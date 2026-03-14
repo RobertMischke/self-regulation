@@ -12,12 +12,114 @@ export const emotionRegulationConfig: DashboardConfig = {
   metricLabels: ['Emotionaler Druck', 'Selbstwert', 'Sicherheit', 'Beruhigung'],
 
   sliders: [
-    { key: 'emotionalPressure', label: 'Emotionaler Druck', left: 'ruhig', right: 'hoch' },
-    { key: 'selfWorth', label: 'Selbstwertgefühl', left: 'niedrig', right: 'stabil' },
-    { key: 'safety', label: 'Innere Sicherheit', left: 'unsicher', right: 'sicher' },
-    { key: 'shame', label: 'Scham / Bewertungsdruck', left: 'wenig', right: 'stark' },
-    { key: 'frustration', label: 'Frustration', left: 'gelassen', right: 'frustriert' },
-    { key: 'bodyTension', label: 'Körperspannung', left: 'locker', right: 'verspannt' },
+    {
+      key: 'emotionalPressure',
+      label: 'Emotionaler Druck',
+      left: 'ruhig',
+      right: 'hoch',
+      feedbackZones: [
+        {
+          direction: 'high', threshold: 80, severity: 'severe',
+          message: 'Dein emotionaler Druck ist extrem hoch. In diesem Zustand übernehmen Gefühle die Steuerung – das ist normal, aber du solltest jetzt nicht handeln, sondern regulieren.',
+          interventions: ['Alles stoppen. Keine Entscheidungen jetzt.', 'Atme: 4 Sekunden ein, 6 aus, 5 Runden.', 'Schreibe in 2 Sätzen auf, was dich gerade belastet.'],
+        },
+        {
+          direction: 'high', threshold: 60, severity: 'moderate',
+          message: 'Emotionaler Druck ist spürbar erhöht. Dein Nervensystem ist aktiviert – achte darauf, dass du nicht in Reaktionsmuster fällst.',
+          interventions: ['Benenne den Druck: Was genau stresst dich?', 'Wechsel auf eine Aufgabe, die dir Kontrolle zurückgibt.'],
+        },
+      ],
+    },
+    {
+      key: 'selfWorth',
+      label: 'Selbstwertgefühl',
+      left: 'niedrig',
+      right: 'stabil',
+      feedbackZones: [
+        {
+          direction: 'low', threshold: 20, severity: 'severe',
+          message: 'Dein Selbstwert ist gerade sehr niedrig. Das bedeutet nicht, dass du weniger wert bist – dein innerer Kritiker ist vermutlich extrem laut.',
+          interventions: ['Sprich mit dir wie mit einem guten Freund.', 'Schreib 3 Dinge auf, die du heute geschafft hast – egal wie klein.', 'Vermeide Vergleiche mit anderen, besonders online.'],
+        },
+        {
+          direction: 'low', threshold: 35, severity: 'moderate',
+          message: 'Dein Selbstwertgefühl ist gedrückt. Prüfe, ob du dich gerade unfair bewertest.',
+          interventions: ['Frage dich: Würde ich das auch über einen Freund denken?', 'Eine kleine Erfolgserfahrung suchen – etwas Machbares erledigen.'],
+        },
+      ],
+    },
+    {
+      key: 'safety',
+      label: 'Innere Sicherheit',
+      left: 'unsicher',
+      right: 'sicher',
+      feedbackZones: [
+        {
+          direction: 'low', threshold: 20, severity: 'severe',
+          message: 'Du fühlst dich sehr unsicher. In diesem Zustand ist alles bedrohlich – das liegt am aktivierten Nervensystem, nicht an der realen Gefahr.',
+          interventions: ['Suche dir einen sicheren Ort oder eine vertraute Person.', 'Körperkontakt (Decke, Kissen, eigene Hand auf der Brust) kann helfen.', 'Erinnere dich: Du bist gerade sicher, auch wenn es sich nicht so anfühlt.'],
+        },
+        {
+          direction: 'low', threshold: 35, severity: 'moderate',
+          message: 'Deine innere Sicherheit ist wackelig. Struktur und Vorhersehbarkeit können jetzt helfen.',
+          interventions: ['Kontakt zu einer vertrauten Person herstellen.', 'Umgebung bewusst wahrnehmen: Was siehst du? Was hörst du?'],
+        },
+      ],
+    },
+    {
+      key: 'shame',
+      label: 'Scham / Bewertungsdruck',
+      left: 'wenig',
+      right: 'stark',
+      feedbackZones: [
+        {
+          direction: 'high', threshold: 75, severity: 'severe',
+          message: 'Starke Scham ist gerade aktiv. Scham lügt oft – sie sagt dir, du seist falsch, aber das ist ein Gefühl, kein Fakt.',
+          interventions: ['Teile das Gefühl mit jemandem, dem du vertraust – Scham verliert im Aussprechen Kraft.', 'Erinnere dich: Fehler machen dich nicht weniger wertvoll.', 'Vermeide gerade Situationen mit Bewertungsdruck.'],
+        },
+        {
+          direction: 'high', threshold: 55, severity: 'moderate',
+          message: 'Bewertungsdruck oder Scham sind spürbar. Prüfe, ob dein innerer Kritiker gerade zu streng ist.',
+          interventions: ['Schreibe auf, was dich beschämt – oft entlarvt sich die Übertreibung.', 'Selbstmitgefühl üben: Du darfst Fehler machen.'],
+        },
+      ],
+    },
+    {
+      key: 'frustration',
+      label: 'Frustration',
+      left: 'gelassen',
+      right: 'frustriert',
+      feedbackZones: [
+        {
+          direction: 'high', threshold: 80, severity: 'severe',
+          message: 'Sehr hohe Frustration. In diesem Zustand neigt man zu impulsiven Entscheidungen – warte, bevor du reagierst.',
+          interventions: ['10 Sekunden Pause, bevor du auf irgendetwas reagierst.', 'Körperlich abreagieren: Aufstehen, Hände schütteln, bewegen.', 'Schreibe den Frust auf – nicht an jemanden richten.'],
+        },
+        {
+          direction: 'high', threshold: 60, severity: 'moderate',
+          message: 'Frustration baut sich auf. Prüfe, ob du an einer Stelle feststeckst, die du anders angehen könntest.',
+          interventions: ['Perspektivwechsel: Was wäre der kleinste nächste Schritt?', 'Kurze Pause, dann bewusst entscheiden, ob du weitermachst.'],
+        },
+      ],
+    },
+    {
+      key: 'bodyTension',
+      label: 'Körperspannung',
+      left: 'locker',
+      right: 'verspannt',
+      feedbackZones: [
+        {
+          direction: 'high', threshold: 80, severity: 'severe',
+          message: 'Dein Körper ist extrem angespannt. Körperanspannung ist ein direktes Signal deines Nervensystems – nimm es ernst.',
+          interventions: ['Progressive Muskelentspannung: 5 Sek. anspannen, 10 Sek. loslassen.', 'Kiefer bewusst öffnen, Schultern fallen lassen.', 'Warmes Getränk oder warme Hände auf Nacken/Bauch.'],
+        },
+        {
+          direction: 'high', threshold: 55, severity: 'moderate',
+          message: 'Spürbare Körperspannung. Dein Körper speichert gerade emotionalen Stress.',
+          interventions: ['Schultern kreisen, Nacken dehnen.', 'Kurz aufstehen und den Körper durchschütteln.'],
+        },
+      ],
+    },
   ],
 
   defaultValues: {

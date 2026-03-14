@@ -12,12 +12,114 @@ export const recoveryDashboardConfig: DashboardConfig = {
   metricLabels: ['Energie', 'Körperlast', 'Schlaf', 'Erholungsgrad'],
 
   sliders: [
-    { key: 'energy', label: 'Allgemeine Energie', left: 'erschöpft', right: 'energiegeladen' },
-    { key: 'sleepQuality', label: 'Schlafqualität (letzte Nacht)', left: 'schlecht', right: 'erholsam' },
-    { key: 'bodyLoad', label: 'Körperliche Belastung', left: 'leicht', right: 'schwer' },
-    { key: 'mentalLoad', label: 'Mentale Last', left: 'klar', right: 'überladen' },
-    { key: 'recoveryTime', label: 'Erholungszeit (letzter Tag)', left: 'keine', right: 'viel' },
-    { key: 'motivation', label: 'Antrieb / Motivation', left: 'leer', right: 'motiviert' },
+    {
+      key: 'energy',
+      label: 'Allgemeine Energie',
+      left: 'erschöpft',
+      right: 'energiegeladen',
+      feedbackZones: [
+        {
+          direction: 'low', threshold: 15, severity: 'severe',
+          message: 'Deine Energie ist extrem niedrig. In diesem Zustand funktioniert weder Motivation noch Willenskraft – dein Körper braucht Grundversorgung.',
+          interventions: ['Sofort: Essen, Trinken, Hinsetzen oder Hinlegen.', 'Keine anspruchsvollen Aufgaben – nur Grundbedürfnisse.', 'Wenn möglich: 10–20 Minuten Powernap.'],
+        },
+        {
+          direction: 'low', threshold: 30, severity: 'moderate',
+          message: 'Dein Energielevel ist deutlich niedrig. Plane bewusst Schonung ein, statt dich durchzukämpfen.',
+          interventions: ['Reduziere deine Aufgabenliste auf das absolute Minimum.', 'Prüfe: Hast du heute genug gegessen und getrunken?'],
+        },
+      ],
+    },
+    {
+      key: 'sleepQuality',
+      label: 'Schlafqualität (letzte Nacht)',
+      left: 'schlecht',
+      right: 'erholsam',
+      feedbackZones: [
+        {
+          direction: 'low', threshold: 20, severity: 'severe',
+          message: 'Sehr schlechter Schlaf. Schlafmangel wirkt wie Alkohol auf deine kognitiven Fähigkeiten – heute ist kein Tag für wichtige Entscheidungen.',
+          interventions: ['Keine komplexen oder irreversiblen Entscheidungen heute.', 'Versuche heute Abend 30 Min früher ins Bett zu gehen.', 'Koffein nur bis 14 Uhr, danach bewusst runterfahren.'],
+        },
+        {
+          direction: 'low', threshold: 35, severity: 'moderate',
+          message: 'Dein Schlaf war nicht erholsam. Das beeinflusst Stimmung, Konzentration und Impulskontrolle.',
+          interventions: ['Heute lieber leichte Aufgaben priorisieren.', 'Abends: Bildschirme reduzieren, Raum abdunkeln.'],
+        },
+      ],
+    },
+    {
+      key: 'bodyLoad',
+      label: 'Körperliche Belastung',
+      left: 'leicht',
+      right: 'schwer',
+      feedbackZones: [
+        {
+          direction: 'high', threshold: 80, severity: 'severe',
+          message: 'Sehr hohe körperliche Belastung. Dein Körper sendet deutliche Warnsignale – Regeneration hat jetzt Vorrang.',
+          interventions: ['Keine weitere körperliche Belastung heute.', 'Dehnen, leichte Bewegung, warmes Bad oder Wärme.', 'Schlaf und Ernährung bewusst priorisieren.'],
+        },
+        {
+          direction: 'high', threshold: 60, severity: 'moderate',
+          message: 'Spürbare körperliche Belastung. Achte darauf, heute nicht noch mehr draufzulegen.',
+          interventions: ['Pausen einplanen, auch wenn es kurze sind.', 'Trink genug Wasser und iss etwas Nahrhaftes.'],
+        },
+      ],
+    },
+    {
+      key: 'mentalLoad',
+      label: 'Mentale Last',
+      left: 'klar',
+      right: 'überladen',
+      feedbackZones: [
+        {
+          direction: 'high', threshold: 80, severity: 'severe',
+          message: 'Dein Kopf ist extrem überladen. Zu viele offene Schleifen blockieren dein Denken – du brauchst Entlastung, nicht mehr Input.',
+          interventions: ['Brain Dump: Schreibe alles auf, was im Kopf ist – 5 Minuten, ohne Struktur.', 'Schließe alle Tabs, Apps und Fenster, die du nicht brauchst.', 'Entscheide dich für genau EINE Sache, die du jetzt tust.'],
+        },
+        {
+          direction: 'high', threshold: 60, severity: 'moderate',
+          message: 'Mentale Last ist erhöht. Zu viele parallele Gedanken verbrauchen Energie, ohne Ergebnis.',
+          interventions: ['Mache eine kurze Liste: Was sind die 3 wichtigsten Dinge?', 'Alles andere bewusst auf morgen verschieben.'],
+        },
+      ],
+    },
+    {
+      key: 'recoveryTime',
+      label: 'Erholungszeit (letzter Tag)',
+      left: 'keine',
+      right: 'viel',
+      feedbackZones: [
+        {
+          direction: 'low', threshold: 15, severity: 'severe',
+          message: 'Fast keine Erholungszeit. Ohne Regeneration baut dein System kontinuierlich ab – das ist nicht nachhaltig.',
+          interventions: ['Heute bewusst eine Pause von mindestens 30 Minuten einplanen.', 'Erholung ist keine Belohnung, sondern Grundbedürfnis.', 'Auch 10 Minuten Nichtstun zählen als echte Pause.'],
+        },
+        {
+          direction: 'low', threshold: 30, severity: 'moderate',
+          message: 'Wenig Erholungszeit. Prüfe, ob du dir aktiv Pausen nimmst oder ob der Tag dich einfach durchträgt.',
+          interventions: ['Plane feste Erholungsslots in den Tag ein.', 'Erholung heißt nicht Bildschirm – echte Pause ist offline.'],
+        },
+      ],
+    },
+    {
+      key: 'motivation',
+      label: 'Antrieb / Motivation',
+      left: 'leer',
+      right: 'motiviert',
+      feedbackZones: [
+        {
+          direction: 'low', threshold: 15, severity: 'severe',
+          message: 'Dein Antrieb ist fast bei Null. Das kann Erschöpfung sein, nicht Faulheit – dein System schützt sich.',
+          interventions: ['Kein Leistungsanspruch jetzt. Nur das Allernötigste.', 'Prüfe: Ist das Erschöpfung oder etwas Tieferes? Bei anhaltendem Zustand Unterstützung suchen.', 'Eine einzige Mini-Aufgabe, die weniger als 5 Minuten dauert.'],
+        },
+        {
+          direction: 'low', threshold: 30, severity: 'moderate',
+          message: 'Wenig Antrieb. Motivation folgt oft auf Handlung, nicht umgekehrt – fang mit etwas Kleinem an.',
+          interventions: ['Nur 3 Minuten anfangen – ohne Qualitätsanspruch.', 'Wechsel auf eine Aufgabe, die dir leichtfällt.'],
+        },
+      ],
+    },
   ],
 
   defaultValues: {
