@@ -7,6 +7,7 @@ import { RadarChartComponent } from '../components/radar-chart.component';
 import { DashboardConfig, ModeDefinition, SystemFeedback, ComputedMetric, SliderItem } from '../models/dashboard-config';
 import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard-registry';
 import { computeAllMetrics, resolveMode, calculateIdealDistance, collectSliderFeedbacks, ActiveSliderFeedback } from '../models/engine';
+import { Snapshot, getSnapshots, addSnapshot, deleteSnapshot, snapshotScore } from '../models/snapshot';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,6 +33,8 @@ export class DashboardComponent {
   readonly sliderItems: Signal<SliderItem[]>;
   readonly displayMetrics: Signal<{ metric: ComputedMetric; value: number }[]>;
   readonly sliderFeedbacks: Signal<ActiveSliderFeedback[]>;
+  readonly snapshots: WritableSignal<Snapshot[]>;
+  readonly showHistory: WritableSignal<boolean> = signal(false);
 
   constructor() {
     const key = this.route.snapshot.paramMap.get('key') ?? '';
@@ -70,6 +73,8 @@ export class DashboardComponent {
     });
 
     this.sliderFeedbacks = computed(() => collectSliderFeedbacks(this.config, this.values()));
+
+    this.snapshots = signal(getSnapshots(this.config.key));
   }
 
   onSliderChange(key: string, value: number): void {
@@ -79,5 +84,41 @@ export class DashboardComponent {
   resetToBalanced(): void {
     this.values.set({ ...this.config.resetValues });
     this.intention.set(this.config.defaultIntention ?? '');
+  }
+
+  takeSnapshot(): void {
+    const snap = addSnapshot({
+      timestamp: Date.now(),
+      dashboardKey: this.config.key,
+      values: { ...this.values() },
+      regulation: this.regulationValue(),
+      friction: this.frictionValue(),
+      modeKey: this.activeModeKey(),
+      modeLabel: this.activeMode().label,
+      intention: this.intention(),
+    });
+    this.snapshots.update(list => [...list, snap]);
+  }
+
+  removeSnapshot(id: string): void {
+    deleteSnapshot(id);
+    this.snapshots.update(list => list.filter(s => s.id !== id));
+  }
+
+  restoreSnapshot(snap: Snapshot): void {
+    this.values.set({ ...snap.values });
+    this.intention.set(snap.intention);
+  }
+
+  snapshotScore = snapshotScore;
+
+  scoreColor(score: number): string {
+    if (score >= 70) return 'bg-emerald-400';
+    if (score >= 45) return 'bg-amber-400';
+    return 'bg-red-400';
+  }
+
+  formatTime(ts: number): string {
+    return new Date(ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
   }
 }

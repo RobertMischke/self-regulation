@@ -63,13 +63,20 @@
           ></textarea>
         </div>
 
-        <div class="mt-4">
+        <div class="mt-4 flex gap-3">
           <button
             type="button"
             (click)="resetToBalanced()"
             class="rounded-2xl bg-slate-200 px-4 py-3 font-semibold text-slate-900"
           >
             Auf Balance setzen
+          </button>
+          <button
+            type="button"
+            (click)="takeSnapshot()"
+            class="rounded-2xl bg-indigo-600 px-4 py-3 font-semibold text-white transition hover:bg-indigo-700"
+          >
+            Snapshot speichern
           </button>
         </div>
       </section>
@@ -146,7 +153,49 @@
       </div>
     </div>
 
+    <!-- History -->
+    <section class="rounded-3xl bg-white p-6 shadow-sm">
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="text-xl font-semibold">Historie</h2>
+        <span class="text-sm text-slate-400">{{ snapshots().length }} Snapshots (Session)</span>
+      </div>
 
+      @if (snapshots().length === 0) {
+        <p class="mt-4 text-sm text-slate-400">Noch keine Snapshots. Klicke oben auf &bdquo;Snapshot speichern&ldquo;, um den aktuellen Zustand festzuhalten.</p>
+      } @else {
+        <!-- Color bar timeline -->
+        <div class="mt-4 flex gap-1">
+          @for (snap of snapshots(); track snap.id) {
+            <button
+              type="button"
+              (click)="restoreSnapshot(snap)"
+              class="group relative h-10 min-w-[12px] flex-1 rounded-lg transition hover:scale-y-110"
+              [class]="scoreColor(snapshotScore(snap))"
+              [title]="formatTime(snap.timestamp) + ' – ' + snap.modeLabel + ' (' + snapshotScore(snap) + ')'">
+              <span class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
+                {{ formatTime(snap.timestamp) }}
+              </span>
+            </button>
+          }
+        </div>
+
+        <!-- Snapshot details -->
+        <div class="mt-4 grid gap-2">
+          @for (snap of snapshots(); track snap.id) {
+            <div class="flex items-center gap-3 rounded-xl border border-slate-100 px-3 py-2 text-sm">
+              <div class="h-3 w-3 shrink-0 rounded-full" [class]="scoreColor(snapshotScore(snap))"></div>
+              <span class="font-semibold text-slate-700">{{ formatTime(snap.timestamp) }}</span>
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ snap.modeLabel }}</span>
+              <span class="text-xs text-slate-400">Reg {{ snap.regulation }} · Frik {{ snap.friction }}</span>
+              <div class="ml-auto flex gap-2">
+                <button type="button" (click)="restoreSnapshot(snap)" class="text-xs font-semibold text-indigo-600 hover:underline">laden</button>
+                <button type="button" (click)="removeSnapshot(snap.id)" class="text-xs font-semibold text-red-500 hover:underline">&#x2715;</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
 
   </div>
 </div>
