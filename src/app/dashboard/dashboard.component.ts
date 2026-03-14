@@ -11,6 +11,10 @@ import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard
 import { computeAllMetrics, resolveMode, calculateIdealDistance, collectSliderFeedbacks, ActiveSliderFeedback } from '../models/engine';
 import { Snapshot, getSnapshots, addSnapshot, deleteSnapshot, clearSnapshots, snapshotScore } from '../models/snapshot';
 
+function severityRank(s: 'mild' | 'moderate' | 'severe'): number {
+  return s === 'severe' ? 0 : s === 'moderate' ? 1 : 2;
+}
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -35,8 +39,10 @@ export class DashboardComponent {
   readonly sliderItems: Signal<SliderItem[]>;
   readonly displayMetrics: Signal<{ metric: ComputedMetric; value: number }[]>;
   readonly sliderFeedbacks: Signal<ActiveSliderFeedback[]>;
+  readonly sliderHints: Signal<Record<string, { severity: 'mild' | 'moderate' | 'severe'; microLabel: string }>>;
   readonly snapshots: WritableSignal<Snapshot[]>;
   readonly showHistory: WritableSignal<boolean> = signal(false);
+  readonly showDetails: WritableSignal<boolean> = signal(false);
   readonly selectedSnapshot: WritableSignal<Snapshot | null> = signal(null);
   readonly expandedSnapshotId: WritableSignal<string | null> = signal(null);
   readonly disclaimerDismissed: WritableSignal<boolean>;
@@ -79,6 +85,16 @@ export class DashboardComponent {
     });
 
     this.sliderFeedbacks = computed(() => collectSliderFeedbacks(this.config, this.values()));
+
+    this.sliderHints = computed(() => {
+      const hints: Record<string, { severity: 'mild' | 'moderate' | 'severe'; microLabel: string }> = {};
+      for (const fb of this.sliderFeedbacks()) {
+        if (fb.microLabel && (!hints[fb.sliderKey] || severityRank(fb.severity) < severityRank(hints[fb.sliderKey].severity))) {
+          hints[fb.sliderKey] = { severity: fb.severity, microLabel: fb.microLabel };
+        }
+      }
+      return hints;
+    });
 
     this.snapshots = signal(getSnapshots(this.config.key));
   }

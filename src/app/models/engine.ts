@@ -13,6 +13,7 @@ export interface ActiveSliderFeedback {
   severity: SliderFeedbackZone['severity'];
   message: string;
   interventions: string[];
+  microLabel?: string;
   value: number;
 }
 
@@ -48,6 +49,7 @@ export function collectSliderFeedbacks(config: DashboardConfig, inputs: Record<s
         severity: zone.severity,
         message: zone.message,
         interventions: zone.interventions,
+        microLabel: zone.microLabel,
         value,
       });
     }

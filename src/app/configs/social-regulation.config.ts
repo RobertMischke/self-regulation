@@ -20,12 +20,12 @@ export const socialRegulationConfig: DashboardConfig = {
       description: 'Wie sicher du dich in deinen aktuellen Beziehungen fühlst. Ideal: ~75 (hoch). Unsicherheit aktiviert Schutzmechanismen, die Nähe blockieren.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Unsicherheit aktiv',
           message: 'Du fühlst dich in deinen Beziehungen sehr unsicher. Das aktiviert Schutzmechanismen, die Nähe und Klarheit blockieren.',
           interventions: ['Benenne für dich, wer gerade Unsicherheit auslöst.', 'Suche bewusst den Kontakt zu einer Person, bei der du dich sicher fühlst.', 'Erlaube dir, jetzt Distanz zu nehmen — das ist kein Rückzug, sondern Schutz.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'Sicherheit stärken',
           message: 'Dein Sicherheitsgefühl in Beziehungen ist eingeschränkt. Das kann unterschwellig viel Energie kosten.',
           interventions: ['Frage dich: Wer tut mir gerade gut, wer eher nicht?', 'Ein kurzes Gespräch mit einer vertrauten Person kann helfen.'],
         },
@@ -39,12 +39,12 @@ export const socialRegulationConfig: DashboardConfig = {
       description: 'Wie klar du deine eigenen Grenzen spürst und benennen kannst. Ideal: ~72 (klar). Diffuse Grenzen führen zu Überforderung und Selbstverlust.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Grenzen unklar',
           message: 'Du hast gerade kaum Gespür für deine Grenzen. Damit steigt das Risiko, dich zu überfordern oder übergangen zu fühlen.',
           interventions: ['Stopp: Was davon ist meins, was gehört jemand anderem?', 'Sage heute bewusst einmal Nein — auch wenn es klein ist.', 'Körpersignal beachten: Wo spürst du Enge, Druck oder Widerstand?'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'Grenzen klären',
           message: 'Deine Grenzen sind gerade etwas verschwommen. Typisch, wenn du viel für andere da bist.',
           interventions: ['Formuliere einen Satz, der anfängt mit: „Ich brauche gerade …"', 'Plane bewusst 30 Minuten nur für dich ein.'],
         },
@@ -58,12 +58,12 @@ export const socialRegulationConfig: DashboardConfig = {
       description: 'Wie stark dein Bedürfnis nach Zugehörigkeit gerade unerfüllt ist. Ideal: niedrig (~25). Hohe Werte = Isolation oder Ausschluss.',
       feedbackZones: [
         {
-          direction: 'high', threshold: 80, severity: 'severe',
+          direction: 'high', threshold: 80, severity: 'severe', microLabel: 'Verbindung suchen',
           message: 'Du fühlst dich stark isoliert oder nicht zugehörig. Das ist ein fundamentales Bedürfnis — nimm es ernst.',
           interventions: ['Schreibe einer Person, die dir etwas bedeutet — auch ohne Anlass.', 'Geh an einen Ort mit Menschen (Café, Park, Bibliothek).', 'Erinnere dich: Zugehörigkeit entsteht oft durch kleine Gesten, nicht durch große.'],
         },
         {
-          direction: 'high', threshold: 60, severity: 'moderate',
+          direction: 'high', threshold: 60, severity: 'moderate', microLabel: 'Nähe fehlt',
           message: 'Dein Bedürfnis nach Zugehörigkeit ist erhöht. Vielleicht warst du zu lange allein oder fühlst dich ausgeschlossen.',
           interventions: ['Plane ein Treffen oder einen Anruf ein.', 'Auch kurze Kontakte zählen — ein Gruß, ein Lächeln.'],
         },
@@ -77,12 +77,12 @@ export const socialRegulationConfig: DashboardConfig = {
       description: 'Wie hoch die Konfliktbelastung gerade ist. Ideal: niedrig (~18). Hohe Werte binden Energie und verhindern produktive Gespräche.',
       feedbackZones: [
         {
-          direction: 'high', threshold: 80, severity: 'severe',
+          direction: 'high', threshold: 80, severity: 'severe', microLabel: 'erst regulieren',
           message: 'Der Konfliktpegel ist sehr hoch. In diesem Zustand sind produktive Gespräche kaum möglich.',
           interventions: ['Nicht jetzt klären. Erst regulieren, dann reden.', 'Schreibe auf, was dich wirklich stört — ohne es abzuschicken.', 'Frage dich: Was davon ist akuter Frust, was tieferer Schmerz?'],
         },
         {
-          direction: 'high', threshold: 55, severity: 'moderate',
+          direction: 'high', threshold: 55, severity: 'moderate', microLabel: 'Konflikt klären',
           message: 'Du trägst gerade einen Konflikt mit dir. Das bindet Energie und Aufmerksamkeit.',
           interventions: ['Benenne den Konflikt in einem Satz für dich.', 'Überlege: Muss das heute geklärt werden oder kann es warten?'],
         },
@@ -96,12 +96,12 @@ export const socialRegulationConfig: DashboardConfig = {
       description: 'Dein Grad emotionaler Offenheit. Ideal: Mitte (~55). Zu verschlossen = Isolation, zu offen ohne Rückhalt = Verletzlichkeit.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'moderate',
+          direction: 'low', threshold: 20, severity: 'moderate', microLabel: 'mehr Offenheit',
           message: 'Du bist emotional sehr verschlossen. Das kann schützen, aber auch isolieren.',
           interventions: ['Frage dich: Schütze ich mich — oder verstecke ich mich?', 'Teile einer Person ein kleines, ehrliches Gefühl mit.'],
         },
         {
-          direction: 'high', threshold: 80, severity: 'moderate',
+          direction: 'high', threshold: 80, severity: 'moderate', microLabel: 'Rückhalt sichern',
           message: 'Du bist emotional sehr offen — achte darauf, dass du dabei nicht verletzlich wirst, ohne Rückhalt zu haben.',
           interventions: ['Prüfe: Habe ich gerade jemanden, der mir Sicherheit gibt?', 'Es ist okay, dich zwischendurch abzugrenzen.'],
         },
@@ -115,12 +115,12 @@ export const socialRegulationConfig: DashboardConfig = {
       description: 'Wie viel Energie du für soziale Interaktion hast. Ideal: ~70. Niedrige Werte = jede Interaktion kostet überproportional viel.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Rückzug erlaubt',
           message: 'Deine soziale Energie ist aufgebraucht. Jede weitere Interaktion kostet überproportional viel.',
           interventions: ['Gib dir Erlaubnis, dich zurückzuziehen — ohne schlechtes Gewissen.', 'Sage ein Treffen ab, wenn es nicht essenziell ist.', 'Stille und Alleinsein ist jetzt Erholung, nicht Vermeidung.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'soziale Pause',
           message: 'Deine soziale Energie ist niedrig. Wähle bewusst, mit wem du sie gerade teilst.',
           interventions: ['Plane bewusst eine soziale Pause ein.', 'Wenn möglich: asynchrone Kommunikation bevorzugen.'],
         },

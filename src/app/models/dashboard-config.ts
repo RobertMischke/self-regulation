@@ -4,6 +4,7 @@ export interface SliderFeedbackZone {
   severity: 'mild' | 'moderate' | 'severe';
   message: string;
   interventions: string[];
+  microLabel?: string;
 }
 
 export interface SliderDefinition {

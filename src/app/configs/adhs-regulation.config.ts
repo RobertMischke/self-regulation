@@ -20,22 +20,22 @@ export const adhsRegulationConfig: DashboardConfig = {
       description: 'Wie wach und aktiviert dein Nervensystem gerade ist. Nicht Motivation, sondern physiologische Grundspannung. Ideal: mittlerer Bereich (~58) — genug Energie zum Starten, aber nicht überreizt.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Aktivierung fehlt',
           message: 'Deine Aktivierung ist extrem niedrig. Ohne minimale Energie kann dein Gehirn keine Aufgabe starten – das ist kein Willensproblem.',
           interventions: ['Kaltes Wasser ins Gesicht oder über die Hände.', 'Aufstehen und 2 Minuten gehen.', 'Einen starken sensorischen Reiz setzen (Musik, Licht, frische Luft).'],
         },
         {
-          direction: 'low', threshold: 35, severity: 'moderate',
+          direction: 'low', threshold: 35, severity: 'moderate', microLabel: 'mehr Energie',
           message: 'Dein Aktivierungslevel ist spürbar niedrig. ADHS-typisch: Nicht zu wenig Wollen, sondern zu wenig Anlaufenergie.',
           interventions: ['Einen Mini-Start setzen: nur 3 Minuten, keine Qualitätsansprüche.', 'Leichte Hintergrundstimulation nutzen (Brown Noise, Lo-Fi).'],
         },
         {
-          direction: 'high', threshold: 75, severity: 'moderate',
+          direction: 'high', threshold: 75, severity: 'moderate', microLabel: 'Unruhe prüfen',
           message: 'Deine Aktivierung ist erhöht – prüfe, ob das produktive Energie oder innere Unruhe ist.',
           interventions: ['Kurz innehalten und prüfen: Bin ich fokussiert oder getrieben?', 'Reize reduzieren: Tabs schließen, Lautstärke senken.'],
         },
         {
-          direction: 'high', threshold: 90, severity: 'severe',
+          direction: 'high', threshold: 90, severity: 'severe', microLabel: 'Überreizung',
           message: 'Sehr hohes Arousal – dein System ist vermutlich überreizt. Erst runterfahren, bevor du entscheidest.',
           interventions: ['Sofort Reize reduzieren: Kopfhörer ab, Bildschirm dimmen.', 'Box-Breathing: 4-4-4-4 Sekunden, mindestens 5 Runden.', 'Nicht in diesem Zustand Entscheidungen treffen.'],
         },
@@ -49,12 +49,12 @@ export const adhsRegulationConfig: DashboardConfig = {
       description: 'Deine aktuelle Grundstimmung. Nicht die Emotion im Moment, sondern das allgemeine Stimmungslevel. Ideal: oberer mittlerer Bereich (~68) — stabil, ohne künstlich gut.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Stimmung kritisch',
           message: 'Deine Stimmung ist sehr niedrig. Überlege ernsthaft, ob du jetzt weiterarbeiten solltest, oder ob Fürsorge Vorrang hat.',
           interventions: ['Mach Pause. Das ist kein Luxus, sondern Regulation.', 'Sprich mit jemandem, dem du vertraust.', 'Kein Leistungsanspruch jetzt – nur Stabilisierung.'],
         },
         {
-          direction: 'low', threshold: 35, severity: 'moderate',
+          direction: 'low', threshold: 35, severity: 'moderate', microLabel: 'Stimmung gedrückt',
           message: 'Deine Stimmung ist gedrückt. Prüfe, ob du wirklich weitermachen möchtest, oder ob eine Pause hilft.',
           interventions: ['Leichte, angenehme Aufgabe wählen statt etwas Anspruchsvolles.', 'Kurze körperliche Aktivierung: Dehnen, frische Luft.'],
         },
@@ -68,12 +68,12 @@ export const adhsRegulationConfig: DashboardConfig = {
       description: 'Wie sehr du bei dir bist. Zentriertheit bedeutet, dass du dich weder getrieben noch verloren fühlst. Ideal: ~70 — ruhig, orientiert und handlungsfähig.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'keine Mitte',
           message: 'Du bist weit von deiner Mitte entfernt. In diesem Zustand ist präzises Arbeiten kaum möglich.',
           interventions: ['Alles stoppen und 2 Minuten nur atmen.', 'Körperlich erden: Füße bewusst auf den Boden, Haltung aufrichten.', 'Einen sicheren, ruhigen Ort aufsuchen.'],
         },
         {
-          direction: 'low', threshold: 35, severity: 'moderate',
+          direction: 'low', threshold: 35, severity: 'moderate', microLabel: 'mehr Struktur',
           message: 'Du spürst innere Unruhe oder Zerstreutheit. Typisch bei ADHS – dein System sucht Orientierung.',
           interventions: ['Einen klaren nächsten Schritt formulieren und aufschreiben.', 'Äußere Struktur nutzen: Timer, Liste, feste Reihenfolge.'],
         },
@@ -87,12 +87,12 @@ export const adhsRegulationConfig: DashboardConfig = {
       description: 'Wie klar du denken kannst. Brain Fog, Zerstreutheit und kognitive Müdigkeit senken diesen Wert. Ideal: ~72 — klares Denken ohne Anstrengung.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Brain Fog',
           message: 'Dein Denken ist stark vernebelt. Brain Fog bei ADHS kann viele Ursachen haben – Schlaf, Essen, Überreizung.',
           interventions: ['Grundbedürfnisse prüfen: Hast du gegessen, getrunken, geschlafen?', 'Keine komplexen Aufgaben jetzt – nur Einfaches oder Pause.', 'Bewegung kann den Nebel lichten: 5 Minuten Spaziergang.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'Klarheit fehlt',
           message: 'Deine Klarheit ist eingeschränkt. Vermeide gerade Aufgaben, die hohe Genauigkeit erfordern.',
           interventions: ['Wechsel auf eine einfachere Aufgabe.', 'Frische Luft oder ein Glas Wasser können helfen.'],
         },
@@ -106,12 +106,12 @@ export const adhsRegulationConfig: DashboardConfig = {
       description: 'Dein körperliches Energielevel — Schlaf, Ernährung und Bewegung fließen hier ein. Ideal: ~68 — wach und belastbar.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Energie leer',
           message: 'Dein Körper meldet starken Energiemangel. Kognitive Steuerung ist so kaum möglich.',
           interventions: ['Essen und Trinken – jetzt, nicht später.', 'Wenn möglich: kurzes Powernap (10–20 Min).', 'Keine anspruchsvollen Entscheidungen in diesem Zustand.'],
         },
         {
-          direction: 'low', threshold: 35, severity: 'moderate',
+          direction: 'low', threshold: 35, severity: 'moderate', microLabel: 'Energie tanken',
           message: 'Deine Körperenergie ist niedrig. Das beeinflusst direkt deine Exekutivfunktionen.',
           interventions: ['Snack oder Mahlzeit planen.', 'Kurz aufstehen und bewegen.'],
         },
@@ -125,12 +125,12 @@ export const adhsRegulationConfig: DashboardConfig = {
       description: 'Wie viel innerer emotionaler Druck gerade auf dir lastet. Hohe Werte signalisieren, dass dein Nervensystem im Alarmmodus ist. Ideal: niedrig (~28).',
       feedbackZones: [
         {
-          direction: 'high', threshold: 80, severity: 'severe',
+          direction: 'high', threshold: 80, severity: 'severe', microLabel: 'Druck senken',
           message: 'Sehr hoher emotionaler Druck. Dein Nervensystem ist im Alarmmodus – Leistung ist hier nicht der richtige Fokus.',
           interventions: ['Alles pausieren. Erst regulieren, dann handeln.', 'Atem-Übung: 4 ein, 6 aus, 5 Runden.', 'Schreibe in 2 Sätzen auf, was dich gerade belastet.'],
         },
         {
-          direction: 'high', threshold: 60, severity: 'moderate',
+          direction: 'high', threshold: 60, severity: 'moderate', microLabel: 'Druck spürbar',
           message: 'Emotionaler Druck ist spürbar erhöht. Das kann bei ADHS schnell die Steuerung übernehmen.',
           interventions: ['Versuche den Druck zu benennen: Was genau stresst dich?', 'Wechsel auf eine Aufgabe, die dir Kontrolle gibt.'],
         },
@@ -144,17 +144,17 @@ export const adhsRegulationConfig: DashboardConfig = {
       description: 'Wie stark dein Gehirn nach Reizen, Abwechslung oder Dopamin sucht. ADHS-typisch: oft zu hoch. Ideal: mittlerer Bereich (~48) — genug Input, ohne in Reizsuche zu verfallen.',
       feedbackZones: [
         {
-          direction: 'high', threshold: 80, severity: 'severe',
+          direction: 'high', threshold: 80, severity: 'severe', microLabel: 'Reizsuche aktiv',
           message: 'Dein Stimulationsbedarf ist extrem hoch. ADHS-typisch: Das Dopamin-System sucht verzweifelt nach Input.',
           interventions: ['Bewusst dosierte Stimulation: schnelle Mini-Aufgabe, Musik, körperliche Bewegung.', 'Nicht mit Social Media oder Doom-Scrolling sättigen – das verstärkt den Hunger.', 'Timer auf 5 Minuten: eine einzige kleine Sache, dann neu bewerten.'],
         },
         {
-          direction: 'high', threshold: 65, severity: 'moderate',
+          direction: 'high', threshold: 65, severity: 'moderate', microLabel: 'mehr Stimulation',
           message: 'Erhöhter Stimulationsbedarf. Dein Gehirn braucht mehr Input, um in Gang zu kommen.',
           interventions: ['Nutze erlaubte Stimulation: Musik, Ambient Noise, Zeitdruck.', 'Gamification: Mach dir die Aufgabe zum Spiel oder Wettbewerb.'],
         },
         {
-          direction: 'low', threshold: 20, severity: 'mild',
+          direction: 'low', threshold: 20, severity: 'mild', microLabel: 'guter Fokuszustand',
           message: 'Dein Stimulationsbedarf ist ungewöhnlich niedrig. Nutze dieses Fenster für ruhige, präzise Arbeit.',
           interventions: ['Guter Moment für Deep Work oder konzeptionelle Aufgaben.', 'Reize bewusst niedrig halten, um den Zustand zu nutzen.'],
         },

@@ -20,12 +20,12 @@ export const eveningCheckinConfig: DashboardConfig = {
       description: 'Wie ruhig dein Kopf gerade ist. Kreisende Gedanken und Grübeln senken diesen Wert. Ideal: ~75 — still genug zum Einschlafen.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Kopf zu unruhig',
           message: 'Dein Kopf ist extrem unruhig. In diesem Zustand wirst du kaum einschlafen können — erst runterfahren.',
           interventions: ['Alles aufschreiben, was im Kopf kreist — ein Brain Dump vor dem Schlafen.', 'Bildschirme ab jetzt aus. Licht dimmen.', 'Atemübung: 4 ein, 7 halten, 8 aus — 5 Runden.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'erst runterfahren',
           message: 'Dein Kopf ist noch recht aktiv. Typisch, wenn der Tag viel Input hatte.',
           interventions: ['10-Minuten-Regel: Ab jetzt kein neues Thema mehr anfangen.', 'Leichte Lektüre oder ruhige Musik statt Bildschirm.'],
         },
@@ -39,12 +39,12 @@ export const eveningCheckinConfig: DashboardConfig = {
       description: 'Ob sich der Tag "fertig" anfühlt. Offene Schleifen halten den Kopf wach. Ideal: ~78 — das Gefühl, genug getan zu haben.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Tag offen',
           message: 'Du hast das Gefühl, der Tag ist noch nicht fertig. Offene Schleifen machen den Kopf unruhig.',
           interventions: ['Schreibe 3 Dinge auf, die du heute geschafft hast — egal wie klein.', 'Notiere 1 Ding, das morgen dran ist — und dann loslassen.', 'Sage dir bewusst: Der Tag ist jetzt beendet.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'Rückblick hilfreich',
           message: 'Der Tag fühlt sich noch nicht ganz abgeschlossen an. Ein kurzer Rückblick kann helfen.',
           interventions: ['Kurze Reflexion: Was lief gut, was bleibt offen?', 'Tomorrow-Liste: 1–2 Aufgaben für morgen notieren.'],
         },
@@ -58,12 +58,12 @@ export const eveningCheckinConfig: DashboardConfig = {
       description: 'Wie viel emotionale Last du vom Tag mitträgst. Ideal: niedrig (~22). Hohe Werte machen Loslassen und Einschlafen schwer.',
       feedbackZones: [
         {
-          direction: 'high', threshold: 80, severity: 'severe',
+          direction: 'high', threshold: 80, severity: 'severe', microLabel: 'Last ablegen',
           message: 'Du trägst gerade viel emotionales Gewicht. Das macht es schwer, loszulassen und zur Ruhe zu kommen.',
           interventions: ['Schreibe 2 Sätze auf, was dich belastet — nicht lösen, nur benennen.', 'Teile dich jemandem mit — auch kurz per Nachricht.', 'Erlaube dir, dass es heute so ist. Nicht jeder Tag endet leicht.'],
         },
         {
-          direction: 'high', threshold: 55, severity: 'moderate',
+          direction: 'high', threshold: 55, severity: 'moderate', microLabel: 'Gewicht spürbar',
           message: 'Du trägst spürbar etwas mit dir. Versuche, das Gefühl bewusst abzulegen.',
           interventions: ['Journaling: 5 Minuten frei schreiben, ohne Ziel.', 'Frage dich: Muss ich das jetzt noch lösen, oder kann es warten?'],
         },
@@ -77,12 +77,12 @@ export const eveningCheckinConfig: DashboardConfig = {
       description: 'Wie entspannt dein Körper ist. Körperanspannung blockiert Schlaf. Ideal: ~78 — locker und gelöst.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Körper angespannt',
           message: 'Dein Körper ist sehr angespannt. Schlaf wird schwer, wenn der Körper nicht loslässt.',
           interventions: ['Progressive Muskelentspannung: Anspannen, 5 Sek halten, loslassen.', 'Warme Dusche oder Wärmflasche können helfen.', 'Sanftes Dehnen: Nacken, Schultern, Rücken.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'mehr Entspannung',
           message: 'Restliche Anspannung im Körper spürbar. Ein paar Minuten bewusste Entspannung helfen.',
           interventions: ['Kurzes Stretching im Liegen.', 'Bewusst jeden Körperteil durchgehen und loslassen.'],
         },
@@ -95,12 +95,12 @@ export const eveningCheckinConfig: DashboardConfig = {
       right: 'viel',
       feedbackZones: [
         {
-          direction: 'low', threshold: 25, severity: 'moderate',
+          direction: 'low', threshold: 25, severity: 'moderate', microLabel: 'Positives suchen',
           message: 'Dir fällt gerade nichts Positives am Tag auf. Das ist an schweren Tagen normal.',
           interventions: ['Suche eine einzige kleine Sache, die okay war — auch wenn es nur der Kaffee war.', 'Dankbarkeit muss nicht groß sein. Winziges zählt.'],
         },
         {
-          direction: 'high', threshold: 75, severity: 'mild',
+          direction: 'high', threshold: 75, severity: 'mild', microLabel: 'gutes Zeichen',
           message: 'Du nimmst Positives wahr — ein gutes Zeichen. Lass dieses Gefühl wirken.',
           interventions: ['Schreibe 3 Dinge auf, für die du heute dankbar bist.', 'Teile ein positives Erlebnis mit jemandem.'],
         },
@@ -113,12 +113,12 @@ export const eveningCheckinConfig: DashboardConfig = {
       right: 'stark',
       feedbackZones: [
         {
-          direction: 'high', threshold: 75, severity: 'severe',
+          direction: 'high', threshold: 75, severity: 'severe', microLabel: 'Bildschirm aus',
           message: 'Dein System ist noch stark von Bildschirmreizen beeinflusst. Blaues Licht und Scroll-Dopamin wirken nach.',
           interventions: ['Alle Bildschirme aus — jetzt, nicht in 10 Minuten.', 'Nachtmodus oder Rotlichtfilter aktivieren.', 'Stattdessen: Buch, Podcast, Gespräch oder Stille.'],
         },
         {
-          direction: 'high', threshold: 55, severity: 'moderate',
+          direction: 'high', threshold: 55, severity: 'moderate', microLabel: 'Bildschirmzeit',
           message: 'Du bist noch etwas aufgedreht von Bildschirmzeit. Achte auf den Übergang.',
           interventions: ['Letzte 30 Minuten ohne Bildschirm planen.', 'Dim das Licht in deiner Umgebung.'],
         },

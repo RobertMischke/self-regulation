@@ -20,12 +20,12 @@ export const orientationCheckConfig: DashboardConfig = {
       description: 'Wie klar du gerade denken kannst. Diffuses Denken, Brain Fog oder Reizüberflutung senken diesen Wert. Ideal: ~72.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Brain Fog',
           message: 'Dein Denken ist stark vernebelt. In diesem Zustand sind Entscheidungen kaum möglich — erst Klarheit schaffen.',
           interventions: ['Alles aufschreiben, was im Kopf kreist — unstrukturiert, einfach raus.', 'Grundbedürfnisse prüfen: Schlaf, Essen, Wasser.', '5 Minuten an die frische Luft gehen.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'Klarheit fehlt',
           message: 'Deine Klarheit ist eingeschränkt. Versuche nicht, alles gleichzeitig zu sortieren.',
           interventions: ['Nur eine einzige Frage beantworten: Was ist gerade am dringendsten?', 'Umgebung aufräumen — äußere Ordnung hilft innerer Klarheit.'],
         },
@@ -39,12 +39,12 @@ export const orientationCheckConfig: DashboardConfig = {
       description: 'Ob du ein inneres Gefühl für deine Richtung hast. Nicht: perfekter Plan. Sondern: "Ich weiß ungefähr, was als Nächstes dran ist." Ideal: ~70.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Orientierung fehlt',
           message: 'Du hast gerade kein Gefühl dafür, wohin es gehen soll. Das ist anstrengend, aber normal.',
           interventions: ['Schreibe 3 Dinge auf, die dir gerade wichtig sind — egal wie klein.', 'Frage dich: Was würde mich morgen entlasten, wenn ich es heute tue?', 'Es reicht ein einziger nächster Schritt.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'Richtung klären',
           message: 'Dein Richtungsgefühl ist schwach. Oft hilft es, eine klare Absicht zu formulieren.',
           interventions: ['Formuliere einen Satz: „Heute will ich …" — ohne Perfektion.', 'Wähle eine Aufgabe, die unter 15 Minuten dauert.'],
         },
@@ -58,12 +58,12 @@ export const orientationCheckConfig: DashboardConfig = {
       description: 'Wie leicht du gerade Entscheidungen treffen kannst. Paralyse und Überwägen senken diesen Wert. Ideal: ~68.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Entscheidungsblockade',
           message: 'Du steckst in Entscheidungsparalyse. Nichts fühlt sich richtig an — das ist ein Schutzmechanismus, kein Versagen.',
           interventions: ['Triff eine bewusst kleine, reversible Entscheidung — egal welche.', 'Setze ein Zeitlimit: In 2 Minuten wähle ich eins von zwei.', 'Erlaube dir, falsch zu liegen. Korrigieren geht immer.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'vereinfachen',
           message: 'Entscheidungen fallen dir gerade schwer. Vermutlich wägt du zu viel ab.',
           interventions: ['Reduziere Optionen auf maximal zwei.', 'Frage dich: Was würde ich einer Freundin raten?'],
         },
@@ -77,12 +77,12 @@ export const orientationCheckConfig: DashboardConfig = {
       description: 'Wie stark das Gefühl der Überforderung gerade ist. Ideal: niedrig (~25). Hohe Werte blockieren jede Handlung.',
       feedbackZones: [
         {
-          direction: 'high', threshold: 80, severity: 'severe',
+          direction: 'high', threshold: 80, severity: 'severe', microLabel: 'Überforderung',
           message: 'Du bist massiv überfordert. Dein System ist im Schutzmodus — jede weitere Anforderung verstärkt die Blockade.',
           interventions: ['Sofort Anforderungen reduzieren. Alles, was warten kann, wartet.', 'Atme langsam: 4 ein, 6 aus, 5 Runden.', 'Sag jemandem: „Ich brauche gerade 10 Minuten."'],
         },
         {
-          direction: 'high', threshold: 60, severity: 'moderate',
+          direction: 'high', threshold: 60, severity: 'moderate', microLabel: 'erst sortieren',
           message: 'Überforderung baut sich auf. Bevor du mehr draufpackst, sortiere das Vorhandene.',
           interventions: ['Erstelle eine Brain-Dump-Liste: alles raus, ohne Ordnung.', 'Streiche bewusst 2 Dinge von der Liste.'],
         },
@@ -96,12 +96,12 @@ export const orientationCheckConfig: DashboardConfig = {
       description: 'Wie viele Gedanken, Impulse und innere Stimmen gleichzeitig aktiv sind. Ideal: niedrig (~28). Hohes Rauschen verhindert fokussiertes Denken.',
       feedbackZones: [
         {
-          direction: 'high', threshold: 75, severity: 'severe',
+          direction: 'high', threshold: 75, severity: 'severe', microLabel: 'inneres Rauschen',
           message: 'Sehr hohes inneres Rauschen. Deine Gedanken überlagern sich — Klarheit ist so kaum möglich.',
           interventions: ['Schreib alles auf, was im Kopf ist — 5 Minuten, ohne zu bewerten.', 'Lege das Handy weg und schließe alle Tabs.', 'Stille oder monotoner Sound für 5 Minuten.'],
         },
         {
-          direction: 'high', threshold: 55, severity: 'moderate',
+          direction: 'high', threshold: 55, severity: 'moderate', microLabel: 'Kopf beruhigen',
           message: 'Dein Kopf ist unruhig. Bevor du sortierst, hilft es, erst mal runterzukommen.',
           interventions: ['Kurze Atem-Übung: 3 tiefe Atemzüge, bewusst langsam.', 'Einen Gedanken aufschreiben, der besonders laut ist.'],
         },
@@ -115,12 +115,12 @@ export const orientationCheckConfig: DashboardConfig = {
       description: 'Wie präsent du in deinem Körper bist. Erdung gibt Orientierung, wenn der Kopf es nicht kann. Ideal: ~72.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 25, severity: 'severe',
+          direction: 'low', threshold: 25, severity: 'severe', microLabel: 'nicht geerdet',
           message: 'Du bist kaum in deinem Körper. Kopf-gesteuerte Orientierung funktioniert so nicht.',
           interventions: ['Füße bewusst auf den Boden drücken, Haltung aufrichten.', 'Kaltes Wasser über die Hände laufen lassen.', 'Einen Gegenstand in die Hand nehmen und bewusst fühlen.'],
         },
         {
-          direction: 'low', threshold: 40, severity: 'moderate',
+          direction: 'low', threshold: 40, severity: 'moderate', microLabel: 'mehr Erdung',
           message: 'Du bist etwas entwurzelt. Dein Körper kann dir Orientierung geben, wenn dein Kopf kreist.',
           interventions: ['Bewusst aufstehen und dich strecken.', '1 Minute bewusst kauen (Kaugummi, Apfel, Nüsse).'],
         },

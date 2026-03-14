@@ -20,12 +20,12 @@ export const recoveryDashboardConfig: DashboardConfig = {
       description: 'Dein allgemeines Energielevel — körperlich und mental. Ideal: ~72. Niedrige Werte zeigen: dein System braucht Grundversorgung, nicht Motivation.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 15, severity: 'severe',
+          direction: 'low', threshold: 15, severity: 'severe', microLabel: 'Energie leer',
           message: 'Deine Energie ist extrem niedrig. In diesem Zustand funktioniert weder Motivation noch Willenskraft – dein Körper braucht Grundversorgung.',
           interventions: ['Sofort: Essen, Trinken, Hinsetzen oder Hinlegen.', 'Keine anspruchsvollen Aufgaben – nur Grundbedürfnisse.', 'Wenn möglich: 10–20 Minuten Powernap.'],
         },
         {
-          direction: 'low', threshold: 30, severity: 'moderate',
+          direction: 'low', threshold: 30, severity: 'moderate', microLabel: 'Schonung nötig',
           message: 'Dein Energielevel ist deutlich niedrig. Plane bewusst Schonung ein, statt dich durchzukämpfen.',
           interventions: ['Reduziere deine Aufgabenliste auf das absolute Minimum.', 'Prüfe: Hast du heute genug gegessen und getrunken?'],
         },
@@ -39,12 +39,12 @@ export const recoveryDashboardConfig: DashboardConfig = {
       description: 'Wie erholsam dein Schlaf war. Ideal: ~78 (maximal erholsam). Schlechter Schlaf wirkt wie Alkohol auf deine kognitiven Fähigkeiten.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 20, severity: 'severe',
+          direction: 'low', threshold: 20, severity: 'severe', microLabel: 'Schlafmangel',
           message: 'Sehr schlechter Schlaf. Schlafmangel wirkt wie Alkohol auf deine kognitiven Fähigkeiten – heute ist kein Tag für wichtige Entscheidungen.',
           interventions: ['Keine komplexen oder irreversiblen Entscheidungen heute.', 'Versuche heute Abend 30 Min früher ins Bett zu gehen.', 'Koffein nur bis 14 Uhr, danach bewusst runterfahren.'],
         },
         {
-          direction: 'low', threshold: 35, severity: 'moderate',
+          direction: 'low', threshold: 35, severity: 'moderate', microLabel: 'Schlaf verbessern',
           message: 'Dein Schlaf war nicht erholsam. Das beeinflusst Stimmung, Konzentration und Impulskontrolle.',
           interventions: ['Heute lieber leichte Aufgaben priorisieren.', 'Abends: Bildschirme reduzieren, Raum abdunkeln.'],
         },
@@ -58,12 +58,12 @@ export const recoveryDashboardConfig: DashboardConfig = {
       description: 'Wie belastet dein Körper gerade ist — Schmerz, Anspannung, Müdigkeit. Ideal: niedrig (~25). Hohe Werte = dein Körper braucht Schonung.',
       feedbackZones: [
         {
-          direction: 'high', threshold: 80, severity: 'severe',
+          direction: 'high', threshold: 80, severity: 'severe', microLabel: 'Körper schonen',
           message: 'Sehr hohe körperliche Belastung. Dein Körper sendet deutliche Warnsignale – Regeneration hat jetzt Vorrang.',
           interventions: ['Keine weitere körperliche Belastung heute.', 'Dehnen, leichte Bewegung, warmes Bad oder Wärme.', 'Schlaf und Ernährung bewusst priorisieren.'],
         },
         {
-          direction: 'high', threshold: 60, severity: 'moderate',
+          direction: 'high', threshold: 60, severity: 'moderate', microLabel: 'Belastung reduzieren',
           message: 'Spürbare körperliche Belastung. Achte darauf, heute nicht noch mehr draufzulegen.',
           interventions: ['Pausen einplanen, auch wenn es kurze sind.', 'Trink genug Wasser und iss etwas Nahrhaftes.'],
         },
@@ -77,12 +77,12 @@ export const recoveryDashboardConfig: DashboardConfig = {
       description: 'Wie viele offene Schleifen, Sorgen und Aufgaben im Kopf sind. Ideal: niedrig (~25). Hohe Werte blockieren Denken und Erholung.',
       feedbackZones: [
         {
-          direction: 'high', threshold: 80, severity: 'severe',
+          direction: 'high', threshold: 80, severity: 'severe', microLabel: 'Kopf entlasten',
           message: 'Dein Kopf ist extrem überladen. Zu viele offene Schleifen blockieren dein Denken – du brauchst Entlastung, nicht mehr Input.',
           interventions: ['Brain Dump: Schreibe alles auf, was im Kopf ist – 5 Minuten, ohne Struktur.', 'Schließe alle Tabs, Apps und Fenster, die du nicht brauchst.', 'Entscheide dich für genau EINE Sache, die du jetzt tust.'],
         },
         {
-          direction: 'high', threshold: 60, severity: 'moderate',
+          direction: 'high', threshold: 60, severity: 'moderate', microLabel: 'mentale Last',
           message: 'Mentale Last ist erhöht. Zu viele parallele Gedanken verbrauchen Energie, ohne Ergebnis.',
           interventions: ['Mache eine kurze Liste: Was sind die 3 wichtigsten Dinge?', 'Alles andere bewusst auf morgen verschieben.'],
         },
@@ -96,12 +96,12 @@ export const recoveryDashboardConfig: DashboardConfig = {
       description: 'Wie viel echte Erholungszeit du in den letzten 24h hattest. Ideal: ~65. Erholung ist kein Luxus, sondern Grundbedarf.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 15, severity: 'severe',
+          direction: 'low', threshold: 15, severity: 'severe', microLabel: 'Erholung fehlt',
           message: 'Fast keine Erholungszeit. Ohne Regeneration baut dein System kontinuierlich ab – das ist nicht nachhaltig.',
           interventions: ['Heute bewusst eine Pause von mindestens 30 Minuten einplanen.', 'Erholung ist keine Belohnung, sondern Grundbedürfnis.', 'Auch 10 Minuten Nichtstun zählen als echte Pause.'],
         },
         {
-          direction: 'low', threshold: 30, severity: 'moderate',
+          direction: 'low', threshold: 30, severity: 'moderate', microLabel: 'Pausen einplanen',
           message: 'Wenig Erholungszeit. Prüfe, ob du dir aktiv Pausen nimmst oder ob der Tag dich einfach durchträgt.',
           interventions: ['Plane feste Erholungsslots in den Tag ein.', 'Erholung heißt nicht Bildschirm – echte Pause ist offline.'],
         },
@@ -115,12 +115,12 @@ export const recoveryDashboardConfig: DashboardConfig = {
       description: 'Wie viel inneren Antrieb du spürst. Ideal: ~68. Geringe Motivation bei Erschöpfung ist kein Versagen — es ist ein Signal, dass Energie fehlt.',
       feedbackZones: [
         {
-          direction: 'low', threshold: 15, severity: 'severe',
+          direction: 'low', threshold: 15, severity: 'severe', microLabel: 'Antrieb fehlt',
           message: 'Dein Antrieb ist fast bei Null. Das kann Erschöpfung sein, nicht Faulheit – dein System schützt sich.',
           interventions: ['Kein Leistungsanspruch jetzt. Nur das Allernötigste.', 'Prüfe: Ist das Erschöpfung oder etwas Tieferes? Bei anhaltendem Zustand Unterstützung suchen.', 'Eine einzige Mini-Aufgabe, die weniger als 5 Minuten dauert.'],
         },
         {
-          direction: 'low', threshold: 30, severity: 'moderate',
+          direction: 'low', threshold: 30, severity: 'moderate', microLabel: 'klein anfangen',
           message: 'Wenig Antrieb. Motivation folgt oft auf Handlung, nicht umgekehrt – fang mit etwas Kleinem an.',
           interventions: ['Nur 3 Minuten anfangen – ohne Qualitätsanspruch.', 'Wechsel auf eine Aufgabe, die dir leichtfällt.'],
         },
