@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <radialGradient id="outerGlow" cx="50%" cy="48%" r="50%">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.45"/>
+      <stop offset="60%" stop-color="#7c3aed" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#0f172a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orbBody" cx="45%" cy="42%" r="52%">
+      <stop offset="0%" stop-color="#f5e6ff"/>
+      <stop offset="15%" stop-color="#d8b4fe"/>
+      <stop offset="35%" stop-color="#a855f7"/>
+      <stop offset="55%" stop-color="#9333ea"/>
+      <stop offset="75%" stop-color="#d946ef"/>
+      <stop offset="92%" stop-color="#6d28d9"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </radialGradient>
+    <radialGradient id="highlight" cx="40%" cy="35%" r="30%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#f0e0ff" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#f0e0ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rimGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="65%" stop-color="#a855f7" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#c084fc" stop-opacity="0.45"/>
+      <stop offset="95%" stop-color="#a78bfa" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#818cf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="16" cy="16" r="16" fill="url(#outerGlow)"/>
+  <circle cx="16" cy="15.5" r="11" fill="url(#orbBody)"/>
+  <circle cx="16" cy="15.5" r="11" fill="url(#rimGlow)"/>
+  <circle cx="16" cy="15.5" r="11" fill="url(#highlight)"/>
+</svg>

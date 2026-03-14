@@ -1,5 +1,6 @@
 import { Component, computed, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 import { FormsModule, } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
 import { ProgressBarComponent } from '../components/progress-bar.component';
@@ -24,6 +25,7 @@ function severityRank(s: 'mild' | 'moderate' | 'severe'): number {
 export class DashboardComponent {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private titleService = inject(Title);
 
   readonly config: DashboardConfig;
   readonly values: WritableSignal<Record<string, number>>;
@@ -61,6 +63,7 @@ export class DashboardComponent {
 
     this.values = signal({ ...this.config.defaultValues });
     this.intention = signal(this.config.defaultIntention ?? '');
+    this.titleService.setTitle(`${this.config.title} \u2013 Regulate`);
 
     this.computedMetrics = computed(() => computeAllMetrics(this.config, this.values()));
 
