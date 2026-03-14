@@ -1,8 +1,17 @@
+export interface SliderFeedbackZone {
+  direction: 'low' | 'high';
+  threshold: number;
+  severity: 'mild' | 'moderate' | 'severe';
+  message: string;
+  interventions: string[];
+}
+
 export interface SliderDefinition {
   key: string;
   label: string;
   left: string;
   right: string;
+  feedbackZones?: SliderFeedbackZone[];
 }
 
 export type SliderItem = SliderDefinition & { value: number };

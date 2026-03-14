@@ -5,7 +5,7 @@ import { ProgressBarComponent } from '../components/progress-bar.component';
 import { MetricCardComponent } from '../components/metric-card.component';
 import { DashboardConfig, ModeDefinition, SystemFeedback, ComputedMetric, SliderItem } from '../models/dashboard-config';
 import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard-registry';
-import { computeAllMetrics, resolveMode, calculateIdealDistance } from '../models/engine';
+import { computeAllMetrics, resolveMode, calculateIdealDistance, collectSliderFeedbacks, ActiveSliderFeedback } from '../models/engine';
 
 @Component({
   selector: 'app-dashboard',
@@ -32,6 +32,7 @@ export class DashboardComponent {
   readonly idealStateDistance: Signal<number>;
   readonly sliderItems: Signal<SliderItem[]>;
   readonly displayMetrics: Signal<{ metric: ComputedMetric; value: number }[]>;
+  readonly sliderFeedbacks: Signal<ActiveSliderFeedback[]>;
 
   constructor() {
     const key = this.route.snapshot.paramMap.get('key') ?? '';
@@ -69,6 +70,8 @@ export class DashboardComponent {
         .filter((m) => m.key !== this.config.primaryMetrics.regulationKey && m.key !== this.config.primaryMetrics.frictionKey)
         .map((m) => ({ metric: m, value: cm[m.key] ?? 0 }));
     });
+
+    this.sliderFeedbacks = computed(() => collectSliderFeedbacks(this.config, this.values()));
   }
 
   onSliderChange(key: string, value: number): void {

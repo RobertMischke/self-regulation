@@ -1,7 +1,60 @@
-import { ComputedMetric, DashboardConfig, ModeCondition } from './dashboard-config';
+import { ComputedMetric, DashboardConfig, ModeCondition, SliderFeedbackZone } from './dashboard-config';
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
+}
+
+const SEVERITY_ORDER: Record<SliderFeedbackZone['severity'], number> = { severe: 0, moderate: 1, mild: 2 };
+
+export interface ActiveSliderFeedback {
+  sliderKey: string;
+  sliderLabel: string;
+  direction: 'low' | 'high';
+  severity: SliderFeedbackZone['severity'];
+  message: string;
+  interventions: string[];
+  value: number;
+}
+
+/**
+ * Evaluate all slider feedback zones and return the most severe active zone
+ * per slider per direction. Results are sorted by severity (severe first).
+ */
+export function collectSliderFeedbacks(config: DashboardConfig, inputs: Record<string, number>): ActiveSliderFeedback[] {
+  const result: ActiveSliderFeedback[] = [];
+
+  for (const slider of config.sliders) {
+    if (!slider.feedbackZones?.length) continue;
+    const value = inputs[slider.key] ?? 50;
+
+    const activeByDirection = new Map<string, { zone: SliderFeedbackZone; severity: number }>();
+
+    for (const zone of slider.feedbackZones) {
+      const triggered = zone.direction === 'low' ? value < zone.threshold : value > zone.threshold;
+      if (!triggered) continue;
+
+      const existing = activeByDirection.get(zone.direction);
+      const zoneOrder = SEVERITY_ORDER[zone.severity];
+      if (!existing || zoneOrder < existing.severity) {
+        activeByDirection.set(zone.direction, { zone, severity: zoneOrder });
+      }
+    }
+
+    for (const { zone } of activeByDirection.values()) {
+      result.push({
+        sliderKey: slider.key,
+        sliderLabel: slider.label,
+        direction: zone.direction,
+        severity: zone.severity,
+        message: zone.message,
+        interventions: zone.interventions,
+        value,
+      });
+    }
+  }
+
+  result.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
+  return result;
 }
 
 export function computeMetric(metric: ComputedMetric, inputs: Record<string, number>): number {
