@@ -1,8 +1,8 @@
 <div class="min-h-screen bg-slate-50 p-6 text-slate-900">
-  <div class="mx-auto grid max-w-7xl gap-6">
+  <div class="relative mx-auto grid max-w-7xl gap-6">
 
-    <!-- Back Link -->
-    <a routerLink="/" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900">
+    <!-- Nav-Link (Desktop, links vom Content) -->
+    <a routerLink="/" class="hidden xl:inline-flex absolute -left-40 top-2 items-center gap-1 text-sm text-slate-400 hover:text-slate-900 transition-colors">
       &#8592; Alle Dashboards
     </a>
 
@@ -30,6 +30,10 @@
 
       <!-- Left: Live-Input -->
       <section class="rounded-3xl bg-white p-6 shadow-sm">
+        <!-- Mobile back link -->
+        <a routerLink="/" class="mb-4 inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 xl:hidden">
+          &#8592; Alle Dashboards
+        </a>
         <h2 class="mb-4 text-xl font-semibold">Live-Input</h2>
 
         <div class="space-y-4">
@@ -93,15 +97,18 @@
             <p class="mt-1 text-sm text-slate-500">Konkrete n&auml;chste Schritte, abgeleitet aus deinem aktuellen Zustand.</p>
           </div>
 
+          <div class="xl:min-h-[280px] flex flex-col">
           @if (sliderFeedbacks().length === 0) {
-            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
-              <p class="text-lg font-semibold text-emerald-800">Alles im gr&uuml;nen Bereich</p>
-              <p class="mt-1 text-sm text-emerald-700">Keine Auff&auml;lligkeiten &ndash; dein Zustand sieht stabil aus.</p>
+            <div class="flex flex-1 items-center justify-center rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+              <div>
+                <p class="text-lg font-semibold text-emerald-800">Alles im gr&uuml;nen Bereich</p>
+                <p class="mt-1 text-sm text-emerald-700">Keine Auff&auml;lligkeiten &ndash; dein Zustand sieht stabil aus.</p>
+              </div>
             </div>
           } @else {
             <!-- Hauptintervention -->
             @let fb = sliderFeedbacks()[activeInterventionIndex()];
-            <div class="rounded-2xl border p-5"
+            <div class="flex-1 rounded-2xl border p-5"
               [class]="fb.severity === 'severe'
                 ? 'border-red-200 bg-red-50/60'
                 : fb.severity === 'moderate'
@@ -171,6 +178,7 @@
               </div>
             }
           }
+          </div>
         </div>
 
         <!-- Kennzahlen -->
