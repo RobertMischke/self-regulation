@@ -75,6 +75,12 @@
       </section>
 
       <div class="grid gap-6">
+        <!-- Radar Chart -->
+        <section class="rounded-3xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-xl font-semibold">Zustandsbild</h2>
+          <app-radar-chart [items]="sliderItems()" (valueChange)="onSliderChange($event.key, $event.value)" />
+        </section>
+
         <!-- Metriken -->
         <section class="rounded-3xl bg-white p-6 shadow-sm">
           <h2 class="mb-4 text-xl font-semibold">Metriken</h2>

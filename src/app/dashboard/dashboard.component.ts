@@ -3,6 +3,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProgressBarComponent } from '../components/progress-bar.component';
 import { MetricCardComponent } from '../components/metric-card.component';
+import { RadarChartComponent } from '../components/radar-chart.component';
 import { DashboardConfig, ModeDefinition, SystemFeedback, ComputedMetric, SliderItem } from '../models/dashboard-config';
 import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard-registry';
 import { computeAllMetrics, resolveMode, calculateIdealDistance, collectSliderFeedbacks, ActiveSliderFeedback } from '../models/engine';
@@ -10,7 +11,7 @@ import { computeAllMetrics, resolveMode, calculateIdealDistance, collectSliderFe
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FormsModule, ProgressBarComponent, MetricCardComponent, RouterLink],
+  imports: [FormsModule, ProgressBarComponent, MetricCardComponent, RadarChartComponent, RouterLink],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent {
