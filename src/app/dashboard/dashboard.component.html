@@ -103,10 +103,10 @@
           @if (snapshots().length === 0) {
             <p class="mt-2 text-xs text-slate-400">Noch keine Snapshots.</p>
           } @else {
-            <div class="mt-2 flex gap-0.5">
+            <div class="mt-2 flex gap-px overflow-hidden rounded">
               @for (snap of snapshots(); track snap.id) {
                 <button type="button" (click)="restoreSnapshot(snap)"
-                  class="group relative h-5 min-w-[6px] flex-1 rounded transition hover:scale-y-125"
+                  class="group relative h-5 min-w-0 flex-1 transition hover:scale-y-125"
                   [class]="scoreColor(snapshotScore(snap))"
                   [title]="formatTime(snap.timestamp) + ' – ' + snap.modeLabel">
                   <span class="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
