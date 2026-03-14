@@ -307,5 +307,6 @@ export const emotionRegulationConfig: DashboardConfig = {
     { sliderKey: 'frustration', target: 20 },
     { sliderKey: 'bodyTension', target: 25 },
   ],
+  intentionPlaceholder: 'Welches Gef\u00fchl steht gerade im Vordergrund?',
 };
 

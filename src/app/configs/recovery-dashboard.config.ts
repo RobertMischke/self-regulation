@@ -298,4 +298,5 @@ export const recoveryDashboardConfig: DashboardConfig = {
     { sliderKey: 'recoveryTime', target: 65 },
     { sliderKey: 'motivation', target: 68 },
   ],
+  intentionPlaceholder: 'Was brauchst du gerade am meisten?',
 };

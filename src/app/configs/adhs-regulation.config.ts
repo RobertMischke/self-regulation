@@ -332,4 +332,5 @@ export const adhsRegulationConfig: DashboardConfig = {
     { sliderKey: 'emotionalPressure', target: 28 },
     { sliderKey: 'stimulationNeed', target: 48 },
   ],
+  intentionPlaceholder: 'Was besch\u00e4ftigt dich gerade? Was f\u00e4llt dir auf?',
 };

@@ -296,4 +296,5 @@ export const socialRegulationConfig: DashboardConfig = {
     { sliderKey: 'emotionalExposure', target: 55 },
     { sliderKey: 'socialEnergy', target: 70 },
   ],
+  intentionPlaceholder: 'An welche Menschen oder Beziehungen denkst du gerade?',
 };

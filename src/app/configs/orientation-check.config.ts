@@ -296,4 +296,5 @@ export const orientationCheckConfig: DashboardConfig = {
     { sliderKey: 'innerNoise', target: 28 },
     { sliderKey: 'bodyGrounding', target: 72 },
   ],
+  intentionPlaceholder: 'Wo stehst du gerade \u2013 und wo willst du hin?',
 };

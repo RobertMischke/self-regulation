@@ -295,4 +295,5 @@ export const eveningCheckinConfig: DashboardConfig = {
     { sliderKey: 'gratitude', target: 68 },
     { sliderKey: 'screenExposure', target: 15 },
   ],
+  intentionPlaceholder: 'Was hat diesen Abend gepr\u00e4gt?',
 };

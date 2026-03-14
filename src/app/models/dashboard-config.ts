@@ -88,4 +88,5 @@ export interface DashboardConfig {
   idealValues: IdealValue[];
 
   defaultIntention?: string;
+  intentionPlaceholder?: string;
 }
