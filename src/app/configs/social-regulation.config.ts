@@ -133,8 +133,8 @@ export const socialRegulationConfig: DashboardConfig = {
     conflictLevel: 45, emotionalExposure: 50, socialEnergy: 42,
   },
   resetValues: {
-    safetyInRelations: 68, boundaryClarity: 65, belongingNeed: 30,
-    conflictLevel: 25, emotionalExposure: 50, socialEnergy: 65,
+    safetyInRelations: 75, boundaryClarity: 72, belongingNeed: 25,
+    conflictLevel: 18, emotionalExposure: 55, socialEnergy: 70,
   },
 
   computedMetrics: [

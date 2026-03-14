@@ -40,7 +40,21 @@
                   <label [for]="'slider-' + item.key" class="font-semibold">{{ item.label }}</label>
                   <app-info-tooltip [text]="item.description" />
                 </span>
-                <span class="tabular-nums text-[11px] text-slate-300">{{ item.value }}</span>
+                <span class="flex items-center gap-2">
+                  @if (sliderHints()[item.key]; as hint) {
+                    <button type="button" (click)="navigateToSliderIntervention(item.key)"
+                      class="cursor-pointer rounded-full px-2 py-0.5 text-[11px] font-medium leading-none transition hover:opacity-80"
+                      [class]="hint.severity === 'severe'
+                        ? 'bg-red-50 text-red-600'
+                        : hint.severity === 'moderate'
+                          ? 'bg-amber-50 text-amber-600'
+                          : 'bg-slate-50 text-slate-500'">{{ hint.microLabel }}</button>
+                  }
+                  <span class="tabular-nums text-[11px]"
+                    [class]="sliderHints()[item.key]
+                      ? (sliderHints()[item.key].severity === 'severe' ? 'text-red-400' : sliderHints()[item.key].severity === 'moderate' ? 'text-amber-400' : 'text-slate-400')
+                      : 'text-slate-400'">{{ item.value }}</span>
+                </span>
               </div>
               <input
                 [id]="'slider-' + item.key"
@@ -51,19 +65,6 @@
               />
               <div class="flex items-center justify-between -mt-0.5">
                 <span class="text-[12px] leading-tight text-slate-500">{{ item.left }}</span>
-                @if (sliderHints()[item.key]; as hint) {
-                  <span class="flex items-center gap-1.5 rounded-full px-2 py-0.5"
-                    [class]="hint.severity === 'severe'
-                      ? 'bg-red-50'
-                      : hint.severity === 'moderate'
-                        ? 'bg-amber-50'
-                        : 'bg-slate-50'">
-                    <span class="inline-block h-1.5 w-1.5 rounded-full"
-                      [class]="hint.severity === 'severe' ? 'bg-red-500' : hint.severity === 'moderate' ? 'bg-amber-500' : 'bg-slate-400'"></span>
-                    <span class="text-[11px] font-medium leading-none"
-                      [class]="hint.severity === 'severe' ? 'text-red-600' : hint.severity === 'moderate' ? 'text-amber-600' : 'text-slate-500'">{{ hint.microLabel }}</span>
-                  </span>
-                }
                 <span class="text-[12px] leading-tight text-slate-500">{{ item.right }}</span>
               </div>
             </div>
@@ -82,71 +83,100 @@
         </div>
       </section>
 
-      <!-- Right: Interventionen (Hauptoutput) -->
-      <section class="rounded-3xl bg-white p-6 shadow-sm">
-        <div class="mb-5">
-          <h2 class="text-xl font-bold tracking-tight">Was dir jetzt helfen kann</h2>
-          <p class="mt-1 text-sm text-slate-500">Konkrete n&auml;chste Schritte, abgeleitet aus deinem aktuellen Zustand.</p>
-        </div>
+      <!-- Right: Interventionen + Kennzahlen -->
+      <section class="flex flex-col gap-6">
 
-        @if (sliderFeedbacks().length === 0) {
-          <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
-            <p class="text-lg font-semibold text-emerald-800">Alles im gr&uuml;nen Bereich</p>
-            <p class="mt-1 text-sm text-emerald-700">Keine Auff&auml;lligkeiten &ndash; dein Zustand sieht stabil aus.</p>
+        <!-- Interventionen (feste Höhe, paged) -->
+        <div class="rounded-3xl bg-white p-6 shadow-sm">
+          <div class="mb-4">
+            <h2 class="text-xl font-bold tracking-tight">Was dir jetzt helfen kann</h2>
+            <p class="mt-1 text-sm text-slate-500">Konkrete n&auml;chste Schritte, abgeleitet aus deinem aktuellen Zustand.</p>
           </div>
-        } @else {
-          <div class="grid gap-4">
-            @for (fb of sliderFeedbacks(); track fb.sliderKey + fb.direction; let i = $index) {
-              <div class="rounded-2xl border p-5"
-                [class]="fb.severity === 'severe'
-                  ? 'border-red-200 bg-red-50/60'
-                  : fb.severity === 'moderate'
-                    ? 'border-amber-200 bg-amber-50/60'
-                    : 'border-slate-200 bg-slate-50/60'">
 
-                <div class="mb-2 flex items-center gap-2">
-                  <span class="grid h-6 w-6 place-items-center rounded-full text-xs font-bold text-white"
-                    [class]="fb.severity === 'severe' ? 'bg-red-500' : fb.severity === 'moderate' ? 'bg-amber-500' : 'bg-slate-400'">
-                    {{ i + 1 }}
-                  </span>
-                  <span class="text-sm font-bold text-slate-800">{{ fb.sliderLabel }}</span>
-                  <span class="ml-auto rounded-full px-2 py-0.5 text-[11px] font-bold"
-                    [class]="fb.severity === 'severe'
-                      ? 'bg-red-200 text-red-900'
-                      : fb.severity === 'moderate'
-                        ? 'bg-amber-200 text-amber-900'
-                        : 'bg-slate-200 text-slate-700'">
-                    {{ fb.severity === 'severe' ? 'Dringend' : fb.severity === 'moderate' ? 'Empfohlen' : 'Optional' }}
-                  </span>
+          @if (sliderFeedbacks().length === 0) {
+            <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+              <p class="text-lg font-semibold text-emerald-800">Alles im gr&uuml;nen Bereich</p>
+              <p class="mt-1 text-sm text-emerald-700">Keine Auff&auml;lligkeiten &ndash; dein Zustand sieht stabil aus.</p>
+            </div>
+          } @else {
+            <!-- Hauptintervention -->
+            @let fb = sliderFeedbacks()[activeInterventionIndex()];
+            <div class="rounded-2xl border p-5"
+              [class]="fb.severity === 'severe'
+                ? 'border-red-200 bg-red-50/60'
+                : fb.severity === 'moderate'
+                  ? 'border-amber-200 bg-amber-50/60'
+                  : 'border-slate-200 bg-slate-50/60'">
+
+              <div class="mb-2 flex items-center gap-2">
+                <span class="grid h-6 w-6 place-items-center rounded-full text-xs font-bold text-white"
+                  [class]="fb.severity === 'severe' ? 'bg-red-500' : fb.severity === 'moderate' ? 'bg-amber-500' : 'bg-slate-400'">
+                  {{ activeInterventionIndex() + 1 }}
+                </span>
+                <span class="text-sm font-bold text-slate-800">{{ fb.sliderLabel }}</span>
+                <span class="ml-auto rounded-full px-2 py-0.5 text-[11px] font-bold"
+                  [class]="fb.severity === 'severe'
+                    ? 'bg-red-200 text-red-900'
+                    : fb.severity === 'moderate'
+                      ? 'bg-amber-200 text-amber-900'
+                      : 'bg-slate-200 text-slate-700'">
+                  {{ fb.severity === 'severe' ? 'Dringend' : fb.severity === 'moderate' ? 'Empfohlen' : 'Optional' }}
+                </span>
+              </div>
+
+              <p class="text-sm leading-relaxed text-slate-600">{{ fb.message }}</p>
+
+              @if (fb.interventions.length > 0) {
+                <div class="mt-3 grid gap-2">
+                  @for (iv of fb.interventions; track iv) {
+                    <div class="flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed text-slate-700">
+                      <span class="mt-0.5 shrink-0 text-indigo-500">&#9656;</span>
+                      {{ iv }}
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Navigation -->
+            @if (sliderFeedbacks().length > 1) {
+              <div class="mt-3 flex items-center gap-3">
+                <!-- Prev / Next -->
+                <button type="button" (click)="showIntervention(activeInterventionIndex() - 1)"
+                  [disabled]="activeInterventionIndex() === 0"
+                  class="grid h-7 w-7 place-items-center rounded-full border border-slate-200 text-sm text-slate-500 transition hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent">
+                  &#8249;
+                </button>
+
+                <!-- Dots -->
+                <div class="flex flex-1 items-center justify-center gap-1.5">
+                  @for (fb2 of sliderFeedbacks(); track fb2.sliderKey + fb2.direction; let j = $index) {
+                    <button type="button" (click)="showIntervention(j)"
+                      class="h-2 rounded-full transition-all"
+                      [class]="j === activeInterventionIndex()
+                        ? 'w-5 ' + (fb2.severity === 'severe' ? 'bg-red-400' : fb2.severity === 'moderate' ? 'bg-amber-400' : 'bg-slate-400')
+                        : 'w-2 ' + (fb2.severity === 'severe' ? 'bg-red-200' : fb2.severity === 'moderate' ? 'bg-amber-200' : 'bg-slate-200')">
+                    </button>
+                  }
                 </div>
 
-                <p class="text-sm leading-relaxed text-slate-600">{{ fb.message }}</p>
+                <button type="button" (click)="showIntervention(activeInterventionIndex() + 1)"
+                  [disabled]="activeInterventionIndex() === sliderFeedbacks().length - 1"
+                  class="grid h-7 w-7 place-items-center rounded-full border border-slate-200 text-sm text-slate-500 transition hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent">
+                  &#8250;
+                </button>
 
-                @if (fb.interventions.length > 0) {
-                  <div class="mt-3 grid gap-2">
-                    @for (iv of fb.interventions; track iv) {
-                      <div class="flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed text-slate-700">
-                        <span class="mt-0.5 shrink-0 text-indigo-500">&#9656;</span>
-                        {{ iv }}
-                      </div>
-                    }
-                  </div>
-                }
+                <!-- Counter -->
+                <span class="text-[11px] text-slate-400">{{ activeInterventionIndex() + 1 }}/{{ sliderFeedbacks().length }}</span>
               </div>
             }
-          </div>
-        }
-      </section>
-    </div>
+          }
+        </div>
 
-    <!-- ═══ Sekundär: Einordnung & Details ═══ -->
-    <section class="rounded-3xl bg-white p-5 shadow-sm">
-      <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-400">Einordnung &amp; Details</h2>
+        <!-- Kennzahlen -->
+        <div class="rounded-3xl bg-white p-6 shadow-sm">
+          <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Kennzahlen</h3>
 
-      <div class="grid gap-5 lg:grid-cols-[1fr_auto_1fr]">
-
-        <!-- Metriken -->
-        <div>
           <div class="grid grid-cols-2 gap-2">
             <app-metric-card label="Regulation" [value]="regulationValue()" [description]="metricDescription(config.primaryMetrics.regulationKey)" />
             <app-metric-card label="Friktion" [value]="frictionValue()" [danger]="true" [description]="metricDescription(config.primaryMetrics.frictionKey)" />
@@ -154,6 +184,7 @@
               <app-metric-card [label]="dm.metric.label" [value]="dm.value" [danger]="dm.metric.danger ?? false" [description]="dm.metric.description" />
             }
           </div>
+
           <div class="mt-3">
             <div class="flex items-center justify-between text-xs text-slate-500">
               <span>Abstand zum Idealzustand</span>
@@ -163,59 +194,64 @@
           </div>
         </div>
 
+      </section>
+    </div>
+
+    <!-- ═══ Sekundär: Zustandsbild & Verlauf ═══ -->
+    <section class="rounded-3xl bg-white p-5 shadow-sm">
+      <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-400">Zustandsbild &amp; Verlauf</h2>
+
+      <div class="grid gap-5 lg:grid-cols-[1fr_auto_1fr]">
+
+        <!-- Zustandsbild -->
+        <div>
+          <div class="mx-auto max-w-[280px]">
+            <app-radar-chart [items]="sliderItems()" (valueChange)="onSliderChange($event.key, $event.value)" />
+          </div>
+        </div>
+
         <!-- Divider -->
         <div class="hidden lg:block w-px bg-slate-200"></div>
 
-        <!-- Zustandsbild + Verlauf -->
-        <div class="grid gap-4 content-start">
-          <!-- Zustandsbild (compact) -->
-          <div>
-            <h3 class="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">Zustandsbild</h3>
-            <div class="mx-auto max-w-[240px]">
-              <app-radar-chart [items]="sliderItems()" (valueChange)="onSliderChange($event.key, $event.value)" />
-            </div>
+        <!-- Verlauf -->
+        <div>
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Verlauf</h3>
+            <span class="text-[10px] text-slate-400">{{ snapshots().length }} Momente</span>
           </div>
-
-          <!-- Verlauf -->
-          <div>
-            <div class="flex items-center justify-between gap-2">
-              <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Verlauf</h3>
-              <span class="text-[10px] text-slate-400">{{ snapshots().length }} Momente</span>
-            </div>
-            @if (snapshots().length === 0) {
-              <p class="mt-1 text-xs text-slate-400">Noch keine gespeicherten Momente.</p>
-            } @else {
-              <div class="mt-1.5 flex gap-px overflow-hidden rounded">
-                @for (snap of snapshots().slice(-30); track snap.id) {
-                  <button type="button" (click)="openSnapshot(snap)"
-                    class="group relative h-4 min-w-0 flex-1 transition hover:scale-y-125"
-                    [class]="snapshotSeverityColor(snap) + (selectedSnapshot()?.id === snap.id ? ' ring-2 ring-indigo-500 ring-offset-1' : '')"
-                    [title]="formatTime(snap.timestamp) + ' \u2013 ' + snap.modeLabel">
-                    <span class="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
-                      {{ formatTime(snap.timestamp) }}
-                    </span>
-                  </button>
-                }
-              </div>
-
-              @if (selectedSnapshot(); as snap) {
-                <div class="mt-1.5 flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px]">
-                  <div class="h-2 w-2 shrink-0 rounded-full" [class]="snapshotSeverityColor(snap)"></div>
-                  <span class="font-semibold text-slate-700">{{ formatTime(snap.timestamp) }}</span>
-                  <span class="text-slate-500">{{ snap.modeLabel }}</span>
-                  <span class="text-slate-400">R{{ snap.regulation }} &middot; F{{ snap.friction }}</span>
-                  <div class="ml-auto flex gap-2">
-                    <button type="button" (click)="restoreSnapshot(snap)" class="font-semibold text-indigo-600 hover:underline">laden</button>
-                    <button type="button" (click)="removeSnapshot(snap.id); selectedSnapshot.set(null)" class="font-semibold text-red-500 hover:underline">&#x2715;</button>
-                  </div>
-                </div>
+          @if (snapshots().length === 0) {
+            <p class="mt-1 text-xs text-slate-400">Noch keine gespeicherten Momente.</p>
+          } @else {
+            <div class="mt-1.5 flex gap-px overflow-hidden rounded">
+              @for (snap of snapshots().slice(-30); track snap.id) {
+                <button type="button" (click)="openSnapshot(snap)"
+                  class="group relative h-4 min-w-0 flex-1 transition hover:scale-y-125"
+                  [class]="snapshotSeverityColor(snap) + (selectedSnapshot()?.id === snap.id ? ' ring-2 ring-indigo-500 ring-offset-1' : '')"
+                  [title]="formatTime(snap.timestamp) + ' \u2013 ' + snap.modeLabel">
+                  <span class="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
+                    {{ formatTime(snap.timestamp) }}
+                  </span>
+                </button>
               }
+            </div>
+
+            @if (selectedSnapshot(); as snap) {
+              <div class="mt-1.5 flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px]">
+                <div class="h-2 w-2 shrink-0 rounded-full" [class]="snapshotSeverityColor(snap)"></div>
+                <span class="font-semibold text-slate-700">{{ formatTime(snap.timestamp) }}</span>
+                <span class="text-slate-500">{{ snap.modeLabel }}</span>
+                <span class="text-slate-400">R{{ snap.regulation }} &middot; F{{ snap.friction }}</span>
+                <div class="ml-auto flex gap-2">
+                  <button type="button" (click)="restoreSnapshot(snap)" class="font-semibold text-indigo-600 hover:underline">laden</button>
+                  <button type="button" (click)="removeSnapshot(snap.id); selectedSnapshot.set(null)" class="font-semibold text-red-500 hover:underline">&#x2715;</button>
+                </div>
+              </div>
             }
-            <button type="button" (click)="showHistory.set(true)"
-              class="mt-2 w-full rounded-lg border border-slate-200 py-1.5 text-[11px] font-semibold text-slate-500 transition hover:bg-slate-50 hover:text-slate-700">
-              Verlauf &ouml;ffnen
-            </button>
-          </div>
+          }
+          <button type="button" (click)="showHistory.set(true)"
+            class="mt-2 w-full rounded-lg border border-slate-200 py-1.5 text-[11px] font-semibold text-slate-500 transition hover:bg-slate-50 hover:text-slate-700">
+            Verlauf &ouml;ffnen
+          </button>
         </div>
       </div>
     </section>

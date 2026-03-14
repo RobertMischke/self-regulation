@@ -133,8 +133,8 @@ export const emotionRegulationConfig: DashboardConfig = {
     shame: 48, frustration: 52, bodyTension: 50,
   },
   resetValues: {
-    emotionalPressure: 30, selfWorth: 65, safety: 65,
-    shame: 25, frustration: 28, bodyTension: 30,
+    emotionalPressure: 25, selfWorth: 72, safety: 75,
+    shame: 18, frustration: 20, bodyTension: 25,
   },
 
   computedMetrics: [

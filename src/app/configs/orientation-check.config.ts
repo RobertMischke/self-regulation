@@ -133,8 +133,8 @@ export const orientationCheckConfig: DashboardConfig = {
     overwhelm: 55, innerNoise: 60, bodyGrounding: 45,
   },
   resetValues: {
-    mentalClarity: 60, directionSense: 58, decisionAbility: 62,
-    overwhelm: 30, innerNoise: 35, bodyGrounding: 65,
+    mentalClarity: 72, directionSense: 70, decisionAbility: 68,
+    overwhelm: 25, innerNoise: 28, bodyGrounding: 72,
   },
 
   computedMetrics: [

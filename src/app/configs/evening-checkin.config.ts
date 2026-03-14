@@ -131,8 +131,8 @@ export const eveningCheckinConfig: DashboardConfig = {
     bodyRelaxation: 42, gratitude: 45, screenExposure: 58,
   },
   resetValues: {
-    mentalRest: 65, dayCompletion: 70, emotionalWeight: 25,
-    bodyRelaxation: 70, gratitude: 60, screenExposure: 20,
+    mentalRest: 75, dayCompletion: 78, emotionalWeight: 22,
+    bodyRelaxation: 78, gratitude: 68, screenExposure: 15,
   },
 
   computedMetrics: [

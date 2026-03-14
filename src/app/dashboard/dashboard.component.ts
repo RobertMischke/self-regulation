@@ -1,4 +1,4 @@
-import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule, } from '@angular/forms';
 import { KeyValuePipe } from '@angular/common';
@@ -40,6 +40,7 @@ export class DashboardComponent {
   readonly displayMetrics: Signal<{ metric: ComputedMetric; value: number }[]>;
   readonly sliderFeedbacks: Signal<ActiveSliderFeedback[]>;
   readonly sliderHints: Signal<Record<string, { severity: 'mild' | 'moderate' | 'severe'; microLabel: string }>>;
+  readonly activeInterventionIndex: WritableSignal<number> = signal(0);
   readonly snapshots: WritableSignal<Snapshot[]>;
   readonly showHistory: WritableSignal<boolean> = signal(false);
   readonly showDetails: WritableSignal<boolean> = signal(false);
@@ -97,6 +98,22 @@ export class DashboardComponent {
     });
 
     this.snapshots = signal(getSnapshots(this.config.key));
+
+    // Reset index when feedbacks change
+    effect(() => {
+      this.sliderFeedbacks();
+      this.activeInterventionIndex.set(0);
+    });
+  }
+
+  showIntervention(index: number): void {
+    const max = this.sliderFeedbacks().length - 1;
+    this.activeInterventionIndex.set(Math.max(0, Math.min(index, max)));
+  }
+
+  navigateToSliderIntervention(sliderKey: string): void {
+    const idx = this.sliderFeedbacks().findIndex(fb => fb.sliderKey === sliderKey);
+    if (idx >= 0) this.showIntervention(idx);
   }
 
   onSliderChange(key: string, value: number): void {

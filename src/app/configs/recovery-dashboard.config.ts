@@ -133,8 +133,8 @@ export const recoveryDashboardConfig: DashboardConfig = {
     mentalLoad: 62, recoveryTime: 30, motivation: 35,
   },
   resetValues: {
-    energy: 65, sleepQuality: 70, bodyLoad: 30,
-    mentalLoad: 30, recoveryTime: 60, motivation: 60,
+    energy: 72, sleepQuality: 78, bodyLoad: 25,
+    mentalLoad: 25, recoveryTime: 65, motivation: 68,
   },
 
   computedMetrics: [
