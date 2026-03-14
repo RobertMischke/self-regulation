@@ -23,8 +23,8 @@
       </div>
 
       <div class="grid gap-4">
-        <app-metric-card label="Regulation" [value]="model().regulation" />
-        <app-metric-card label="Friktion" [value]="model().friction" [danger]="true" />
+        <app-metric-card label="Regulation" [value]="regulationValue()" />
+        <app-metric-card label="Friktion" [value]="frictionValue()" [danger]="true" />
       </div>
     </section>
 
@@ -126,12 +126,13 @@
 
           <div class="mt-4 rounded-2xl bg-slate-100 p-4">
             <strong>Reflexionsfrage</strong>
-            <p class="mt-2">{{ model().reflectiveQuestion }}</p>
+            <p class="mt-2">{{ activeMode().reflectiveQuestion }}</p>
           </div>
 
           <div class="mt-4 grid gap-3 sm:grid-cols-2">
-            <app-metric-card label="Unterstimulation" [value]="model().underStimulation" />
-            <app-metric-card label="&#220;berstimulation" [value]="model().overStimulation" [danger]="true" />
+            @for (dm of displayMetrics(); track dm.metric.key) {
+              <app-metric-card [label]="dm.metric.label" [value]="dm.value" [danger]="dm.metric.danger ?? false" />
+            }
           </div>
 
           <div class="mt-4">
@@ -158,18 +159,20 @@
     </div>
 
     <!-- Question Groups -->
-    <section class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-      @for (group of config.questionGroups; track group.title) {
-        <div class="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 class="mb-4 text-xl font-semibold">{{ group.title }}</h2>
-          <div class="grid gap-3">
-            @for (question of group.questions; track question) {
-              <div class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700">{{ question }}</div>
-            }
+    @if (config.questionGroups.length > 0) {
+      <section class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+        @for (group of config.questionGroups; track group.title) {
+          <div class="rounded-3xl bg-white p-6 shadow-sm">
+            <h2 class="mb-4 text-xl font-semibold">{{ group.title }}</h2>
+            <div class="grid gap-3">
+              @for (question of group.questions; track question) {
+                <div class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700">{{ question }}</div>
+              }
+            </div>
           </div>
-        </div>
-      }
-    </section>
+        }
+      </section>
+    }
 
   </div>
 </div>

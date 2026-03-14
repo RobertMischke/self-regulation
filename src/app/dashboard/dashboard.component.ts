@@ -3,9 +3,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProgressBarComponent } from '../components/progress-bar.component';
 import { MetricCardComponent } from '../components/metric-card.component';
-import { DashboardConfig } from '../models/dashboard-config';
-import { ModeDefinition, RegulationModel, SliderItem } from '../models/types';
+import { DashboardConfig, ModeDefinition, SystemFeedback, ComputedMetric, SliderItem } from '../models/dashboard-config';
 import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard-registry';
+import { computeAllMetrics, resolveMode, calculateIdealDistance } from '../models/engine';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,11 +23,15 @@ export class DashboardComponent {
   readonly microCommitment: WritableSignal<string>;
   readonly focusMessage = signal('');
 
-  readonly model: Signal<RegulationModel>;
+  readonly computedMetrics: Signal<Record<string, number>>;
+  readonly regulationValue: Signal<number>;
+  readonly frictionValue: Signal<number>;
+  readonly activeModeKey: Signal<string>;
   readonly activeMode: Signal<ModeDefinition>;
-  readonly systemFeedback: Signal<{ title: string; text: string; badge: string }>;
+  readonly systemFeedback: Signal<SystemFeedback>;
   readonly idealStateDistance: Signal<number>;
   readonly sliderItems: Signal<SliderItem[]>;
+  readonly displayMetrics: Signal<{ metric: ComputedMetric; value: number }[]>;
 
   constructor() {
     const key = this.route.snapshot.paramMap.get('key') ?? '';
@@ -43,16 +47,28 @@ export class DashboardComponent {
     this.currentTask = signal(this.config.defaultTask);
     this.microCommitment = signal(this.config.defaultMicroCommitment);
 
-    this.model = computed(() => this.config.calculate(this.values()));
-    this.activeMode = computed(() => this.config.modes[this.model().modeKey]);
-    this.systemFeedback = computed(() => this.config.getSystemFeedback(this.model().modeKey));
-    this.idealStateDistance = computed(() => this.config.calculateIdealDistance(this.values()));
+    this.computedMetrics = computed(() => computeAllMetrics(this.config, this.values()));
+
+    this.regulationValue = computed(() => this.computedMetrics()[this.config.primaryMetrics.regulationKey] ?? 0);
+    this.frictionValue = computed(() => this.computedMetrics()[this.config.primaryMetrics.frictionKey] ?? 0);
+
+    this.activeModeKey = computed(() => resolveMode(this.config, this.values(), this.computedMetrics()));
+    this.activeMode = computed(() => this.config.modes[this.activeModeKey()]);
+    this.systemFeedback = computed(() => this.config.feedbacks[this.activeModeKey()] ?? {
+      title: '', text: '', badge: this.activeModeKey(),
+    });
+    this.idealStateDistance = computed(() => calculateIdealDistance(this.config, this.values()));
+
     this.sliderItems = computed(() =>
-      this.config.sliders.map((s) => ({
-        ...s,
-        value: this.values()[s.key] ?? 50,
-      }))
+      this.config.sliders.map((s) => ({ ...s, value: this.values()[s.key] ?? 50 }))
     );
+
+    this.displayMetrics = computed(() => {
+      const cm = this.computedMetrics();
+      return this.config.computedMetrics
+        .filter((m) => m.key !== this.config.primaryMetrics.regulationKey && m.key !== this.config.primaryMetrics.frictionKey)
+        .map((m) => ({ metric: m, value: cm[m.key] ?? 0 }));
+    });
   }
 
   onSliderChange(key: string, value: number): void {
@@ -67,7 +83,7 @@ export class DashboardComponent {
 
   startFocusBlock(): void {
     this.focusMessage.set(
-      `Aktiver Modus: ${this.activeMode().label}\n\nAktuelle Aufgabe: ${this.currentTask()}\n\nNächster Schritt: ${this.microCommitment()}`
+      `Aktiver Modus: ${this.activeMode().label}\n\nAktuelle Aufgabe: ${this.currentTask()}\n\nNÃ¤chster Schritt: ${this.microCommitment()}`
     );
   }
 }

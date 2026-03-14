@@ -1,5 +1,3 @@
-import { ModeDefinition, RegulationModel } from './types';
-
 export interface SliderDefinition {
   key: string;
   label: string;
@@ -7,9 +5,56 @@ export interface SliderDefinition {
   right: string;
 }
 
+export type SliderItem = SliderDefinition & { value: number };
+
 export interface QuestionGroup {
   title: string;
   questions: string[];
+}
+
+export interface MetricWeight {
+  sliderKey: string;
+  weight: number;
+  invert?: boolean;
+  offset?: number;
+}
+
+export interface ModeRule {
+  modeKey: string;
+  priority: number;
+  conditions: ModeCondition[];
+}
+
+export interface ModeCondition {
+  type: 'slider' | 'computed';
+  key: string;
+  operator: '>' | '<' | '>=' | '<=';
+  value: number;
+}
+
+export interface IdealValue {
+  sliderKey: string;
+  target: number;
+}
+
+export interface ModeDefinition {
+  label: string;
+  description: string;
+  interventions: string[];
+  reflectiveQuestion: string;
+}
+
+export interface SystemFeedback {
+  title: string;
+  text: string;
+  badge: string;
+}
+
+export interface ComputedMetric {
+  key: string;
+  label: string;
+  weights: MetricWeight[];
+  danger?: boolean;
 }
 
 export interface DashboardConfig {
@@ -21,15 +66,21 @@ export interface DashboardConfig {
   audience: string;
   disclaimer: string;
   metricLabels: string[];
+
   sliders: SliderDefinition[];
-  modes: Record<string, ModeDefinition>;
-  questionGroups: QuestionGroup[];
   defaultValues: Record<string, number>;
   resetValues: Record<string, number>;
+
+  computedMetrics: ComputedMetric[];
+  primaryMetrics: { regulationKey: string; frictionKey: string };
+  modeRules: ModeRule[];
+  defaultModeKey: string;
+  modes: Record<string, ModeDefinition>;
+  feedbacks: Record<string, SystemFeedback>;
+  idealValues: IdealValue[];
+
+  questionGroups: QuestionGroup[];
   defaultTask: string;
   defaultMicroCommitment: string;
   resetMicroCommitment: string;
-  calculate: (inputs: Record<string, number>) => RegulationModel;
-  calculateIdealDistance: (inputs: Record<string, number>) => number;
-  getSystemFeedback: (modeKey: string) => { title: string; text: string; badge: string };
 }
