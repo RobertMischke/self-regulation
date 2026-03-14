@@ -3,14 +3,6 @@ import { RouterLink } from '@angular/router';
 import { DashboardConfig } from '../../models/dashboard-config';
 import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
 
-interface PlaceholderCard {
-  icon: string;
-  title: string;
-  description: string;
-  tags: string[];
-  comingSoon: boolean;
-}
-
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -92,34 +84,6 @@ interface PlaceholderCard {
               </a>
             }
 
-            <!-- Placeholder cards (coming soon) -->
-            @for (card of placeholderCards; track card.title) {
-              <div class="relative flex flex-col rounded-3xl border border-dashed border-slate-200 bg-slate-50/50 p-6">
-                <div class="mb-4 flex items-center gap-3">
-                  <div class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-slate-200 text-xl">
-                    {{ card.icon }}
-                  </div>
-                  <div>
-                    <span class="text-lg font-semibold text-slate-400">{{ card.title }}</span>
-                  </div>
-                </div>
-
-                <p class="text-sm leading-6 text-slate-400">{{ card.description }}</p>
-
-                <div class="mt-auto flex flex-wrap gap-2 pt-5">
-                  @for (tag of card.tags; track tag) {
-                    <span class="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-400">
-                      {{ tag }}
-                    </span>
-                  }
-                </div>
-
-                <span class="absolute right-5 top-5 rounded-full bg-slate-200 px-2.5 py-0.5 text-[11px] font-semibold text-slate-500">
-                  Bald verf&uuml;gbar
-                </span>
-              </div>
-            }
-
             <!-- Create your own -->
             <div class="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-300 bg-white p-6 text-center">
               <div class="grid h-12 w-12 place-items-center rounded-2xl bg-slate-100 text-2xl text-slate-400">+</div>
@@ -158,30 +122,6 @@ interface PlaceholderCard {
 })
 export class HomeComponent {
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
-
-  readonly placeholderCards: PlaceholderCard[] = [
-    {
-      icon: '\u{1F9ED}',
-      title: 'Orientierungs-Check',
-      description: 'Klarheit gewinnen, wenn sich alles diffus anf\u00FChlt \u2014 Priorit\u00E4ten sp\u00FCren statt planen.',
-      tags: ['Klarheit', 'Richtung', 'Entscheidung'],
-      comingSoon: true,
-    },
-    {
-      icon: '\u{1F91D}',
-      title: 'Soziale Regulation',
-      description: 'Beziehungsdynamiken einordnen, Grenzen sp\u00FCren und Sicherheit wiederfinden.',
-      tags: ['Bindung', 'Grenzen', 'Sicherheit'],
-      comingSoon: true,
-    },
-    {
-      icon: '\u{1F319}',
-      title: 'Abend-Check-in',
-      description: 'Den Tag einordnen, loslassen und den \u00DCbergang in den Abend bewusst gestalten.',
-      tags: ['Reflexion', 'Loslassen', 'Schlaf'],
-      comingSoon: true,
-    },
-  ];
 
   configModeCount(config: DashboardConfig): number {
     return Object.keys(config.modes).length;
