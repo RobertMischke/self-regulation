@@ -156,8 +156,8 @@ export const adhsRegulationConfig: DashboardConfig = {
   ],
 
   defaultValues: {
-    arousal: 46, mood: 58, centeredness: 43, clarity: 49,
-    bodyEnergy: 55, emotionalPressure: 41, stimulationNeed: 63,
+    arousal: 46, mood: 58, centeredness: 32, clarity: 49,
+    bodyEnergy: 55, emotionalPressure: 41, stimulationNeed: 68,
   },
   resetValues: {
     arousal: 55, mood: 62, centeredness: 60, clarity: 61,
