@@ -17,6 +17,7 @@ export const socialRegulationConfig: DashboardConfig = {
       label: 'Sicherheit in Beziehungen',
       left: 'unsicher',
       right: 'sicher',
+      description: 'Wie sicher du dich in deinen aktuellen Beziehungen fühlst. Ideal: ~75 (hoch). Unsicherheit aktiviert Schutzmechanismen, die Nähe blockieren.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -35,6 +36,7 @@ export const socialRegulationConfig: DashboardConfig = {
       label: 'Grenzen-Klarheit',
       left: 'diffus',
       right: 'klar',
+      description: 'Wie klar du deine eigenen Grenzen spürst und benennen kannst. Ideal: ~72 (klar). Diffuse Grenzen führen zu Überforderung und Selbstverlust.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -53,6 +55,7 @@ export const socialRegulationConfig: DashboardConfig = {
       label: 'Zugehörigkeitsbedürfnis',
       left: 'erfüllt',
       right: 'unerfüllt',
+      description: 'Wie stark dein Bedürfnis nach Zugehörigkeit gerade unerfüllt ist. Ideal: niedrig (~25). Hohe Werte = Isolation oder Ausschluss.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -71,6 +74,7 @@ export const socialRegulationConfig: DashboardConfig = {
       label: 'Konfliktniveau',
       left: 'friedlich',
       right: 'belastet',
+      description: 'Wie hoch die Konfliktbelastung gerade ist. Ideal: niedrig (~18). Hohe Werte binden Energie und verhindern produktive Gespräche.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -89,6 +93,7 @@ export const socialRegulationConfig: DashboardConfig = {
       label: 'Emotionale Offenheit',
       left: 'verschlossen',
       right: 'sehr offen',
+      description: 'Dein Grad emotionaler Offenheit. Ideal: Mitte (~55). Zu verschlossen = Isolation, zu offen ohne Rückhalt = Verletzlichkeit.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'moderate',
@@ -107,6 +112,7 @@ export const socialRegulationConfig: DashboardConfig = {
       label: 'Soziale Energie',
       left: 'erschöpft',
       right: 'voll',
+      description: 'Wie viel Energie du für soziale Interaktion hast. Ideal: ~70. Niedrige Werte = jede Interaktion kostet überproportional viel.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -135,6 +141,7 @@ export const socialRegulationConfig: DashboardConfig = {
     {
       key: 'socialSafety',
       label: 'Soziale Sicherheit',
+      description: 'Berechnet aus Sicherheitsgefühl, Grenzen-Klarheit, (invertiertem) Konfliktniveau und sozialer Energie. Hoch = du kannst dich auf dein Umfeld stützen.',
       weights: [
         { sliderKey: 'safetyInRelations', weight: 0.35 },
         { sliderKey: 'boundaryClarity', weight: 0.25 },
@@ -145,6 +152,7 @@ export const socialRegulationConfig: DashboardConfig = {
     {
       key: 'socialStrain',
       label: 'Soziale Belastung',
+      description: 'Zeigt soziale Anspannung: Konflikt + Zugehörigkeitsdefizit minus Sicherheit und Energie. Hoch = das Zwischenmenschliche ist aktuell ein Stressor.',
       danger: true,
       weights: [
         { sliderKey: 'conflictLevel', weight: 0.3 },
@@ -156,6 +164,7 @@ export const socialRegulationConfig: DashboardConfig = {
     {
       key: 'regulation',
       label: 'Regulation',
+      description: 'Gesamte soziale Regulationsfähigkeit. Kombination aus Sicherheit, Grenzen, Energie und (invertiert) Konflikten. Hoch = stabil, niedrig = verletzlich.',
       weights: [
         { sliderKey: 'safetyInRelations', weight: 0.25 },
         { sliderKey: 'boundaryClarity', weight: 0.25 },
@@ -167,6 +176,7 @@ export const socialRegulationConfig: DashboardConfig = {
     {
       key: 'friction',
       label: 'Friktion',
+      description: 'Innere Reibung im sozialen Feld. Steigt durch Konflikte und Zugehörigkeitsdefizit, sinkt durch Grenzen-Klarheit, Sicherheit und Energie.',
       danger: true,
       weights: [
         { sliderKey: 'conflictLevel', weight: 0.3 },

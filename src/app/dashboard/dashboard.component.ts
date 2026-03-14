@@ -5,6 +5,7 @@ import { KeyValuePipe } from '@angular/common';
 import { ProgressBarComponent } from '../components/progress-bar.component';
 import { MetricCardComponent } from '../components/metric-card.component';
 import { RadarChartComponent } from '../components/radar-chart.component';
+import { InfoTooltipComponent } from '../components/info-tooltip.component';
 import { DashboardConfig, ModeDefinition, SystemFeedback, ComputedMetric, SliderItem } from '../models/dashboard-config';
 import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard-registry';
 import { computeAllMetrics, resolveMode, calculateIdealDistance, collectSliderFeedbacks, ActiveSliderFeedback } from '../models/engine';
@@ -13,7 +14,7 @@ import { Snapshot, getSnapshots, addSnapshot, deleteSnapshot, clearSnapshots, sn
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FormsModule, KeyValuePipe, ProgressBarComponent, MetricCardComponent, RadarChartComponent, RouterLink],
+  imports: [FormsModule, KeyValuePipe, ProgressBarComponent, MetricCardComponent, RadarChartComponent, InfoTooltipComponent, RouterLink],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent {
@@ -127,6 +128,10 @@ export class DashboardComponent {
     return this.config.sliders.find(s => s.key === key)?.label ?? key;
   }
 
+  metricDescription(key: string): string | undefined {
+    return this.config.computedMetrics.find(m => m.key === key)?.description;
+  }
+
   restoreSnapshot(snap: Snapshot): void {
     this.values.set({ ...snap.values });
     this.intention.set(snap.intention);
@@ -147,8 +152,18 @@ export class DashboardComponent {
 
   scoreColor(score: number): string {
     if (score >= 70) return 'bg-emerald-400';
-    if (score >= 45) return 'bg-amber-400';
-    return 'bg-red-400';
+    if (score >= 45) return 'bg-amber-500';
+    return 'bg-red-500';
+  }
+
+  snapshotSeverityColor(snap: Snapshot): string {
+    const feedbacks = collectSliderFeedbacks(this.config, snap.values);
+    if (feedbacks.length === 0) return 'bg-emerald-400';
+    const hasSevere = feedbacks.some(f => f.severity === 'severe');
+    if (hasSevere) return 'bg-red-500';
+    const hasModerate = feedbacks.some(f => f.severity === 'moderate');
+    if (hasModerate) return 'bg-amber-500';
+    return 'bg-slate-400';
   }
 
   formatTime(ts: number): string {

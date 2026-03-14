@@ -17,6 +17,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
       label: 'Allgemeine Energie',
       left: 'erschöpft',
       right: 'energiegeladen',
+      description: 'Dein allgemeines Energielevel — körperlich und mental. Ideal: ~72. Niedrige Werte zeigen: dein System braucht Grundversorgung, nicht Motivation.',
       feedbackZones: [
         {
           direction: 'low', threshold: 15, severity: 'severe',
@@ -35,6 +36,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
       label: 'Schlafqualität (letzte Nacht)',
       left: 'schlecht',
       right: 'erholsam',
+      description: 'Wie erholsam dein Schlaf war. Ideal: ~78 (maximal erholsam). Schlechter Schlaf wirkt wie Alkohol auf deine kognitiven Fähigkeiten.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -53,6 +55,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
       label: 'Körperliche Belastung',
       left: 'leicht',
       right: 'schwer',
+      description: 'Wie belastet dein Körper gerade ist — Schmerz, Anspannung, Müdigkeit. Ideal: niedrig (~25). Hohe Werte = dein Körper braucht Schonung.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -71,6 +74,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
       label: 'Mentale Last',
       left: 'klar',
       right: 'überladen',
+      description: 'Wie viele offene Schleifen, Sorgen und Aufgaben im Kopf sind. Ideal: niedrig (~25). Hohe Werte blockieren Denken und Erholung.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -89,6 +93,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
       label: 'Erholungszeit (letzter Tag)',
       left: 'keine',
       right: 'viel',
+      description: 'Wie viel echte Erholungszeit du in den letzten 24h hattest. Ideal: ~65. Erholung ist kein Luxus, sondern Grundbedarf.',
       feedbackZones: [
         {
           direction: 'low', threshold: 15, severity: 'severe',
@@ -107,6 +112,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
       label: 'Antrieb / Motivation',
       left: 'leer',
       right: 'motiviert',
+      description: 'Wie viel inneren Antrieb du spürst. Ideal: ~68. Geringe Motivation bei Erschöpfung ist kein Versagen — es ist ein Signal, dass Energie fehlt.',
       feedbackZones: [
         {
           direction: 'low', threshold: 15, severity: 'severe',
@@ -135,6 +141,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
     {
       key: 'exhaustion',
       label: 'Erschöpfungsindex',
+      description: 'Gibt an, wie erschöpft dein System gerade ist. Berechnet aus Energie (invertiert), Schlaf (invertiert), körperlicher und mentaler Belastung. Niedrig = gut versorgt, hoch = dringend Erholung nötig.',
       danger: true,
       weights: [
         { sliderKey: 'energy', weight: 0.3, invert: true, offset: 100 },
@@ -146,6 +153,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
     {
       key: 'recoveryScore',
       label: 'Erholungsscore',
+      description: 'Misst, wie gut du dich regenerierst. Fließt ein: Erholungszeit, Schlafqualität, Energie und Motivation. Hoch = gute Erholung, niedrig = Defizit.',
       weights: [
         { sliderKey: 'recoveryTime', weight: 0.3 },
         { sliderKey: 'sleepQuality', weight: 0.3 },
@@ -156,6 +164,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
     {
       key: 'regulation',
       label: 'Regulation',
+      description: 'Zeigt, wie gut dein System sich selbst reguliert. Kombination aus Energie, Schlaf, Erholung und (invertiert) Belastung. Hoch = stabil, niedrig = System unter Druck.',
       weights: [
         { sliderKey: 'energy', weight: 0.25 },
         { sliderKey: 'sleepQuality', weight: 0.25 },
@@ -167,6 +176,7 @@ export const recoveryDashboardConfig: DashboardConfig = {
     {
       key: 'friction',
       label: 'Friktion',
+      description: 'Innerer Widerstand und Reibung. Steigt durch mentale/körperliche Last, sinkt durch Energie und Motivation. Hoch = blockiert, niedrig = im Fluss.',
       danger: true,
       weights: [
         { sliderKey: 'mentalLoad', weight: 0.3 },

@@ -17,6 +17,7 @@ export const emotionRegulationConfig: DashboardConfig = {
       label: 'Emotionaler Druck',
       left: 'ruhig',
       right: 'hoch',
+      description: 'Wie viel innerer emotionaler Druck gerade auf dir lastet — Stress, Anspannung, Überforderung. Ideal: niedrig (~25). Hohe Werte zeigen, dass dein Nervensystem im Alarmmodus ist.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -35,6 +36,7 @@ export const emotionRegulationConfig: DashboardConfig = {
       label: 'Selbstwertgefühl',
       left: 'niedrig',
       right: 'stabil',
+      description: 'Wie stabil dein Selbstwert gerade ist — unabhängig von Leistung. Ideal: ~72. Niedrige Werte heißen nicht, dass du weniger wert bist — dein innerer Kritiker ist vermutlich zu laut.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -53,6 +55,7 @@ export const emotionRegulationConfig: DashboardConfig = {
       label: 'Innere Sicherheit',
       left: 'unsicher',
       right: 'sicher',
+      description: 'Wie sicher du dich in deiner aktuellen Situation fühlst. Körperliches und emotionales Sicherheitsgefühl. Ideal: ~75. Niedrig = das Nervensystem ist im Schutzmodus.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -71,6 +74,7 @@ export const emotionRegulationConfig: DashboardConfig = {
       label: 'Scham / Bewertungsdruck',
       left: 'wenig',
       right: 'stark',
+      description: 'Wie stark Schamgefühle oder Angst vor Bewertung gerade aktiv sind. Ideal: niedrig (~18). Scham lügt oft — sie sagt dir, du wärst falsch, aber das ist ein Gefühl, kein Fakt.',
       feedbackZones: [
         {
           direction: 'high', threshold: 75, severity: 'severe',
@@ -89,6 +93,7 @@ export const emotionRegulationConfig: DashboardConfig = {
       label: 'Frustration',
       left: 'gelassen',
       right: 'frustriert',
+      description: 'Wie viel Frustration sich gerade aufgestaut hat — durch Blockaden, Misserfolge oder Hilflosigkeit. Ideal: niedrig (~20). Hohe Werte führen zu Impulsivität.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -107,6 +112,7 @@ export const emotionRegulationConfig: DashboardConfig = {
       label: 'Körperspannung',
       left: 'locker',
       right: 'verspannt',
+      description: 'Wie angespannt dein Körper gerade ist — Schultern, Kiefer, Rücken. Ideal: niedrig (~25). Körperspannung spiegelt emotionalen Stress direkt wider.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -135,6 +141,7 @@ export const emotionRegulationConfig: DashboardConfig = {
     {
       key: 'emotionalLoad',
       label: 'Emotionale Belastung',
+      description: 'Gesamtbelastung aus emotionalem Druck, Scham, Frustration und Körperspannung. Hohe Werte bedeuten: dein System ist überlastet.',
       danger: true,
       weights: [
         { sliderKey: 'emotionalPressure', weight: 0.3 },
@@ -146,6 +153,7 @@ export const emotionRegulationConfig: DashboardConfig = {
     {
       key: 'emotionalStability',
       label: 'Emotionale Stabilität',
+      description: 'Wie stabil dein emotionales Fundament ist — kombiniert Selbstwert, Sicherheit und (umgekehrt) Druck und Spannung.',
       weights: [
         { sliderKey: 'selfWorth', weight: 0.35 },
         { sliderKey: 'safety', weight: 0.35 },
@@ -156,6 +164,7 @@ export const emotionRegulationConfig: DashboardConfig = {
     {
       key: 'regulation',
       label: 'Regulation',
+      description: 'Gesamtmaß für deine emotionale Selbststeuerung — wie gut du Gefühle regulieren kannst. Basiert auf Selbstwert, Sicherheit und (umgekehrt) Druck und Frustration.',
       weights: [
         { sliderKey: 'selfWorth', weight: 0.3 },
         { sliderKey: 'safety', weight: 0.3 },
@@ -166,6 +175,7 @@ export const emotionRegulationConfig: DashboardConfig = {
     {
       key: 'friction',
       label: 'Friktion',
+      description: 'Innerer Widerstand gegen Handlungsfähigkeit — berechnet aus hohem emotionalen Druck, Scham, Frustration und geringem Selbstwert/Sicherheit.',
       danger: true,
       weights: [
         { sliderKey: 'emotionalPressure', weight: 0.3 },

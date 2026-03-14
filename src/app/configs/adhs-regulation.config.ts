@@ -17,6 +17,7 @@ export const adhsRegulationConfig: DashboardConfig = {
       label: 'Aktivierung / Arousal',
       left: 'zu niedrig',
       right: 'zu hoch',
+      description: 'Wie wach und aktiviert dein Nervensystem gerade ist. Nicht Motivation, sondern physiologische Grundspannung. Ideal: mittlerer Bereich (~58) — genug Energie zum Starten, aber nicht überreizt.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -45,6 +46,7 @@ export const adhsRegulationConfig: DashboardConfig = {
       label: 'Gefühlslage',
       left: 'niedrig',
       right: 'gut',
+      description: 'Deine aktuelle Grundstimmung. Nicht die Emotion im Moment, sondern das allgemeine Stimmungslevel. Ideal: oberer mittlerer Bereich (~68) — stabil, ohne künstlich gut.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -63,6 +65,7 @@ export const adhsRegulationConfig: DashboardConfig = {
       label: 'Mitte / innere Balance',
       left: 'weg',
       right: 'zentriert',
+      description: 'Wie sehr du bei dir bist. Zentriertheit bedeutet, dass du dich weder getrieben noch verloren fühlst. Ideal: ~70 — ruhig, orientiert und handlungsfähig.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -81,6 +84,7 @@ export const adhsRegulationConfig: DashboardConfig = {
       label: 'Klarheit',
       left: 'vernebelt',
       right: 'klar',
+      description: 'Wie klar du denken kannst. Brain Fog, Zerstreutheit und kognitive Müdigkeit senken diesen Wert. Ideal: ~72 — klares Denken ohne Anstrengung.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -99,6 +103,7 @@ export const adhsRegulationConfig: DashboardConfig = {
       label: 'Körperenergie',
       left: 'leer',
       right: 'wach',
+      description: 'Dein körperliches Energielevel — Schlaf, Ernährung und Bewegung fließen hier ein. Ideal: ~68 — wach und belastbar.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -117,6 +122,7 @@ export const adhsRegulationConfig: DashboardConfig = {
       label: 'Emotionaler Druck',
       left: 'ruhig',
       right: 'hoch',
+      description: 'Wie viel innerer emotionaler Druck gerade auf dir lastet. Hohe Werte signalisieren, dass dein Nervensystem im Alarmmodus ist. Ideal: niedrig (~28).',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -135,6 +141,7 @@ export const adhsRegulationConfig: DashboardConfig = {
       label: 'Bedarf an Stimulation',
       left: 'wenig',
       right: 'viel',
+      description: 'Wie stark dein Gehirn nach Reizen, Abwechslung oder Dopamin sucht. ADHS-typisch: oft zu hoch. Ideal: mittlerer Bereich (~48) — genug Input, ohne in Reizsuche zu verfallen.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -168,6 +175,7 @@ export const adhsRegulationConfig: DashboardConfig = {
     {
       key: 'underStimulation',
       label: 'Unterstimulation',
+      description: 'Berechnet, wie stark dein System unterfordert ist — basierend auf niedriger Aktivierung, wenig Körperenergie, hohem Stimulationsbedarf und geringer Klarheit. Hohe Werte bedeuten: dein Gehirn bekommt zu wenig Input zum Arbeiten.',
       weights: [
         { sliderKey: 'arousal', weight: 0.35, invert: true, offset: 50 },
         { sliderKey: 'bodyEnergy', weight: 0.25, invert: true, offset: 50 },
@@ -178,6 +186,7 @@ export const adhsRegulationConfig: DashboardConfig = {
     {
       key: 'overStimulation',
       label: 'Überstimulation',
+      description: 'Misst, wie überreizt dein System ist — basierend auf hoher Aktivierung, emotionalem Druck und geringer Zentriertheit. Hohe Werte signalisieren Reizüberflutung.',
       danger: true,
       weights: [
         { sliderKey: 'arousal', weight: 0.4, offset: -50 },
@@ -189,6 +198,7 @@ export const adhsRegulationConfig: DashboardConfig = {
     {
       key: 'regulation',
       label: 'Regulation',
+      description: 'Gesamtmaß für deine Selbststeuerung — wie gut du gerade in der Lage bist, dich zu steuern. Kombiniert Zentriertheit, Klarheit, Stimmung, Körperenergie und (umgekehrt) emotionalen Druck.',
       weights: [
         { sliderKey: 'centeredness', weight: 0.35 },
         { sliderKey: 'clarity', weight: 0.25 },
@@ -200,6 +210,7 @@ export const adhsRegulationConfig: DashboardConfig = {
     {
       key: 'friction',
       label: 'Friktion',
+      description: 'Wie viel innerer Widerstand deinem Handeln entgegensteht — berechnet aus geringer Zentriertheit, fehlender Klarheit, schlechter Stimmung und hohem Stimulationsbedarf. Hohe Werte = hohe innere Reibung.',
       danger: true,
       weights: [
         { sliderKey: 'centeredness', weight: -0.35 },

@@ -11,6 +11,7 @@ export interface SliderDefinition {
   label: string;
   left: string;
   right: string;
+  description?: string;
   feedbackZones?: SliderFeedbackZone[];
 }
 
@@ -60,6 +61,7 @@ export interface ComputedMetric {
   label: string;
   weights: MetricWeight[];
   danger?: boolean;
+  description?: string;
 }
 
 export interface DashboardConfig {

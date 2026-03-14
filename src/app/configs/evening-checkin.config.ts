@@ -17,6 +17,7 @@ export const eveningCheckinConfig: DashboardConfig = {
       label: 'Mentale Ruhe',
       left: 'unruhig',
       right: 'still',
+      description: 'Wie ruhig dein Kopf gerade ist. Kreisende Gedanken und Grübeln senken diesen Wert. Ideal: ~75 — still genug zum Einschlafen.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -35,6 +36,7 @@ export const eveningCheckinConfig: DashboardConfig = {
       label: 'Tagesabschluss-Gefühl',
       left: 'offen',
       right: 'abgeschlossen',
+      description: 'Ob sich der Tag "fertig" anfühlt. Offene Schleifen halten den Kopf wach. Ideal: ~78 — das Gefühl, genug getan zu haben.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -53,6 +55,7 @@ export const eveningCheckinConfig: DashboardConfig = {
       label: 'Emotionales Gewicht',
       left: 'leicht',
       right: 'schwer',
+      description: 'Wie viel emotionale Last du vom Tag mitträgst. Ideal: niedrig (~22). Hohe Werte machen Loslassen und Einschlafen schwer.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -71,6 +74,7 @@ export const eveningCheckinConfig: DashboardConfig = {
       label: 'Körperliche Entspannung',
       left: 'angespannt',
       right: 'entspannt',
+      description: 'Wie entspannt dein Körper ist. Körperanspannung blockiert Schlaf. Ideal: ~78 — locker und gelöst.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -135,6 +139,7 @@ export const eveningCheckinConfig: DashboardConfig = {
     {
       key: 'readiness',
       label: 'Abend-Bereitschaft',
+      description: 'Wie bereit du für den Abend und Schlaf bist — basierend auf mentaler Ruhe, Körperentspannung, Tagesabschluss und (umgekehrt) Bildschirmzeit.',
       weights: [
         { sliderKey: 'mentalRest', weight: 0.3 },
         { sliderKey: 'bodyRelaxation', weight: 0.25 },
@@ -145,6 +150,7 @@ export const eveningCheckinConfig: DashboardConfig = {
     {
       key: 'residualLoad',
       label: 'Restbelastung',
+      description: 'Was vom Tag noch nachwirkt — emotionales Gewicht, mentale Unruhe, Bildschirmzeit. Hohe Werte bedeuten: der Tag ist noch nicht losgelassen.',
       danger: true,
       weights: [
         { sliderKey: 'emotionalWeight', weight: 0.3 },
@@ -156,6 +162,7 @@ export const eveningCheckinConfig: DashboardConfig = {
     {
       key: 'regulation',
       label: 'Regulation',
+      description: 'Wie gut du gerade in der Lage bist, den Tag abzuschließen und in die Ruhe zu finden.',
       weights: [
         { sliderKey: 'mentalRest', weight: 0.25 },
         { sliderKey: 'bodyRelaxation', weight: 0.25 },
@@ -167,7 +174,9 @@ export const eveningCheckinConfig: DashboardConfig = {
     {
       key: 'friction',
       label: 'Friktion',
+      description: 'Innerer Widerstand gegen Loslassen und Zur-Ruhe-Kommen — hohe Werte zeigen, dass der Abend noch belastet ist.',
       danger: true,
+
       weights: [
         { sliderKey: 'mentalRest', weight: -0.25 },
         { sliderKey: 'emotionalWeight', weight: 0.25 },

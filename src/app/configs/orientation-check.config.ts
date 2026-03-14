@@ -17,6 +17,7 @@ export const orientationCheckConfig: DashboardConfig = {
       label: 'Mentale Klarheit',
       left: 'vernebelt',
       right: 'klar',
+      description: 'Wie klar du gerade denken kannst. Diffuses Denken, Brain Fog oder Reizüberflutung senken diesen Wert. Ideal: ~72.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -35,6 +36,7 @@ export const orientationCheckConfig: DashboardConfig = {
       label: 'Richtungsgefühl',
       left: 'orientierungslos',
       right: 'klar ausgerichtet',
+      description: 'Ob du ein inneres Gefühl für deine Richtung hast. Nicht: perfekter Plan. Sondern: "Ich weiß ungefähr, was als Nächstes dran ist." Ideal: ~70.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -53,6 +55,7 @@ export const orientationCheckConfig: DashboardConfig = {
       label: 'Entscheidungsfähigkeit',
       left: 'blockiert',
       right: 'entscheidungsstark',
+      description: 'Wie leicht du gerade Entscheidungen treffen kannst. Paralyse und Überwägen senken diesen Wert. Ideal: ~68.',
       feedbackZones: [
         {
           direction: 'low', threshold: 20, severity: 'severe',
@@ -71,6 +74,7 @@ export const orientationCheckConfig: DashboardConfig = {
       label: 'Überforderungsgefühl',
       left: 'ruhig',
       right: 'überwältigt',
+      description: 'Wie stark das Gefühl der Überforderung gerade ist. Ideal: niedrig (~25). Hohe Werte blockieren jede Handlung.',
       feedbackZones: [
         {
           direction: 'high', threshold: 80, severity: 'severe',
@@ -89,6 +93,7 @@ export const orientationCheckConfig: DashboardConfig = {
       label: 'Inneres Rauschen',
       left: 'still',
       right: 'laut',
+      description: 'Wie viele Gedanken, Impulse und innere Stimmen gleichzeitig aktiv sind. Ideal: niedrig (~28). Hohes Rauschen verhindert fokussiertes Denken.',
       feedbackZones: [
         {
           direction: 'high', threshold: 75, severity: 'severe',
@@ -107,6 +112,7 @@ export const orientationCheckConfig: DashboardConfig = {
       label: 'Körperliche Erdung',
       left: 'abgehoben',
       right: 'geerdet',
+      description: 'Wie präsent du in deinem Körper bist. Erdung gibt Orientierung, wenn der Kopf es nicht kann. Ideal: ~72.',
       feedbackZones: [
         {
           direction: 'low', threshold: 25, severity: 'severe',
@@ -135,6 +141,7 @@ export const orientationCheckConfig: DashboardConfig = {
     {
       key: 'orientation',
       label: 'Orientierung',
+      description: 'Gesamtmaß für deine Orientierung — kombiniert Klarheit, Richtungsgefühl, Entscheidungsfähigkeit und (umgekehrt) Überforderung.',
       weights: [
         { sliderKey: 'mentalClarity', weight: 0.3 },
         { sliderKey: 'directionSense', weight: 0.3 },
@@ -145,6 +152,7 @@ export const orientationCheckConfig: DashboardConfig = {
     {
       key: 'confusion',
       label: 'Diffusität',
+      description: 'Wie diffus und unklar dein Zustand ist — basierend auf geringer Klarheit, fehlendem Richtungsgefühl und hohem inneren Rauschen. Hohe Werte = alles verschwimmt.',
       danger: true,
       weights: [
         { sliderKey: 'mentalClarity', weight: -0.3 },
@@ -156,6 +164,7 @@ export const orientationCheckConfig: DashboardConfig = {
     {
       key: 'regulation',
       label: 'Regulation',
+      description: 'Wie gut du dich gerade orientieren und steuern kannst — basierend auf Klarheit, Richtung, Erdung und (umgekehrt) Überforderung.',
       weights: [
         { sliderKey: 'mentalClarity', weight: 0.25 },
         { sliderKey: 'directionSense', weight: 0.25 },
@@ -167,6 +176,7 @@ export const orientationCheckConfig: DashboardConfig = {
     {
       key: 'friction',
       label: 'Friktion',
+      description: 'Innerer Widerstand gegen Orientierung und Handlung — hohe Werte zeigen: zu viel Rauschen, Überforderung und zu wenig Klarheit.',
       danger: true,
       weights: [
         { sliderKey: 'mentalClarity', weight: -0.25 },
