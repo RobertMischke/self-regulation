@@ -84,8 +84,7 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
                 </div>
                 <div class="mt-4 text-xs text-slate-400">
                   {{ config.sliders.length }} Slider &middot;
-                  {{ configModeCount(config) }} Modi &middot;
-                  {{ config.questionGroups.length }} Fragegruppen
+                  {{ configModeCount(config) }} Modi
                 </div>
               </a>
             }

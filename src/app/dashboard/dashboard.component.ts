@@ -19,9 +19,7 @@ export class DashboardComponent {
 
   readonly config: DashboardConfig;
   readonly values: WritableSignal<Record<string, number>>;
-  readonly currentTask: WritableSignal<string>;
-  readonly microCommitment: WritableSignal<string>;
-  readonly focusMessage = signal('');
+  readonly intention: WritableSignal<string>;
 
   readonly computedMetrics: Signal<Record<string, number>>;
   readonly regulationValue: Signal<number>;
@@ -45,8 +43,7 @@ export class DashboardComponent {
     }
 
     this.values = signal({ ...this.config.defaultValues });
-    this.currentTask = signal(this.config.defaultTask);
-    this.microCommitment = signal(this.config.defaultMicroCommitment);
+    this.intention = signal(this.config.defaultIntention ?? '');
 
     this.computedMetrics = computed(() => computeAllMetrics(this.config, this.values()));
 
@@ -80,13 +77,6 @@ export class DashboardComponent {
 
   resetToBalanced(): void {
     this.values.set({ ...this.config.resetValues });
-    this.microCommitment.set(this.config.resetMicroCommitment);
-    this.focusMessage.set('');
-  }
-
-  startFocusBlock(): void {
-    this.focusMessage.set(
-      `Aktiver Modus: ${this.activeMode().label}\n\nAktuelle Aufgabe: ${this.currentTask()}\n\nNächster Schritt: ${this.microCommitment()}`
-    );
+    this.intention.set(this.config.defaultIntention ?? '');
   }
 }

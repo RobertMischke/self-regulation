@@ -25,10 +25,6 @@ function makeConfig(overrides: Partial<DashboardConfig> = {}): DashboardConfig {
     modes: {},
     feedbacks: {},
     idealValues: [],
-    questionGroups: [],
-    defaultTask: '',
-    defaultMicroCommitment: '',
-    resetMicroCommitment: '',
     ...overrides,
   };
 }

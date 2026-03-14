@@ -53,36 +53,17 @@
           }
         </div>
 
-        <div class="mt-6 grid gap-4 md:grid-cols-2">
-          <div>
-            <label for="currentTask" class="font-semibold">Woran arbeitest du gerade?</label>
-            <textarea
-              id="currentTask"
-              [value]="currentTask()"
-              (input)="currentTask.set($any($event.target).value)"
-              class="mt-2 min-h-[120px] w-full rounded-2xl border border-slate-300 bg-white p-4"
-            ></textarea>
-          </div>
-
-          <div>
-            <label for="microCommitment" class="font-semibold">Dein kleinster n&#228;chster Schritt</label>
-            <textarea
-              id="microCommitment"
-              [value]="microCommitment()"
-              (input)="microCommitment.set($any($event.target).value)"
-              class="mt-2 min-h-[120px] w-full rounded-2xl border border-slate-300 bg-white p-4"
-            ></textarea>
-          </div>
+        <div class="mt-6">
+          <label for="intention" class="font-semibold">Was ist dir gerade wichtig?</label>
+          <textarea
+            id="intention"
+            [value]="intention()"
+            (input)="intention.set($any($event.target).value)"
+            class="mt-2 min-h-[120px] w-full rounded-2xl border border-slate-300 bg-white p-4"
+          ></textarea>
         </div>
 
-        <div class="mt-4 flex flex-wrap gap-3">
-          <button
-            type="button"
-            (click)="startFocusBlock()"
-            class="rounded-2xl bg-slate-900 px-4 py-3 font-semibold text-white"
-          >
-            Fokus-Block starten
-          </button>
+        <div class="mt-4">
           <button
             type="button"
             (click)="resetToBalanced()"
@@ -91,12 +72,6 @@
             Auf Balance setzen
           </button>
         </div>
-
-        @if (focusMessage()) {
-          <div class="mt-4 whitespace-pre-wrap rounded-2xl bg-slate-100 p-4 text-sm text-slate-700">
-            {{ focusMessage() }}
-          </div>
-        }
       </section>
 
       <div class="grid gap-6">
@@ -165,21 +140,7 @@
       </div>
     </div>
 
-    <!-- Question Groups -->
-    @if (config.questionGroups.length > 0) {
-      <section class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
-        @for (group of config.questionGroups; track group.title) {
-          <div class="rounded-3xl bg-white p-6 shadow-sm">
-            <h2 class="mb-4 text-xl font-semibold">{{ group.title }}</h2>
-            <div class="grid gap-3">
-              @for (question of group.questions; track question) {
-                <div class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700">{{ question }}</div>
-              }
-            </div>
-          </div>
-        }
-      </section>
-    }
+
 
   </div>
 </div>

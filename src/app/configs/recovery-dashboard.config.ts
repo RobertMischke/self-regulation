@@ -288,43 +288,4 @@ export const recoveryDashboardConfig: DashboardConfig = {
     { sliderKey: 'recoveryTime', target: 65 },
     { sliderKey: 'motivation', target: 68 },
   ],
-
-  questionGroups: [
-    {
-      title: 'Energie & Erschöpfung',
-      questions: [
-        'Fühlst du dich schon morgens müde?',
-        'Brauchst du Koffein, um überhaupt zu funktionieren?',
-        'Hast du das Gefühl, dass Erholung nicht mehr reicht?',
-      ],
-    },
-    {
-      title: 'Schlaf & Rhythmus',
-      questions: [
-        'Wachst du nachts auf oder schläfst du unruhig?',
-        'Ist dein Schlafrhythmus gerade regelmäßig?',
-        'Fühlst du dich morgens erholt?',
-      ],
-    },
-    {
-      title: 'Körpersignale',
-      questions: [
-        'Hast du Kopfschmerzen, Rückenschmerzen oder Verspannungen?',
-        'Isst du regelmäßig und ausgewogen?',
-        'Trinkst du genug Wasser?',
-      ],
-    },
-    {
-      title: 'Mentale Last',
-      questions: [
-        'Kreisen deine Gedanken, auch wenn du abschalten willst?',
-        'Fällt es dir schwer, Dinge loszulassen?',
-        'Hast du das Gefühl, nie fertig zu werden?',
-      ],
-    },
-  ],
-
-  defaultTask: 'Ich möchte meinen Energiehaushalt verstehen und herausfinden, was ich heute brauche.',
-  defaultMicroCommitment: 'Einmal kurz innehalten und spüren, wie müde ich wirklich bin.',
-  resetMicroCommitment: 'Einen Moment Ruhe nehmen und nichts leisten müssen.',
 };

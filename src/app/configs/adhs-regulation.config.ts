@@ -321,43 +321,4 @@ export const adhsRegulationConfig: DashboardConfig = {
     { sliderKey: 'emotionalPressure', target: 28 },
     { sliderKey: 'stimulationNeed', target: 48 },
   ],
-
-  questionGroups: [
-    {
-      title: 'Fragen bei Unterstimulation',
-      questions: [
-        'Fällt dir das Anfangen gerade schwer?',
-        'Schweifen deine Gedanken weg, obwohl du etwas tun willst?',
-        'Fühlst du dich eher flach, leer oder nicht richtig online?',
-      ],
-    },
-    {
-      title: 'Fragen bei Überstimulation',
-      questions: [
-        'Bist du innerlich hektisch oder reizüberflutet?',
-        'Springst du zwischen Tabs, Gedanken oder Aufgaben?',
-        'Fühlt sich dein Kopf voll oder zu laut an?',
-      ],
-    },
-    {
-      title: 'Fragen zu Gefühlen',
-      questions: [
-        'Ist gerade starker Druck, Frust oder Unsicherheit da?',
-        'Hast du das Gefühl, dass Gefühle deine Steuerung kapern?',
-        'Ist die Selbstbewertung gerade eher hart als hilfreich?',
-      ],
-    },
-    {
-      title: 'Fragen zum Körper',
-      questions: [
-        'Bist du müde, hungrig, verspannt oder unruhig?',
-        'Hast du heute genug getrunken und gegessen?',
-        'Hattest du Schlaf, Licht und etwas Bewegung?',
-      ],
-    },
-  ],
-
-  defaultTask: 'Ich möchte meine Aufmerksamkeit so regulieren, dass ich gut arbeite, ohne mich zu überreizen.',
-  defaultMicroCommitment: 'Nur den nächsten kleinen Schritt sichtbar machen.',
-  resetMicroCommitment: 'Den kleinsten nächsten Schritt auswählen und anfangen.',
 };

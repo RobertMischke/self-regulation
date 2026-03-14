@@ -297,43 +297,5 @@ export const emotionRegulationConfig: DashboardConfig = {
     { sliderKey: 'frustration', target: 20 },
     { sliderKey: 'bodyTension', target: 25 },
   ],
-
-  questionGroups: [
-    {
-      title: 'Emotionaler Druck',
-      questions: [
-        'Fühlst du gerade inneren Druck, ohne klaren Auslöser?',
-        'Reagierst du stärker als die Situation es erfordert?',
-        'Fällt es dir schwer, zur Ruhe zu kommen?',
-      ],
-    },
-    {
-      title: 'Scham & Selbstbewertung',
-      questions: [
-        'Bewertest du dich gerade hart für etwas?',
-        'Hast du das Gefühl, nicht zu genügen?',
-        'Vergleichst du dich gerade mit anderen?',
-      ],
-    },
-    {
-      title: 'Sicherheit & Bindung',
-      questions: [
-        'Fühlst du dich gerade sicher in deinen Beziehungen?',
-        'Hast du das Gefühl, dazuzugehören?',
-        'Gibt es jemanden, den du jetzt anrufen könntest?',
-      ],
-    },
-    {
-      title: 'Körperreaktion',
-      questions: [
-        'Sind Schultern, Kiefer oder Bauch angespannt?',
-        'Hast du einen Kloß im Hals oder Enge in der Brust?',
-        'Ist dein Atem flach oder unregelmäßig?',
-      ],
-    },
-  ],
-
-  defaultTask: 'Ich möchte verstehen, was mich gerade emotional belastet, und einen ersten Schritt zur Regulation finden.',
-  defaultMicroCommitment: 'Einmal bewusst durchatmen und hinspüren.',
-  resetMicroCommitment: 'Kurz innehalten und wahrnehmen, wie es mir gerade geht.',
 };
+

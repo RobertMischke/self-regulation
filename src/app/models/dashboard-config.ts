@@ -16,10 +16,6 @@ export interface SliderDefinition {
 
 export type SliderItem = SliderDefinition & { value: number };
 
-export interface QuestionGroup {
-  title: string;
-  questions: string[];
-}
 
 export interface MetricWeight {
   sliderKey: string;
@@ -88,8 +84,5 @@ export interface DashboardConfig {
   feedbacks: Record<string, SystemFeedback>;
   idealValues: IdealValue[];
 
-  questionGroups: QuestionGroup[];
-  defaultTask: string;
-  defaultMicroCommitment: string;
-  resetMicroCommitment: string;
+  defaultIntention?: string;
 }
