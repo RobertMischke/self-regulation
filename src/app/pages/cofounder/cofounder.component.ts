@@ -20,8 +20,9 @@ import { RouterLink } from '@angular/router';
         </div>
 
         <p class="mt-6 text-lg leading-8 text-slate-600">
-          Ich baue ein sehr kleines, fokussiertes Produkt f&uuml;r Selbstregulation und suche Menschen,
-          die Lust haben, es mit mir weiterzuentwickeln und in den Markt zu bringen.
+          Ich &uuml;berlege, ein kleines, fokussiertes Produkt f&uuml;r Selbstregulation zu bauen.
+          Erstmal m&ouml;chte ich pr&uuml;fen, ob sich &uuml;berhaupt jemand daf&uuml;r interessiert.
+          Ich suche Menschen, die Lust haben, das Produkt mit mir zu entwickeln und in den Markt zu bringen.
         </p>
 
         <!-- Was ich suche -->
@@ -40,27 +41,22 @@ import { RouterLink } from '@angular/router';
         <!-- Monetarisierung -->
         <section class="mt-10">
           <h2 class="text-xl font-bold">Monetarisierung</h2>
+          <p class="mt-3 text-sm leading-7 text-slate-600">
+            Die Basisfunktion &ndash; ein vollst&auml;ndiges Dashboard zur Selbsteinsch&auml;tzung &ndash; bleibt frei verf&uuml;gbar.
+            Bezahlte Premium-Features erweitern den Funktionsumfang:
+          </p>
           <ul class="mt-4 space-y-2 text-sm leading-7 text-slate-600">
             <li class="flex items-start gap-2">
               <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500"></span>
-              Historische Snapshots und pers&ouml;nliche Entwicklung
+              Visualisierung bisheriger Zust&auml;nde &ndash; Entwicklung &uuml;ber Wochen und Monate sichtbar machen
             </li>
             <li class="flex items-start gap-2">
               <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500"></span>
-              Anpassbare und eigene Dashboards
-            </li>
-            <li class="flex items-start gap-2">
-              <span class="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500"></span>
-              Abo-Modell
+              Individuelle und eigene Dashboards
             </li>
           </ul>
-        </section>
-
-        <!-- Vision -->
-        <section class="mt-10 rounded-2xl border border-slate-100 bg-slate-50/60 p-6">
-          <p class="text-sm leading-7 text-slate-600">
-            <strong>Kein riesiges Venture</strong>, sondern ein kleines, scharf positioniertes Produkt.
-            Wer Lust hat, so etwas mit aufzubauen, ist willkommen.
+          <p class="mt-4 text-sm leading-7 text-slate-600">
+            Abo-Modell mit monatlicher oder j&auml;hrlicher Zahlung &ndash; oder Einmalzahlung f&uuml;r eine Lifetime-Lizenz.
           </p>
         </section>
 
@@ -68,10 +64,10 @@ import { RouterLink } from '@angular/router';
         <section class="mt-12 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6">
           <h2 class="text-xl font-bold">Kontakt</h2>
           <p class="mt-3 text-sm leading-7 text-slate-600">
-            Meld dich gerne &mdash; formlos, unkompliziert.
+            Kein riesiges Venture &ndash; ein kleines, scharfes Produkt. Meld dich gerne.
           </p>
 
-          <div class="mt-5 flex flex-col gap-3 text-sm">
+          <div class="mt-3 flex flex-col gap-3 text-sm">
             <a href="mailto:robertmischke&#64;gmail.com" class="inline-flex items-center gap-2.5 font-medium text-indigo-600 hover:underline">
               <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/>
