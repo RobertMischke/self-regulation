@@ -41,6 +41,10 @@ export function deleteSnapshot(id: string): void {
   writeAll(readAll().filter(s => s.id !== id));
 }
 
+export function clearSnapshots(dashboardKey: string): void {
+  writeAll(readAll().filter(s => s.dashboardKey !== dashboardKey));
+}
+
 /** 0–100 score: high regulation + low friction = good */
 export function snapshotScore(s: Snapshot): number {
   return Math.round((s.regulation + (100 - s.friction)) / 2);

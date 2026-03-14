@@ -1,18 +1,19 @@
 import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, } from '@angular/forms';
+import { KeyValuePipe } from '@angular/common';
 import { ProgressBarComponent } from '../components/progress-bar.component';
 import { MetricCardComponent } from '../components/metric-card.component';
 import { RadarChartComponent } from '../components/radar-chart.component';
 import { DashboardConfig, ModeDefinition, SystemFeedback, ComputedMetric, SliderItem } from '../models/dashboard-config';
 import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard-registry';
 import { computeAllMetrics, resolveMode, calculateIdealDistance, collectSliderFeedbacks, ActiveSliderFeedback } from '../models/engine';
-import { Snapshot, getSnapshots, addSnapshot, deleteSnapshot, snapshotScore } from '../models/snapshot';
+import { Snapshot, getSnapshots, addSnapshot, deleteSnapshot, clearSnapshots, snapshotScore } from '../models/snapshot';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FormsModule, ProgressBarComponent, MetricCardComponent, RadarChartComponent, RouterLink],
+  imports: [FormsModule, KeyValuePipe, ProgressBarComponent, MetricCardComponent, RadarChartComponent, RouterLink],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent {
@@ -35,6 +36,8 @@ export class DashboardComponent {
   readonly sliderFeedbacks: Signal<ActiveSliderFeedback[]>;
   readonly snapshots: WritableSignal<Snapshot[]>;
   readonly showHistory: WritableSignal<boolean> = signal(false);
+  readonly selectedSnapshot: WritableSignal<Snapshot | null> = signal(null);
+  readonly expandedSnapshotId: WritableSignal<string | null> = signal(null);
   readonly disclaimerDismissed: WritableSignal<boolean>;
 
   constructor() {
@@ -105,11 +108,34 @@ export class DashboardComponent {
   removeSnapshot(id: string): void {
     deleteSnapshot(id);
     this.snapshots.update(list => list.filter(s => s.id !== id));
+    if (this.expandedSnapshotId() === id) this.expandedSnapshotId.set(null);
+    if (this.selectedSnapshot()?.id === id) this.selectedSnapshot.set(null);
+  }
+
+  clearAllSnapshots(): void {
+    clearSnapshots(this.config.key);
+    this.snapshots.set([]);
+    this.expandedSnapshotId.set(null);
+    this.selectedSnapshot.set(null);
+  }
+
+  toggleSnapshotDetail(id: string): void {
+    this.expandedSnapshotId.set(this.expandedSnapshotId() === id ? null : id);
+  }
+
+  sliderLabel(key: string): string {
+    return this.config.sliders.find(s => s.key === key)?.label ?? key;
   }
 
   restoreSnapshot(snap: Snapshot): void {
     this.values.set({ ...snap.values });
     this.intention.set(snap.intention);
+    this.selectedSnapshot.set(null);
+    this.showHistory.set(false);
+  }
+
+  openSnapshot(snap: Snapshot): void {
+    this.selectedSnapshot.set(this.selectedSnapshot()?.id === snap.id ? null : snap);
   }
 
   dismissDisclaimer(): void {

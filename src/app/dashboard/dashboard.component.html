@@ -55,13 +55,13 @@
         </div>
 
         <div class="mt-6 flex gap-3">
-          <button type="button" (click)="resetToBalanced()"
-            class="rounded-2xl bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
-            Auf Balance setzen
-          </button>
           <button type="button" (click)="takeSnapshot()"
             class="rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700">
-            Snapshot speichern
+            Moment speichern
+          </button>
+          <button type="button" (click)="resetToBalanced()"
+            class="rounded-2xl border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-600 transition hover:bg-slate-100">
+            Auf Balance setzen
           </button>
         </div>
       </section>
@@ -98,27 +98,41 @@
         <section class="rounded-3xl bg-white p-4 shadow-sm">
           <div class="flex items-center justify-between gap-2">
             <h2 class="text-sm font-semibold text-slate-500">Verlauf</h2>
-            <span class="text-[11px] text-slate-400">{{ snapshots().length }} Snapshots</span>
+            <span class="text-[11px] text-slate-400">{{ snapshots().length }} Momente</span>
           </div>
           @if (snapshots().length === 0) {
-            <p class="mt-2 text-xs text-slate-400">Noch keine Snapshots.</p>
+            <p class="mt-2 text-xs text-slate-400">Noch keine gespeicherten Momente.</p>
           } @else {
             <div class="mt-2 flex gap-px overflow-hidden rounded">
-              @for (snap of snapshots(); track snap.id) {
-                <button type="button" (click)="restoreSnapshot(snap)"
+              @for (snap of snapshots().slice(-30); track snap.id) {
+                <button type="button" (click)="openSnapshot(snap)"
                   class="group relative h-5 min-w-0 flex-1 transition hover:scale-y-125"
-                  [class]="scoreColor(snapshotScore(snap))"
-                  [title]="formatTime(snap.timestamp) + ' – ' + snap.modeLabel">
+                  [class]="scoreColor(snapshotScore(snap)) + (selectedSnapshot()?.id === snap.id ? ' ring-2 ring-indigo-500 ring-offset-1' : '')"
+                  [title]="formatTime(snap.timestamp) + ' \u2013 ' + snap.modeLabel">
                   <span class="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
                     {{ formatTime(snap.timestamp) }}
                   </span>
                 </button>
               }
             </div>
+
+            <!-- Inline preview of selected snapshot -->
+            @if (selectedSnapshot(); as snap) {
+              <div class="mt-2 flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs">
+                <div class="h-2 w-2 shrink-0 rounded-full" [class]="scoreColor(snapshotScore(snap))"></div>
+                <span class="font-semibold text-slate-700">{{ formatTime(snap.timestamp) }}</span>
+                <span class="text-slate-500">{{ snap.modeLabel }}</span>
+                <span class="text-slate-400">R{{ snap.regulation }} &middot; F{{ snap.friction }}</span>
+                <div class="ml-auto flex gap-2">
+                  <button type="button" (click)="restoreSnapshot(snap)" class="font-semibold text-indigo-600 hover:underline">laden</button>
+                  <button type="button" (click)="removeSnapshot(snap.id); selectedSnapshot.set(null)" class="font-semibold text-red-500 hover:underline">&#x2715;</button>
+                </div>
+              </div>
+            }
           }
-          <button type="button" (click)="showHistory.set(!showHistory())"
+          <button type="button" (click)="showHistory.set(true)"
             class="mt-3 w-full rounded-xl border border-slate-200 py-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-50 hover:text-slate-700">
-            {{ showHistory() ? 'Verlauf schließen' : 'Verlauf öffnen' }}
+            Verlauf &ouml;ffnen
           </button>
         </section>
       </div>
@@ -183,30 +197,41 @@
       }
     </section>
 
-    <!-- ═══ BOTTOM: Historie (collapsible, secondary) ═══ -->
-    @if (showHistory()) {
-      <section class="rounded-3xl bg-white p-6 shadow-sm">
-        <div class="flex items-center justify-between gap-4">
-          <h2 class="text-lg font-semibold text-slate-600">Historie</h2>
-          <div class="flex items-center gap-3">
-            <span class="text-xs text-slate-400">{{ snapshots().length }} Snapshots (Session)</span>
-            <button type="button" (click)="showHistory.set(false)" class="text-xs font-semibold text-slate-400 hover:text-slate-600">&times; Schließen</button>
-          </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: Vollständiger Verlauf ═══ -->
+@if (showHistory()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" (click)="showHistory.set(false)">
+    <div class="relative max-h-[80vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-6 shadow-xl" (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="text-xl font-bold text-slate-800">Verlauf</h2>
+        <div class="flex items-center gap-3">
+          <span class="text-xs text-slate-400">{{ snapshots().length }} Momente</span>
+          @if (snapshots().length > 0) {
+            <button type="button" (click)="clearAllSnapshots()"
+              class="rounded-lg bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-600 transition hover:bg-red-100">
+              Alle l&ouml;schen
+            </button>
+          }
+          <button type="button" (click)="showHistory.set(false)"
+            class="grid h-8 w-8 place-items-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-600">
+            &times;
+          </button>
         </div>
+      </div>
 
       @if (snapshots().length === 0) {
-        <p class="mt-3 text-sm text-slate-400">Noch keine Snapshots. Klicke oben auf &bdquo;Snapshot speichern&ldquo;, um den aktuellen Zustand festzuhalten.</p>
+        <p class="mt-4 text-sm text-slate-400">Noch keine gespeicherten Momente.</p>
       } @else {
         <!-- Color bar timeline -->
-        <div class="mt-4 flex gap-1">
+        <div class="mt-4 flex gap-0.5 overflow-hidden rounded">
           @for (snap of snapshots(); track snap.id) {
-            <button
-              type="button"
-              (click)="restoreSnapshot(snap)"
-              class="group relative h-8 min-w-[12px] flex-1 rounded-lg transition hover:scale-y-110"
+            <button type="button" (click)="restoreSnapshot(snap)"
+              class="group relative h-6 min-w-0 flex-1 transition hover:scale-y-125"
               [class]="scoreColor(snapshotScore(snap))"
-              [title]="formatTime(snap.timestamp) + ' – ' + snap.modeLabel + ' (' + snapshotScore(snap) + ')'">
-              <span class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
+              [title]="formatTime(snap.timestamp) + ' \u2013 ' + snap.modeLabel">
+              <span class="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
                 {{ formatTime(snap.timestamp) }}
               </span>
             </button>
@@ -214,23 +239,32 @@
         </div>
 
         <!-- Snapshot list -->
-        <div class="mt-3 grid gap-1.5">
-          @for (snap of snapshots(); track snap.id) {
-            <div class="flex items-center gap-3 rounded-xl border border-slate-100 px-3 py-2 text-sm">
-              <div class="h-2.5 w-2.5 shrink-0 rounded-full" [class]="scoreColor(snapshotScore(snap))"></div>
-              <span class="font-semibold text-slate-700">{{ formatTime(snap.timestamp) }}</span>
-              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ snap.modeLabel }}</span>
-              <span class="text-xs text-slate-400">Reg {{ snap.regulation }} &middot; Frik {{ snap.friction }}</span>
-              <div class="ml-auto flex gap-2">
-                <button type="button" (click)="restoreSnapshot(snap)" class="text-xs font-semibold text-indigo-600 hover:underline">laden</button>
-                <button type="button" (click)="removeSnapshot(snap.id)" class="text-xs font-semibold text-red-500 hover:underline">&#x2715;</button>
+        <div class="mt-4 grid gap-1.5">
+          @for (snap of snapshots().slice(-200); track snap.id) {
+            <div class="rounded-xl border border-slate-100">
+              <!-- Row header -->
+              <div class="flex items-center gap-3 px-3 py-2 text-sm">
+                <div class="h-2.5 w-2.5 shrink-0 rounded-full" [class]="scoreColor(snapshotScore(snap))"></div>
+                <span class="font-semibold text-slate-700">{{ formatTime(snap.timestamp) }}</span>
+                <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ snap.modeLabel }}</span>
+                <span class="text-xs text-slate-400">Score {{ snapshotScore(snap) }}</span>
+                <button type="button" (click)="removeSnapshot(snap.id)" class="ml-auto text-xs font-semibold text-red-400 hover:text-red-600">&#x2715;</button>
+              </div>
+              <!-- Slider bars (always visible) -->
+              <div class="grid gap-1 px-3 pb-2">
+                @for (entry of snap.values | keyvalue; track entry.key) {
+                  <div class="flex items-center gap-2 text-[11px]">
+                    <span class="w-28 shrink-0 truncate text-slate-500">{{ sliderLabel(entry.key) }}</span>
+                    <div class="relative h-1.5 flex-1 rounded-full bg-slate-200">
+                      <div class="absolute inset-y-0 left-0 rounded-full bg-indigo-400" [style.width.%]="entry.value"></div>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
           }
         </div>
       }
-      </section>
-    }
-
+    </div>
   </div>
-</div>
+}
