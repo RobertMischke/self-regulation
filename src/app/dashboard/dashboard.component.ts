@@ -1,103 +1,73 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProgressBarComponent } from '../components/progress-bar.component';
 import { MetricCardComponent } from '../components/metric-card.component';
-import { SliderItem } from '../models/types';
-import { modeDefinitions, dashboardDefinitions, questionGroups } from '../models/constants';
-import { calculateModel, calculateIdealStateDistance, getSystemFeedback } from '../models/regulation';
+import { DashboardConfig } from '../models/dashboard-config';
+import { ModeDefinition, RegulationModel, SliderItem } from '../models/types';
+import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard-registry';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FormsModule, ProgressBarComponent, MetricCardComponent],
+  imports: [FormsModule, ProgressBarComponent, MetricCardComponent, RouterLink],
   templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent {
-  readonly dashboardDefinitions = dashboardDefinitions;
-  readonly questionGroups = questionGroups;
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
-  selectedDashboardKey = signal('focus');
-  arousal = signal(46);
-  mood = signal(58);
-  centeredness = signal(43);
-  clarity = signal(49);
-  bodyEnergy = signal(55);
-  emotionalPressure = signal(41);
-  stimulationNeed = signal(63);
-  currentTask = signal('Ich möchte meine Aufmerksamkeit so regulieren, dass ich gut arbeite, ohne mich zu überreizen.');
-  microCommitment = signal('Nur den nächsten kleinen Schritt sichtbar machen.');
-  focusMessage = signal('');
+  readonly config: DashboardConfig;
+  readonly values: WritableSignal<Record<string, number>>;
+  readonly currentTask: WritableSignal<string>;
+  readonly microCommitment: WritableSignal<string>;
+  readonly focusMessage = signal('');
 
-  selectedDashboard = computed(() =>
-    dashboardDefinitions.find(d => d.key === this.selectedDashboardKey()) ?? dashboardDefinitions[0]
-  );
+  readonly model: Signal<RegulationModel>;
+  readonly activeMode: Signal<ModeDefinition>;
+  readonly systemFeedback: Signal<{ title: string; text: string; badge: string }>;
+  readonly idealStateDistance: Signal<number>;
+  readonly sliderItems: Signal<SliderItem[]>;
 
-  model = computed(() =>
-    calculateModel({
-      arousal: this.arousal(),
-      mood: this.mood(),
-      centeredness: this.centeredness(),
-      clarity: this.clarity(),
-      bodyEnergy: this.bodyEnergy(),
-      emotionalPressure: this.emotionalPressure(),
-      stimulationNeed: this.stimulationNeed(),
-    })
-  );
+  constructor() {
+    const key = this.route.snapshot.paramMap.get('key') ?? '';
+    const config = getDashboardConfig(key);
+    if (!config) {
+      this.config = getAllDashboardConfigs()[0];
+      this.router.navigate(['/']);
+    } else {
+      this.config = config;
+    }
 
-  activeMode = computed(() => modeDefinitions[this.model().modeKey]);
+    this.values = signal({ ...this.config.defaultValues });
+    this.currentTask = signal(this.config.defaultTask);
+    this.microCommitment = signal(this.config.defaultMicroCommitment);
 
-  systemFeedback = computed(() => getSystemFeedback(this.model().modeKey));
-
-  idealStateDistance = computed(() =>
-    calculateIdealStateDistance(
-      this.arousal(),
-      this.mood(),
-      this.centeredness(),
-      this.clarity(),
-      this.bodyEnergy(),
-      this.emotionalPressure(),
-      this.stimulationNeed()
-    )
-  );
-
-  sliderItems = computed<SliderItem[]>(() => [
-    { key: 'arousal', label: 'Aktivierung / Arousal', value: this.arousal(), left: 'zu niedrig', right: 'zu hoch' },
-    { key: 'mood', label: 'Gefühlslage', value: this.mood(), left: 'niedrig', right: 'gut' },
-    { key: 'centeredness', label: 'Mitte / innere Balance', value: this.centeredness(), left: 'weg', right: 'zentriert' },
-    { key: 'clarity', label: 'Klarheit', value: this.clarity(), left: 'vernebelt', right: 'klar' },
-    { key: 'bodyEnergy', label: 'Körperenergie', value: this.bodyEnergy(), left: 'leer', right: 'wach' },
-    { key: 'emotionalPressure', label: 'Emotionaler Druck', value: this.emotionalPressure(), left: 'ruhig', right: 'hoch' },
-    { key: 'stimulationNeed', label: 'Bedarf an Stimulation', value: this.stimulationNeed(), left: 'wenig', right: 'viel' },
-  ]);
+    this.model = computed(() => this.config.calculate(this.values()));
+    this.activeMode = computed(() => this.config.modes[this.model().modeKey]);
+    this.systemFeedback = computed(() => this.config.getSystemFeedback(this.model().modeKey));
+    this.idealStateDistance = computed(() => this.config.calculateIdealDistance(this.values()));
+    this.sliderItems = computed(() =>
+      this.config.sliders.map((s) => ({
+        ...s,
+        value: this.values()[s.key] ?? 50,
+      }))
+    );
+  }
 
   onSliderChange(key: string, value: number): void {
-    const signalMap: Record<string, ReturnType<typeof signal<number>>> = {
-      arousal: this.arousal,
-      mood: this.mood,
-      centeredness: this.centeredness,
-      clarity: this.clarity,
-      bodyEnergy: this.bodyEnergy,
-      emotionalPressure: this.emotionalPressure,
-      stimulationNeed: this.stimulationNeed,
-    };
-    signalMap[key]?.set(value);
+    this.values.update((v) => ({ ...v, [key]: value }));
   }
 
   resetToBalanced(): void {
-    this.arousal.set(55);
-    this.mood.set(62);
-    this.centeredness.set(60);
-    this.clarity.set(61);
-    this.bodyEnergy.set(60);
-    this.emotionalPressure.set(34);
-    this.stimulationNeed.set(50);
-    this.microCommitment.set('Den kleinsten nächsten Schritt auswählen und anfangen.');
+    this.values.set({ ...this.config.resetValues });
+    this.microCommitment.set(this.config.resetMicroCommitment);
     this.focusMessage.set('');
   }
 
   startFocusBlock(): void {
     this.focusMessage.set(
-      `Aktiver Modus: ${this.activeMode().label}\n\nAktuelle Aufgabe: ${this.currentTask()}\n\nNächster Schritt: ${this.microCommitment()}`
+      `Aktiver Modus: ${this.activeMode().label}\n\nAktuelle Aufgabe: ${this.currentTask()}\n\nN�chster Schritt: ${this.microCommitment()}`
     );
   }
 }

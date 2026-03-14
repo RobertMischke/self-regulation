@@ -1,121 +1,24 @@
 <div class="min-h-screen bg-slate-50 p-6 text-slate-900">
   <div class="mx-auto grid max-w-7xl gap-6">
 
-    <!-- Regulation Profiles Header -->
-    <section class="rounded-3xl bg-white p-6 shadow-sm">
-      <div class="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <div>
-          <div class="mb-3 inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-            Regulation Profiles
-          </div>
-          <h1 class="text-3xl font-semibold tracking-tight">Ein Dashboard-System für unterschiedliche Ziele und Profile</h1>
-          <p class="mt-3 max-w-3xl leading-7 text-slate-600">
-            Statt für jeden Anwendungsfall ein komplett neues Tool zu bauen, kann dieselbe Dashboard-Logik parametrisiert
-            werden. Das System bleibt gleich: Zustände erfassen, Muster erkennen, Modus ableiten und passende
-            Interventionen anbieten. Unterschiede entstehen über Konfigurationen für Metriken, Texte, Zielzustände,
-            Fragen, Regeln und Profile.
-          </p>
-          <div class="mt-4 rounded-2xl bg-slate-100 p-4 text-sm leading-6 text-slate-700">
-            Denkbar ist ein Admin-Tool, in dem du pro Dashboard definierst: welche Skalen gezeigt werden, welche
-            Schwellwerte Modi auslösen, welche Reflexionsfragen erscheinen, welche Interventionen empfohlen werden und
-            welches Zielbild das jeweilige Profil hat.
-          </div>
-        </div>
-
-        <div class="rounded-3xl border border-slate-200 p-5">
-          <h2 class="text-xl font-semibold">Konfigurierbares System</h2>
-          <div class="mt-4 grid gap-3 text-sm text-slate-700">
-            <div class="rounded-2xl bg-slate-50 p-3">Metriken: frei definierbare Slider, Scores und Labels</div>
-            <div class="rounded-2xl bg-slate-50 p-3">Regeln: Schwellwerte und Moduslogik pro Dashboard</div>
-            <div class="rounded-2xl bg-slate-50 p-3">Content: Fragen, Feedbacktexte und Interventionen pro Profil</div>
-            <div class="rounded-2xl bg-slate-50 p-3">Zielbild: eigener Idealzustand je Zielgruppe oder Use Case</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Dashboard Selection -->
-    <section class="rounded-3xl bg-white p-6 shadow-sm">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 class="text-2xl font-semibold">Beispiele für unterschiedliche Dashboards</h2>
-          <p class="mt-2 text-slate-600">Alle auf derselben Engine, aber mit unterschiedlichen Zielen, Metriken und Interventionen.</p>
-        </div>
-        <div class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-          Aktives Beispiel: {{ selectedDashboard().title }}
-        </div>
-      </div>
-
-      <div class="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        @for (def of dashboardDefinitions; track def.key) {
-          <button
-            type="button"
-            (click)="selectedDashboardKey.set(def.key)"
-            class="rounded-3xl border p-5 text-left transition"
-            [class]="def.key === selectedDashboard().key
-              ? 'border-slate-900 bg-slate-900 text-white'
-              : 'border-slate-200 bg-white text-slate-900'"
-          >
-            <div class="text-lg font-semibold">{{ def.title }}</div>
-            <div class="mt-2 text-sm" [class]="def.key === selectedDashboard().key ? 'text-slate-200' : 'text-slate-600'">
-              {{ def.goal }}
-            </div>
-            <div class="mt-3 text-sm" [class]="def.key === selectedDashboard().key ? 'text-slate-300' : 'text-slate-500'">
-              {{ def.audience }}
-            </div>
-            <div class="mt-4 flex flex-wrap gap-2">
-              @for (metric of def.metrics; track metric) {
-                <span
-                  class="rounded-full px-2.5 py-1 text-xs font-semibold"
-                  [class]="def.key === selectedDashboard().key ? 'bg-white/10 text-white' : 'bg-slate-100 text-slate-700'"
-                >
-                  {{ metric }}
-                </span>
-              }
-            </div>
-          </button>
-        }
-      </div>
-    </section>
-
-    <!-- Active Profile Description -->
-    <section class="grid gap-6 rounded-3xl bg-white p-6 shadow-sm lg:grid-cols-[1fr_1fr]">
-      <div>
-        <h2 class="text-2xl font-semibold">Aktive Profilbeschreibung</h2>
-        <div class="mt-4 rounded-2xl border border-slate-200 p-5">
-          <div class="text-xl font-semibold">{{ selectedDashboard().title }}</div>
-          <p class="mt-3 leading-7 text-slate-600">{{ selectedDashboard().goal }}</p>
-          <p class="mt-3 text-sm text-slate-500">{{ selectedDashboard().audience }}</p>
-        </div>
-      </div>
-
-      <div>
-        <h2 class="text-2xl font-semibold">Was ein Admin konfigurieren würde</h2>
-        <div class="mt-4 grid gap-3">
-          <div class="rounded-2xl border border-slate-200 p-4 text-slate-700">Dashboard-Metadaten: Name, Ziel, Zielgruppe, Tonalität</div>
-          <div class="rounded-2xl border border-slate-200 p-4 text-slate-700">Skalen: welche Inputs erhoben werden und wie sie benannt sind</div>
-          <div class="rounded-2xl border border-slate-200 p-4 text-slate-700">Berechnung: Gewichtungen, Zielwerte, Regeln und Moduswechsel</div>
-          <div class="rounded-2xl border border-slate-200 p-4 text-slate-700">Interventionen: pro Zustand unterschiedliche Vorschläge und Fragen</div>
-        </div>
-      </div>
-    </section>
+    <!-- Back Link -->
+    <a routerLink="/" class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900">
+      &#8592; Alle Dashboards
+    </a>
 
     <!-- Main Dashboard Header -->
     <section class="grid gap-6 rounded-3xl bg-white p-6 shadow-sm lg:grid-cols-[1.5fr_1fr] lg:items-center">
       <div>
         <div class="mb-4 flex items-center gap-4">
-          <div class="grid h-14 w-14 place-items-center rounded-2xl bg-slate-900 text-2xl text-white">🧠</div>
+          <div class="grid h-14 w-14 place-items-center rounded-2xl bg-slate-900 text-2xl text-white">{{ config.icon }}</div>
           <div>
-            <h2 class="text-3xl font-semibold tracking-tight">ADHS-Regulations-Dashboard</h2>
-            <p class="text-sm text-slate-500">
-              Interaktive Feedback-Schleife für Aktivierung, Gefühlslage, Mitte und Arbeitsmodus.
-            </p>
+            <h2 class="text-3xl font-semibold tracking-tight">{{ config.title }}</h2>
+            <p class="text-sm text-slate-500">{{ config.subtitle }}</p>
           </div>
         </div>
 
         <div class="rounded-2xl bg-slate-100 p-4 text-sm leading-6 text-slate-700">
-          Dieses Tool ist eine Hilfe zur Selbststeuerung, nicht zur Diagnose. Es soll dich dabei unterstützen,
-          den passenden Modus zu finden: Starten, Routine, Deep Work oder Reset.
+          {{ config.disclaimer }}
         </div>
       </div>
 
@@ -169,7 +72,7 @@
           </div>
 
           <div>
-            <label for="microCommitment" class="font-semibold">Dein kleinster nächster Schritt</label>
+            <label for="microCommitment" class="font-semibold">Dein kleinster n&#228;chster Schritt</label>
             <textarea
               id="microCommitment"
               [value]="microCommitment()"
@@ -228,7 +131,7 @@
 
           <div class="mt-4 grid gap-3 sm:grid-cols-2">
             <app-metric-card label="Unterstimulation" [value]="model().underStimulation" />
-            <app-metric-card label="Überstimulation" [value]="model().overStimulation" [danger]="true" />
+            <app-metric-card label="&#220;berstimulation" [value]="model().overStimulation" [danger]="true" />
           </div>
 
           <div class="mt-4">
@@ -255,42 +158,17 @@
     </div>
 
     <!-- Question Groups -->
-    <section class="grid gap-6 lg:grid-cols-2 xl:grid-cols-4">
-      <div class="rounded-3xl bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xl font-semibold">Fragen bei Unterstimulation</h2>
-        <div class="grid gap-3">
-          @for (question of questionGroups.underStimulated; track question) {
-            <div class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700">{{ question }}</div>
-          }
+    <section class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      @for (group of config.questionGroups; track group.title) {
+        <div class="rounded-3xl bg-white p-6 shadow-sm">
+          <h2 class="mb-4 text-xl font-semibold">{{ group.title }}</h2>
+          <div class="grid gap-3">
+            @for (question of group.questions; track question) {
+              <div class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700">{{ question }}</div>
+            }
+          </div>
         </div>
-      </div>
-
-      <div class="rounded-3xl bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xl font-semibold">Fragen bei Überstimulation</h2>
-        <div class="grid gap-3">
-          @for (question of questionGroups.overStimulated; track question) {
-            <div class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700">{{ question }}</div>
-          }
-        </div>
-      </div>
-
-      <div class="rounded-3xl bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xl font-semibold">Fragen zu Gefühlen</h2>
-        <div class="grid gap-3">
-          @for (question of questionGroups.emotionalLoad; track question) {
-            <div class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700">{{ question }}</div>
-          }
-        </div>
-      </div>
-
-      <div class="rounded-3xl bg-white p-6 shadow-sm">
-        <h2 class="mb-4 text-xl font-semibold">Fragen zum Körper</h2>
-        <div class="grid gap-3">
-          @for (question of questionGroups.bodySignals; track question) {
-            <div class="rounded-2xl border border-slate-200 bg-white p-3 text-slate-700">{{ question }}</div>
-          }
-        </div>
-      </div>
+      }
     </section>
 
   </div>

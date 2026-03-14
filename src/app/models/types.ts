@@ -6,14 +6,6 @@ export type ModeDefinition = {
   interventions: string[];
 };
 
-export type DashboardDefinition = {
-  key: string;
-  title: string;
-  goal: string;
-  audience: string;
-  metrics: string[];
-};
-
 export type RegulationModel = {
   underStimulation: number;
   overStimulation: number;
