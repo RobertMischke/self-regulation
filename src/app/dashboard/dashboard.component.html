@@ -63,8 +63,8 @@
               <input
                 [id]="'slider-' + item.key"
                 type="range" [min]="0" [max]="100" [step]="1"
-                [value]="item.value"
-                (input)="onSliderChange(item.key, $any($event.target).valueAsNumber)"
+                [ngModel]="item.value"
+                (ngModelChange)="onSliderChange(item.key, $event)"
                 class="w-full"
               />
               <div class="flex items-center justify-between -mt-0.5">
