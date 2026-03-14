@@ -6,7 +6,7 @@
       &#8592; Alle Dashboards
     </a>
 
-    <!-- Main Dashboard Header -->
+    <!-- Header -->
     <section class="rounded-3xl bg-white p-6 shadow-sm">
       <div class="flex items-center gap-4">
         <div class="grid h-14 w-14 place-items-center rounded-2xl bg-slate-900 text-2xl text-white">{{ config.icon }}</div>
@@ -15,14 +15,20 @@
           <p class="text-sm text-slate-500">{{ config.subtitle }}</p>
         </div>
       </div>
-
-      <div class="mt-4 rounded-2xl bg-slate-100 p-4 text-sm leading-6 text-slate-700">
-        {{ config.disclaimer }}
-      </div>
+      @if (!disclaimerDismissed()) {
+        <div class="mt-4 flex items-start gap-3 rounded-2xl bg-slate-100 p-4 text-sm leading-6 text-slate-700">
+          <span class="flex-1">{{ config.disclaimer }}</span>
+          <button (click)="dismissDisclaimer()" class="shrink-0 rounded-lg bg-slate-200 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-300 transition-colors" title="Gelesen">
+            ✓ Gelesen
+          </button>
+        </div>
+      }
     </section>
 
-    <!-- Live Input + Feedback -->
+    <!-- ═══ TOP: Input (left) + Analyse (right) ═══ -->
     <div class="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+
+      <!-- Left: Live-Input -->
       <section class="rounded-3xl bg-white p-6 shadow-sm">
         <h2 class="mb-4 text-xl font-semibold">Live-Input</h2>
 
@@ -33,18 +39,13 @@
                 <label [for]="'slider-' + item.key" class="font-semibold">{{ item.label }}</label>
                 <span>{{ item.value }}</span>
               </div>
-
               <input
                 [id]="'slider-' + item.key"
-                type="range"
-                [min]="0"
-                [max]="100"
-                [step]="1"
+                type="range" [min]="0" [max]="100" [step]="1"
                 [value]="item.value"
                 (input)="onSliderChange(item.key, $any($event.target).valueAsNumber)"
                 class="w-full"
               />
-
               <div class="flex justify-between text-xs text-slate-400">
                 <span>{{ item.left }}</span>
                 <span>{{ item.right }}</span>
@@ -53,115 +54,148 @@
           }
         </div>
 
-        <div class="mt-6">
-          <label for="intention" class="font-semibold">Was ist dir gerade wichtig?</label>
-          <textarea
-            id="intention"
-            [value]="intention()"
-            (input)="intention.set($any($event.target).value)"
-            class="mt-2 min-h-[120px] w-full rounded-2xl border border-slate-300 bg-white p-4"
-          ></textarea>
-        </div>
-
-        <div class="mt-4 flex gap-3">
-          <button
-            type="button"
-            (click)="resetToBalanced()"
-            class="rounded-2xl bg-slate-200 px-4 py-3 font-semibold text-slate-900"
-          >
+        <div class="mt-6 flex gap-3">
+          <button type="button" (click)="resetToBalanced()"
+            class="rounded-2xl bg-slate-200 px-4 py-3 text-sm font-semibold text-slate-900">
             Auf Balance setzen
           </button>
-          <button
-            type="button"
-            (click)="takeSnapshot()"
-            class="rounded-2xl bg-indigo-600 px-4 py-3 font-semibold text-white transition hover:bg-indigo-700"
-          >
+          <button type="button" (click)="takeSnapshot()"
+            class="rounded-2xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700">
             Snapshot speichern
           </button>
         </div>
       </section>
 
-      <div class="grid gap-6">
-        <!-- Radar Chart -->
+      <!-- Right: Analyse (compact) -->
+      <div class="grid gap-6 content-start">
+
+        <!-- Radar -->
         <section class="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 class="mb-4 text-xl font-semibold">Zustandsbild</h2>
+          <h2 class="mb-2 text-lg font-semibold">Zustandsbild</h2>
           <app-radar-chart [items]="sliderItems()" (valueChange)="onSliderChange($event.key, $event.value)" />
         </section>
 
-        <!-- Metriken -->
-        <section class="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 class="mb-4 text-xl font-semibold">Metriken</h2>
-
-          <div class="grid gap-3 sm:grid-cols-2">
+        <!-- Metriken (compact) -->
+        <section class="rounded-3xl bg-white p-5 shadow-sm">
+          <h2 class="mb-3 text-lg font-semibold">Analyse</h2>
+          <div class="grid gap-2 sm:grid-cols-2">
             <app-metric-card label="Regulation" [value]="regulationValue()" />
             <app-metric-card label="Friktion" [value]="frictionValue()" [danger]="true" />
             @for (dm of displayMetrics(); track dm.metric.key) {
               <app-metric-card [label]="dm.metric.label" [value]="dm.value" [danger]="dm.metric.danger ?? false" />
             }
           </div>
-
-          <div class="mt-4">
-            <div class="flex items-center justify-between gap-3 text-sm">
+          <div class="mt-3">
+            <div class="flex items-center justify-between gap-3 text-xs text-slate-500">
               <span>Abstand zum Idealzustand</span>
-              <strong>{{ idealStateDistance() }}</strong>
+              <strong class="text-sm text-slate-700">{{ idealStateDistance() }}</strong>
             </div>
             <app-progress-bar [value]="100 - idealStateDistance()" [neutral]="true" />
           </div>
         </section>
 
-        <!-- Per-Slider Feedback -->
-        <section class="rounded-3xl bg-white p-6 shadow-sm">
-          <h2 class="mb-4 text-xl font-semibold">Einzelne Hinweise</h2>
-
-          @if (sliderFeedbacks().length === 0) {
-            <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-800">
-              Alle Werte im grünen Bereich – keine Auffälligkeiten.
-            </div>
+        <!-- Compact Verlaufsmodul -->
+        <section class="rounded-3xl bg-white p-4 shadow-sm">
+          <div class="flex items-center justify-between gap-2">
+            <h2 class="text-sm font-semibold text-slate-500">Verlauf</h2>
+            <span class="text-[11px] text-slate-400">{{ snapshots().length }} Snapshots</span>
+          </div>
+          @if (snapshots().length === 0) {
+            <p class="mt-2 text-xs text-slate-400">Noch keine Snapshots.</p>
           } @else {
-            <div class="grid gap-4">
-              @for (fb of sliderFeedbacks(); track fb.sliderKey + fb.direction) {
-                <div class="rounded-2xl border p-4"
+            <div class="mt-2 flex gap-0.5">
+              @for (snap of snapshots(); track snap.id) {
+                <button type="button" (click)="restoreSnapshot(snap)"
+                  class="group relative h-5 min-w-[6px] flex-1 rounded transition hover:scale-y-125"
+                  [class]="scoreColor(snapshotScore(snap))"
+                  [title]="formatTime(snap.timestamp) + ' – ' + snap.modeLabel">
+                  <span class="pointer-events-none absolute -top-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
+                    {{ formatTime(snap.timestamp) }}
+                  </span>
+                </button>
+              }
+            </div>
+          }
+          <button type="button" (click)="showHistory.set(!showHistory())"
+            class="mt-3 w-full rounded-xl border border-slate-200 py-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-50 hover:text-slate-700">
+            {{ showHistory() ? 'Verlauf schließen' : 'Verlauf öffnen' }}
+          </button>
+        </section>
+      </div>
+    </div>
+
+    <!-- ═══ CENTER: Interventionen (full width, prominent) ═══ -->
+    <section class="rounded-3xl bg-white p-8 shadow-sm">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold tracking-tight">Was dir jetzt helfen kann</h2>
+        <p class="mt-1 text-sm text-slate-500">Konkrete n&auml;chste Schritte, abgeleitet aus deinem aktuellen Zustand.</p>
+      </div>
+
+      @if (sliderFeedbacks().length === 0) {
+        <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+          <p class="text-lg font-semibold text-emerald-800">Alles im gr&uuml;nen Bereich</p>
+          <p class="mt-1 text-sm text-emerald-700">Keine Auff&auml;lligkeiten &ndash; dein Zustand sieht stabil aus.</p>
+        </div>
+      } @else {
+        <div class="grid gap-5 lg:grid-cols-2">
+          @for (fb of sliderFeedbacks(); track fb.sliderKey + fb.direction; let i = $index) {
+            <div class="rounded-2xl border p-5"
+              [class]="fb.severity === 'severe'
+                ? 'border-red-200 bg-red-50/60'
+                : fb.severity === 'moderate'
+                  ? 'border-amber-200 bg-amber-50/60'
+                  : 'border-slate-200 bg-slate-50/60'">
+
+              <!-- Priority badge + slider context -->
+              <div class="mb-2 flex items-center gap-2">
+                <span class="grid h-6 w-6 place-items-center rounded-full text-xs font-bold text-white"
+                  [class]="fb.severity === 'severe' ? 'bg-red-500' : fb.severity === 'moderate' ? 'bg-amber-500' : 'bg-slate-400'">
+                  {{ i + 1 }}
+                </span>
+                <span class="text-sm font-bold text-slate-800">{{ fb.sliderLabel }}</span>
+                <span class="ml-auto rounded-full px-2 py-0.5 text-[11px] font-bold"
                   [class]="fb.severity === 'severe'
-                    ? 'border-red-300 bg-red-50'
+                    ? 'bg-red-200 text-red-900'
                     : fb.severity === 'moderate'
-                      ? 'border-amber-300 bg-amber-50'
-                      : 'border-slate-200 bg-slate-50'">
-                  <div class="mb-1 flex items-center justify-between gap-3">
-                    <span class="text-sm font-bold">{{ fb.sliderLabel }}</span>
-                    <span class="rounded-full px-2 py-0.5 text-xs font-bold"
-                      [class]="fb.severity === 'severe'
-                        ? 'bg-red-200 text-red-900'
-                        : fb.severity === 'moderate'
-                          ? 'bg-amber-200 text-amber-900'
-                          : 'bg-slate-200 text-slate-700'">
-                      {{ fb.severity === 'severe' ? 'Kritisch' : fb.severity === 'moderate' ? 'Auffällig' : 'Hinweis' }}
-                    </span>
-                  </div>
-                  <p class="text-sm leading-relaxed text-slate-700">{{ fb.message }}</p>
-                  @if (fb.interventions.length > 0) {
-                    <div class="mt-3 grid gap-2">
-                      @for (iv of fb.interventions; track iv) {
-                        <div class="rounded-xl border border-slate-200 bg-white p-2 text-sm text-slate-600">{{ iv }}</div>
-                      }
+                      ? 'bg-amber-200 text-amber-900'
+                      : 'bg-slate-200 text-slate-700'">
+                  {{ fb.severity === 'severe' ? 'Dringend' : fb.severity === 'moderate' ? 'Empfohlen' : 'Optional' }}
+                </span>
+              </div>
+
+              <!-- Context message -->
+              <p class="text-sm leading-relaxed text-slate-600">{{ fb.message }}</p>
+
+              <!-- Interventions as action items -->
+              @if (fb.interventions.length > 0) {
+                <div class="mt-4 grid gap-2">
+                  @for (iv of fb.interventions; track iv) {
+                    <div class="flex items-start gap-2.5 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm leading-relaxed text-slate-700">
+                      <span class="mt-0.5 shrink-0 text-indigo-500">&#9656;</span>
+                      {{ iv }}
                     </div>
                   }
                 </div>
               }
             </div>
           }
-        </section>
-      </div>
-    </div>
+        </div>
+      }
+    </section>
 
-    <!-- History -->
-    <section class="rounded-3xl bg-white p-6 shadow-sm">
-      <div class="flex items-center justify-between gap-4">
-        <h2 class="text-xl font-semibold">Historie</h2>
-        <span class="text-sm text-slate-400">{{ snapshots().length }} Snapshots (Session)</span>
-      </div>
+    <!-- ═══ BOTTOM: Historie (collapsible, secondary) ═══ -->
+    @if (showHistory()) {
+      <section class="rounded-3xl bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between gap-4">
+          <h2 class="text-lg font-semibold text-slate-600">Historie</h2>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-slate-400">{{ snapshots().length }} Snapshots (Session)</span>
+            <button type="button" (click)="showHistory.set(false)" class="text-xs font-semibold text-slate-400 hover:text-slate-600">&times; Schließen</button>
+          </div>
+        </div>
 
       @if (snapshots().length === 0) {
-        <p class="mt-4 text-sm text-slate-400">Noch keine Snapshots. Klicke oben auf &bdquo;Snapshot speichern&ldquo;, um den aktuellen Zustand festzuhalten.</p>
+        <p class="mt-3 text-sm text-slate-400">Noch keine Snapshots. Klicke oben auf &bdquo;Snapshot speichern&ldquo;, um den aktuellen Zustand festzuhalten.</p>
       } @else {
         <!-- Color bar timeline -->
         <div class="mt-4 flex gap-1">
@@ -169,7 +203,7 @@
             <button
               type="button"
               (click)="restoreSnapshot(snap)"
-              class="group relative h-10 min-w-[12px] flex-1 rounded-lg transition hover:scale-y-110"
+              class="group relative h-8 min-w-[12px] flex-1 rounded-lg transition hover:scale-y-110"
               [class]="scoreColor(snapshotScore(snap))"
               [title]="formatTime(snap.timestamp) + ' – ' + snap.modeLabel + ' (' + snapshotScore(snap) + ')'">
               <span class="pointer-events-none absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-white opacity-0 transition group-hover:opacity-100">
@@ -179,14 +213,14 @@
           }
         </div>
 
-        <!-- Snapshot details -->
-        <div class="mt-4 grid gap-2">
+        <!-- Snapshot list -->
+        <div class="mt-3 grid gap-1.5">
           @for (snap of snapshots(); track snap.id) {
             <div class="flex items-center gap-3 rounded-xl border border-slate-100 px-3 py-2 text-sm">
-              <div class="h-3 w-3 shrink-0 rounded-full" [class]="scoreColor(snapshotScore(snap))"></div>
+              <div class="h-2.5 w-2.5 shrink-0 rounded-full" [class]="scoreColor(snapshotScore(snap))"></div>
               <span class="font-semibold text-slate-700">{{ formatTime(snap.timestamp) }}</span>
               <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{{ snap.modeLabel }}</span>
-              <span class="text-xs text-slate-400">Reg {{ snap.regulation }} · Frik {{ snap.friction }}</span>
+              <span class="text-xs text-slate-400">Reg {{ snap.regulation }} &middot; Frik {{ snap.friction }}</span>
               <div class="ml-auto flex gap-2">
                 <button type="button" (click)="restoreSnapshot(snap)" class="text-xs font-semibold text-indigo-600 hover:underline">laden</button>
                 <button type="button" (click)="removeSnapshot(snap.id)" class="text-xs font-semibold text-red-500 hover:underline">&#x2715;</button>
@@ -195,7 +229,8 @@
           }
         </div>
       }
-    </section>
+      </section>
+    }
 
   </div>
 </div>

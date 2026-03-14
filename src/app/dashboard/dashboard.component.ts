@@ -35,9 +35,11 @@ export class DashboardComponent {
   readonly sliderFeedbacks: Signal<ActiveSliderFeedback[]>;
   readonly snapshots: WritableSignal<Snapshot[]>;
   readonly showHistory: WritableSignal<boolean> = signal(false);
+  readonly disclaimerDismissed: WritableSignal<boolean>;
 
   constructor() {
     const key = this.route.snapshot.paramMap.get('key') ?? '';
+    this.disclaimerDismissed = signal(localStorage.getItem('disclaimer_dismissed') === '1');
     const config = getDashboardConfig(key);
     if (!config) {
       this.config = getAllDashboardConfigs()[0];
@@ -108,6 +110,11 @@ export class DashboardComponent {
   restoreSnapshot(snap: Snapshot): void {
     this.values.set({ ...snap.values });
     this.intention.set(snap.intention);
+  }
+
+  dismissDisclaimer(): void {
+    localStorage.setItem('disclaimer_dismissed', '1');
+    this.disclaimerDismissed.set(true);
   }
 
   snapshotScore = snapshotScore;
