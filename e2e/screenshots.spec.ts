@@ -20,3 +20,21 @@ for (const page of pages) {
     });
   });
 }
+
+test('screenshot: modal-verlauf', async ({ page: p }) => {
+  await p.goto('/dashboard/adhs-regulation', { waitUntil: 'networkidle' });
+  await p.waitForTimeout(300);
+  // Save two snapshots so the wave has data
+  for (let i = 0; i < 3; i++) {
+    const btn = p.getByRole('button', { name: 'Moment speichern' });
+    await btn.click();
+    await p.waitForTimeout(200);
+  }
+  // Open the modal
+  const verlauf = p.getByRole('button', { name: 'Verlauf öffnen' });
+  await verlauf.click();
+  await p.waitForTimeout(400);
+  await p.screenshot({
+    path: join(SCREENSHOT_DIR, 'modal-verlauf.png'),
+  });
+});

@@ -164,6 +164,26 @@ export class DashboardComponent {
     return this.config.sliders.find(s => s.key === key)?.label ?? key;
   }
 
+  miniRadarPoints(values: Record<string, number>, cx: number, cy: number, r: number): string {
+    const keys = this.config.sliders.map(s => s.key);
+    const n = keys.length;
+    return keys.map((key, i) => {
+      const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
+      const v = (values[key] ?? 50) / 100;
+      const x = cx + r * v * Math.cos(angle);
+      const y = cy + r * v * Math.sin(angle);
+      return `${x},${y}`;
+    }).join(' ');
+  }
+
+  miniRadarRing(cx: number, cy: number, r: number, fraction: number): string {
+    const n = this.config.sliders.length;
+    return Array.from({ length: n }, (_, i) => {
+      const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
+      return `${cx + r * fraction * Math.cos(angle)},${cy + r * fraction * Math.sin(angle)}`;
+    }).join(' ');
+  }
+
   metricDescription(key: string): string | undefined {
     return this.config.computedMetrics.find(m => m.key === key)?.description;
   }
@@ -204,5 +224,60 @@ export class DashboardComponent {
 
   formatTime(ts: number): string {
     return new Date(ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  formatDateTime(ts: number): string {
+    const d = new Date(ts);
+    const date = d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+    const time = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+    return `${date}, ${time}`;
+  }
+
+  scoreToY(score: number, snaps: Snapshot[], height: number): number {
+    const scores = snaps.map(s => snapshotScore(s));
+    const min = Math.min(...scores);
+    const max = Math.max(...scores);
+    const spread = max - min;
+    if (spread < 5) {
+      // Almost no variation — center the line
+      return height * 0.5;
+    }
+    const pad = spread * 0.15;
+    const lo = min - pad;
+    const hi = max + pad;
+    const norm = (score - lo) / (hi - lo);
+    return height - Math.max(0, Math.min(1, norm)) * height;
+  }
+
+  wavePath(snaps: Snapshot[], width: number, height: number): string {
+    if (snaps.length === 0) return '';
+    if (snaps.length === 1) {
+      return `M0,${height * 0.5} L${width},${height * 0.5}`;
+    }
+    const step = width / (snaps.length - 1);
+    const points = snaps.map((s, i) => ({
+      x: i * step,
+      y: this.scoreToY(snapshotScore(s), snaps, height),
+    }));
+    let d = `M${points[0].x},${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      const cp = step * 0.4;
+      d += ` C${points[i - 1].x + cp},${points[i - 1].y} ${points[i].x - cp},${points[i].y} ${points[i].x},${points[i].y}`;
+    }
+    return d;
+  }
+
+  waveAreaPath(snaps: Snapshot[], width: number, height: number): string {
+    const line = this.wavePath(snaps, width, height);
+    if (!line) return '';
+    return line + ` L${width},${height} L0,${height} Z`;
+  }
+
+  snapshotStrokeColor(snap: Snapshot): string {
+    const feedbacks = collectSliderFeedbacks(this.config, snap.values);
+    if (feedbacks.length === 0) return '#34d399';
+    if (feedbacks.some(f => f.severity === 'severe')) return '#ef4444';
+    if (feedbacks.some(f => f.severity === 'moderate')) return '#f59e0b';
+    return '#94a3b8';
   }
 }
