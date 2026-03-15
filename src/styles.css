@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+/* Instant native tooltips */
+.instant-tooltip { position: relative; }
+.instant-tooltip:hover::after {
+  content: attr(title);
+  position: absolute;
+  left: 50%; bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  background: #1e293b; color: #fff;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0;
+  animation: tooltip-in 0.1s ease-out forwards;
+}
+@keyframes tooltip-in { to { opacity: 1; } }
