@@ -60,6 +60,19 @@ import { RouterLink } from '@angular/router';
           </p>
         </section>
 
+        <!-- AI-Slop -->
+        <section class="mt-10">
+          <h2 class="text-xl font-bold">AI-Slop</h2>
+          <p class="mt-3 text-sm leading-7 text-slate-600">
+            Dieser Prototyp hat weniger als 10 Stunden Arbeit gekostet &ndash;
+            fast komplett AI-gest&uuml;tzt gebaut. Ein guter Teil der Arbeit war dabei inhaltlich. 
+          </p>
+          <p class="mt-3 text-sm leading-7 text-slate-600">
+            Ich gehe davon aus, dass mit erstaunlich wenig Aufwand auch Payments, Speichern von Historie
+            und mehr Content eingebaut werden kann &ndash; so dass die Entwicklungskosten insgesamt enorm klein bleiben.
+          </p>
+        </section>
+
         <!-- Kontakt -->
         <section class="mt-12 rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6">
           <h2 class="text-xl font-bold">Kontakt</h2>

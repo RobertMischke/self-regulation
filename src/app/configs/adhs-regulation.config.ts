@@ -8,7 +8,7 @@ export const adhsRegulationConfig: DashboardConfig = {
   goal: 'Aufmerksamkeit stabilisieren, Reibung senken und ins Arbeiten kommen.',
   audience: 'Für Fokus, Deep Work, exekutive Steuerung und kognitive Klarheit.',
   disclaimer:
-    'Dieses Tool ist eine Hilfe zur Selbststeuerung, nicht zur Diagnose. Es soll dich dabei unterstützen, den passenden Modus zu finden: Starten, Routine, Deep Work oder Reset.',
+    'Dieses Tool ist eine Hilfe zur Selbststeuerung, nicht zur Diagnose. Es soll dich dabei unterstützen, dich zu regulieren.',
   metricLabels: ['Aktivierung', 'Klarheit', 'Friktion', 'Stimulation'],
 
   sliders: [

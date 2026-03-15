@@ -1,8 +1,8 @@
 <div class="min-h-screen bg-slate-50 p-6 text-slate-900">
   <div class="relative mx-auto grid max-w-7xl gap-6">
 
-    <!-- Nav-Link (Desktop, links vom Content) -->
-    <a routerLink="/" class="hidden xl:inline-flex absolute -left-40 top-2 items-center gap-1 text-sm text-slate-400 hover:text-slate-900 transition-colors">
+    <!-- Nav-Link: über dem Content auf schmalen Screens, links daneben ab xl -->
+    <a routerLink="/" class="inline-flex items-center gap-1 text-sm text-slate-400 hover:text-slate-900 transition-colors xl:absolute xl:-left-40 xl:top-2">
       &#8592; Alle Dashboards
     </a>
 
@@ -18,7 +18,7 @@
       @if (!disclaimerDismissed()) {
         <div class="mt-4 flex items-start gap-3 rounded-2xl bg-slate-100 p-4 text-sm leading-6 text-slate-700">
           <span class="flex-1">{{ config.disclaimer }}</span>
-          <button (click)="dismissDisclaimer()" class="shrink-0 rounded-lg bg-slate-200 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-300 transition-colors" title="Gelesen">
+          <button (click)="dismissDisclaimer()" class="shrink-0 rounded-xl bg-slate-200 px-4 py-1.5 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-300 transition-colors" title="Gelesen">
             ✓ Gelesen
           </button>
         </div>
@@ -30,11 +30,7 @@
 
       <!-- Left: Live-Input -->
       <section class="rounded-3xl bg-white p-6 shadow-sm">
-        <!-- Mobile back link -->
-        <a routerLink="/" class="mb-4 inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-900 xl:hidden">
-          &#8592; Alle Dashboards
-        </a>
-        <h2 class="mb-4 text-xl font-semibold">Live-Input</h2>
+        <h2 class="mb-4 text-lg font-semibold text-slate-800">Live-Input</h2>
 
         <div class="space-y-4">
           @for (item of sliderItems(); track item.key) {
@@ -89,7 +85,7 @@
         <!-- Interventionen (feste Höhe, paged) -->
         <div class="rounded-3xl bg-white p-6 shadow-sm">
           <div class="mb-4">
-            <h2 class="text-xl font-bold tracking-tight">Was dir jetzt helfen kann</h2>
+            <h2 class="text-lg font-semibold text-slate-800">Was dir jetzt helfen kann</h2>
             <p class="mt-1 text-sm text-slate-500">Konkrete n&auml;chste Schritte, abgeleitet aus deinem aktuellen Zustand.</p>
           </div>
 
@@ -206,7 +202,7 @@
 
       <!-- Zustandsbild -->
       <section class="rounded-3xl bg-white p-5 shadow-sm">
-        <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-400">Zustandsbild</h2>
+        <h2 class="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Zustandsbild</h2>
         <div class="mx-auto max-w-[420px]">
           <app-radar-chart [items]="sliderItems()" (valueChange)="onSliderChange($event.key, $event.value)" />
         </div>
@@ -215,9 +211,9 @@
       <!-- Verlauf -->
       <section class="rounded-3xl bg-white p-5 shadow-sm">
         <div class="flex items-center justify-between gap-2">
-          <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Verlauf</h2>
+          <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-400">Verlauf</h2>
           <button type="button" (click)="takeSnapshot()"
-            class="rounded-2xl bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-indigo-700">
+            class="rounded-lg border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700">
             Moment speichern
           </button>
         </div>
