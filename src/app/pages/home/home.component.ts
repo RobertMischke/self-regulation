@@ -93,13 +93,13 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
         </div>
       </section>
 
-      <!-- Co-Founder Banner -->
+      <!-- Mitstreiter Banner -->
       <section class="border-t border-indigo-100 bg-indigo-50/50">
         <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4 px-6 py-5">
           <div class="flex items-center gap-3">
             <span class="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-bold text-indigo-700">Offen</span>
             <p class="text-sm font-medium text-slate-700">
-              <strong>Co-Founder gesucht</strong> &mdash; f&uuml;r Produkt, UX, psychologische Einordnung und Go-to-Market.
+              <strong>Mitstreiter gesucht</strong> &mdash; f&uuml;r Produkt, Positionierung, Vermarktung und Go-to-Market.
             </p>
           </div>
           <a routerLink="/cofounder" class="shrink-0 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800">

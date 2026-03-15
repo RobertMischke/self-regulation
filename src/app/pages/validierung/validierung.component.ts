@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { KontaktComponent } from '../../components/kontakt.component';
 
 @Component({
   selector: 'app-validierung',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, KontaktComponent],
   template: `
     <div class="min-h-screen bg-white text-slate-900">
       <div class="mx-auto max-w-3xl px-6 py-16 sm:py-24">
@@ -121,13 +122,18 @@ import { RouterLink } from '@angular/router';
           </p>
           <p class="mt-3 text-sm leading-7 text-slate-600">
             Ich freue mich &uuml;ber R&uuml;ckmeldungen &ndash; besonders auch &uuml;ber kritische.
+            Au&szlig;erdem suche ich Mitstreiter:innen, die Lust haben, diesen Ansatz gemeinsam weiterzuentwickeln.
           </p>
           <div class="mt-4">
             <a routerLink="/cofounder" class="inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition">
-              Zum Kontakt &rarr;
+              Mitstreiter gesucht &rarr;
             </a>
           </div>
         </section>
+
+        <div class="mt-8">
+          <app-kontakt />
+        </div>
 
       </div>
     </div>

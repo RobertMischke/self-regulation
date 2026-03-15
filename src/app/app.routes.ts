@@ -10,7 +10,7 @@ export const routes: Routes = [
   { path: '', component: HomeComponent, title: 'Regulate' },
   { path: 'dashboard/:key', component: DashboardComponent },
   { path: 'impressum', component: ImpressumComponent, title: 'Impressum – Regulate' },
-  { path: 'cofounder', component: CofounderComponent, title: 'Co-Founder – Regulate' },
+  { path: 'cofounder', component: CofounderComponent, title: 'Mitstreiter gesucht – Regulate' },
   { path: 'datenschutz', component: DatenschutzComponent, title: 'Datenschutz – Regulate' },
   { path: 'validierung', component: ValidierungComponent, title: 'Wissenschaftliche Einordnung – Regulate' },
   { path: '**', redirectTo: '' },
