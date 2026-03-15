@@ -1,0 +1,22 @@
+import { test } from '@playwright/test';
+import { join } from 'path';
+
+const SCREENSHOT_DIR = join(__dirname, 'screenshots');
+
+const pages = [
+  { name: 'home', path: '/' },
+  { name: 'dashboard-adhs', path: '/dashboard/adhs-regulation' },
+  { name: 'dashboard-emotion', path: '/dashboard/emotion-regulation' },
+  { name: 'cofounder', path: '/cofounder' },
+];
+
+for (const page of pages) {
+  test(`screenshot: ${page.name}`, async ({ page: p }) => {
+    await p.goto(page.path, { waitUntil: 'networkidle' });
+    await p.waitForTimeout(500);
+    await p.screenshot({
+      path: join(SCREENSHOT_DIR, `${page.name}.png`),
+      fullPage: true,
+    });
+  });
+}

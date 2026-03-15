@@ -1,0 +1,100 @@
+---
+name: visual-feedback
+description: >
+  **WORKFLOW SKILL** — Visual design feedback loop using Playwright screenshots.
+  USE FOR: reviewing how a page looks, getting 1–3 concrete improvement suggestions, then implementing ONE improvement and re-screenshotting.
+  Workflow: specify page → screenshot → suggest → implement one change → screenshot again.
+  DO NOT USE FOR: functional testing, unit tests, or non-visual code changes.
+---
+
+# Visual Feedback Skill
+
+Take a Playwright screenshot of a specific page, review it visually, suggest 1–3 improvements, implement exactly ONE, then re-screenshot to confirm.
+
+## Prerequisites
+
+- Dev server running on `http://localhost:4200` (run `npm start` if not)
+- Playwright installed (`npm install` covers it)
+- Screenshots land in `e2e/screenshots/`
+
+## Workflow
+
+Follow these steps **exactly in order**. Do ONE improvement per cycle, not many.
+
+### Step 1 — Identify the page
+
+Ask or infer which page to review. Valid pages and their screenshot names:
+
+| Page | URL path | Screenshot file |
+|------|----------|----------------|
+| Home / Landing | `/` | `home.png` |
+| ADHS Dashboard | `/dashboard/adhs-regulation` | `dashboard-adhs.png` |
+| Emotion Dashboard | `/dashboard/emotion-regulation` | `dashboard-emotion.png` |
+| Co-Founder | `/cofounder` | `cofounder.png` |
+| Recovery Dashboard | `/dashboard/recovery` | `dashboard-recovery.png` |
+| Evening Check-in | `/dashboard/evening-checkin` | `dashboard-evening.png` |
+| Orientation Check | `/dashboard/orientation-check` | `dashboard-orientation.png` |
+| Social Regulation | `/dashboard/social-regulation` | `dashboard-social.png` |
+
+If the page isn't in the test suite yet, add it to `e2e/screenshots.spec.ts` first.
+
+### Step 2 — Take a screenshot
+
+Run the Playwright screenshot for that specific page:
+
+```
+npx playwright test --project=chromium -g "screenshot: <page-name>"
+```
+
+For example: `npx playwright test --project=chromium -g "screenshot: home"`
+
+This generates a PNG in `e2e/screenshots/<page-name>.png`.
+
+### Step 3 — View the screenshot
+
+Use the `view_image` tool to look at the screenshot file:
+
+```
+view_image("e2e/screenshots/<page-name>.png")
+```
+
+### Step 4 — Give feedback
+
+Based on the screenshot, provide **1 to 3 concrete, specific visual improvement suggestions**. Each suggestion should be:
+- Actionable (specific CSS/template change, not vague)
+- Visual (layout, spacing, colors, typography, alignment, contrast)
+- Scoped (small, incremental — not a full redesign)
+
+Format:
+```
+1. [Brief title] — [What to change and where]
+2. [Brief title] — [What to change and where]
+3. [Brief title] — [What to change and where]
+```
+
+### Step 5 — Implement ONE improvement
+
+Pick the highest-impact suggestion. Implement it. Just one — not all three.
+
+### Step 6 — Re-screenshot
+
+Run the same Playwright screenshot command again to capture the result.
+Use `view_image` to review the new screenshot.
+Briefly confirm what changed and whether it looks better.
+
+**STOP HERE.** The cycle is complete. Do not continue improving unless the user asks for another round.
+
+## Adding New Pages
+
+To add a page to the screenshot suite, edit `e2e/screenshots.spec.ts` and add an entry to the `pages` array:
+
+```typescript
+{ name: 'my-page', path: '/my-route' },
+```
+
+## Notes
+
+- Screenshots are full-page captures at 1440×900 viewport
+- The `e2e/screenshots/` folder is gitignored
+- Each cycle is ONE improvement only — no cascading changes
+- Always show the screenshot to the user via `view_image` before and after
