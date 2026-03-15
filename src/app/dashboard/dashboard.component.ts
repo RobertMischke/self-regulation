@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, Signal, signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { FormsModule, } from '@angular/forms';
@@ -22,14 +22,18 @@ function severityRank(s: 'mild' | 'moderate' | 'severe'): number {
   imports: [FormsModule, KeyValuePipe, ProgressBarComponent, MetricCardComponent, RadarChartComponent, InfoTooltipComponent, RouterLink],
   templateUrl: './dashboard.component.html',
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private titleService = inject(Title);
+  private autosaveTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly config: DashboardConfig;
   readonly values: WritableSignal<Record<string, number>>;
   readonly intention: WritableSignal<string>;
+  readonly autosaveEnabled: WritableSignal<boolean>;
+  readonly autosaveSeconds: WritableSignal<number>;
+  readonly showAutosaveInfo: WritableSignal<boolean> = signal(false);
 
   readonly computedMetrics: Signal<Record<string, number>>;
   readonly regulationValue: Signal<number>;
@@ -102,11 +106,60 @@ export class DashboardComponent {
 
     this.snapshots = signal(getSnapshots(this.config.key));
 
+    // Autosave config from localStorage
+    const savedEnabled = localStorage.getItem(`autosave_enabled_${this.config.key}`);
+    this.autosaveEnabled = signal(savedEnabled !== '0');
+    const savedSeconds = parseInt(localStorage.getItem(`autosave_seconds_${this.config.key}`) ?? '', 10);
+    this.autosaveSeconds = signal(isNaN(savedSeconds) || savedSeconds < 5 ? 30 : savedSeconds);
+
     // Reset index when feedbacks change
     effect(() => {
       this.sliderFeedbacks();
       this.activeInterventionIndex.set(0);
     });
+
+    // Autosave debounce: restart timer on every value/intention change
+    let autosaveInitialized = false;
+    effect(() => {
+      this.values();
+      this.intention();
+      const enabled = this.autosaveEnabled();
+      if (!autosaveInitialized) {
+        autosaveInitialized = true;
+        return;
+      }
+      if (enabled) {
+        this.resetAutosaveTimer();
+      }
+    });
+  }
+
+  private resetAutosaveTimer(): void {
+    if (this.autosaveTimer) clearTimeout(this.autosaveTimer);
+    this.autosaveTimer = setTimeout(() => {
+      this.takeSnapshot();
+    }, this.autosaveSeconds() * 1000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.autosaveTimer) clearTimeout(this.autosaveTimer);
+  }
+
+  toggleAutosave(): void {
+    const next = !this.autosaveEnabled();
+    this.autosaveEnabled.set(next);
+    localStorage.setItem(`autosave_enabled_${this.config.key}`, next ? '1' : '0');
+    if (!next && this.autosaveTimer) {
+      clearTimeout(this.autosaveTimer);
+      this.autosaveTimer = null;
+    }
+  }
+
+  setAutosaveSeconds(value: number): void {
+    const clamped = Math.max(5, Math.min(300, Math.round(value)));
+    this.autosaveSeconds.set(clamped);
+    localStorage.setItem(`autosave_seconds_${this.config.key}`, String(clamped));
+    if (this.autosaveEnabled()) this.resetAutosaveTimer();
   }
 
   showIntervention(index: number): void {
