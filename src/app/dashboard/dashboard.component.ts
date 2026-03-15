@@ -21,6 +21,7 @@ function severityRank(s: 'mild' | 'moderate' | 'severe'): number {
   standalone: true,
   imports: [FormsModule, KeyValuePipe, ProgressBarComponent, MetricCardComponent, RadarChartComponent, InfoTooltipComponent, RouterLink],
   templateUrl: './dashboard.component.html',
+  host: { class: 'bg-slate-50' },
 })
 export class DashboardComponent implements OnDestroy {
   private route = inject(ActivatedRoute);

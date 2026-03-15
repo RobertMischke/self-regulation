@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* Routed components fill available height */
+.grow > :not(router-outlet) {
+  flex: 1;
+}
+
 /* Instant native tooltips */
 .instant-tooltip { position: relative; }
 .instant-tooltip:hover::after {
