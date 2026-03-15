@@ -258,7 +258,7 @@
               <div class="h-2 w-2 shrink-0 rounded-full" [class]="snapshotSeverityColor(snap)"></div>
               <span class="font-semibold text-slate-700">{{ formatTime(snap.timestamp) }}</span>
               <span class="text-slate-500">{{ snap.modeLabel }}</span>
-              <span class="text-slate-400">R{{ snap.regulation }} &middot; F{{ snap.friction }}</span>
+              <span class="font-medium" [class]="snapshotSeverityTextColor(snap)">{{ snapshotIdealDistance(snap) }}</span>
               <div class="ml-auto flex gap-2">
                 <button type="button" (click)="restoreSnapshot(snap)" class="font-semibold text-indigo-600 hover:underline">laden</button>
                 <button type="button" (click)="removeSnapshot(snap.id); selectedSnapshot.set(null)" class="font-semibold text-red-500 hover:underline">&#x2715;</button>
@@ -330,7 +330,7 @@
 
         <!-- Snapshot list -->
         <div class="mt-5 grid gap-3">
-          @for (snap of snapshots(); track snap.id) {
+          @for (snap of snapshots().slice().reverse(); track snap.id) {
             <div class="rounded-2xl bg-white p-4 shadow-sm transition hover:shadow-md">
               <!-- Header -->
               <div class="flex items-center gap-3">
@@ -345,9 +345,9 @@
                   }
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="text-xs tabular-nums text-slate-400">R{{ snap.regulation }} &middot; F{{ snap.friction }}</span>
+                  <span class="text-sm font-semibold tabular-nums" [class]="snapshotSeverityTextColor(snap)">{{ snapshotIdealDistance(snap) }}</span>
                   <button type="button" (click)="restoreSnapshot(snap)" class="rounded-lg border border-slate-200 px-2.5 py-1 text-[11px] font-medium text-slate-500 transition hover:border-slate-300 hover:text-slate-700">laden</button>
-                  <button type="button" (click)="removeSnapshot(snap.id)" class="text-sm text-slate-300 transition hover:text-red-400">&times;</button>
+                  <button type="button" (click)="removeSnapshot(snap.id)" class="rounded-lg px-1.5 py-0.5 text-xs text-slate-400 transition hover:bg-red-50 hover:text-red-500">&times;</button>
                 </div>
               </div>
               <!-- Two-column: Radar + Bars -->
@@ -362,7 +362,7 @@
                 <div class="grid content-center gap-1">
                   @for (entry of snap.values | keyvalue; track entry.key) {
                     <div class="flex items-center gap-2 text-[11px]">
-                      <span class="w-24 shrink-0 truncate text-slate-400">{{ sliderLabel(entry.key) }}</span>
+                      <span class="w-32 shrink-0 truncate text-slate-400">{{ sliderLabel(entry.key) }}</span>
                       <div class="relative h-1 flex-1 rounded-full bg-slate-100">
                         <div class="absolute inset-y-0 left-0 rounded-full bg-violet-300" [style.width.%]="entry.value"></div>
                       </div>

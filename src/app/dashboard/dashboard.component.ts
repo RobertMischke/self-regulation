@@ -230,7 +230,7 @@ export class DashboardComponent {
     const d = new Date(ts);
     const date = d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
     const time = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-    return `${date}, ${time}`;
+    return `${date} ${time}`;
   }
 
   scoreToY(score: number, snaps: Snapshot[], height: number): number {
@@ -279,5 +279,17 @@ export class DashboardComponent {
     if (feedbacks.some(f => f.severity === 'severe')) return '#ef4444';
     if (feedbacks.some(f => f.severity === 'moderate')) return '#f59e0b';
     return '#94a3b8';
+  }
+
+  snapshotSeverityTextColor(snap: Snapshot): string {
+    const feedbacks = collectSliderFeedbacks(this.config, snap.values);
+    if (feedbacks.length === 0) return 'text-emerald-500';
+    if (feedbacks.some(f => f.severity === 'severe')) return 'text-red-500';
+    if (feedbacks.some(f => f.severity === 'moderate')) return 'text-amber-500';
+    return 'text-slate-400';
+  }
+
+  snapshotIdealDistance(snap: Snapshot): number {
+    return Math.round(calculateIdealDistance(this.config, snap.values));
   }
 }
