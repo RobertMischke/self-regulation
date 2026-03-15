@@ -8,6 +8,7 @@ const pages = [
   { name: 'dashboard-adhs', path: '/dashboard/adhs-regulation' },
   { name: 'dashboard-emotion', path: '/dashboard/emotion-regulation' },
   { name: 'cofounder', path: '/cofounder' },
+  { name: 'validierung', path: '/validierung' },
 ];
 
 for (const page of pages) {

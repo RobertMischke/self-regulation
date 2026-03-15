@@ -120,7 +120,9 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
               </p>
             </div>
             <div class="text-xs leading-relaxed text-slate-400 sm:text-right">
-              <div class="flex gap-3 sm:justify-end">
+              <div class="flex flex-wrap gap-3 sm:justify-end">
+                <a routerLink="/validierung" class="font-bold text-slate-500 hover:text-indigo-600 transition">Wissenschaftliche Einordnung</a>
+                <span class="text-slate-300">|</span>
                 <a routerLink="/impressum" class="font-bold text-slate-500 hover:text-indigo-600 transition">Impressum</a>
                 <span class="text-slate-300">|</span>
                 <a routerLink="/datenschutz" class="font-bold text-slate-500 hover:text-indigo-600 transition">Datenschutz</a>

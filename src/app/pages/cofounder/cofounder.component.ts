@@ -60,6 +60,19 @@ import { RouterLink } from '@angular/router';
           </p>
         </section>
 
+        <!-- Wissenschaftliche Einordnung -->
+        <section class="mt-10">
+          <h2 class="text-xl font-bold">Wissenschaftliche Basis</h2>
+          <p class="mt-3 text-sm leading-7 text-slate-600">
+            Die Inhalte der Dashboards sind aktuell nicht wissenschaftlich validiert.
+            Wir haben einen konkreten Plan, wie wir das &auml;ndern k&ouml;nnen &ndash;
+            mit AI-gest&uuml;tzter Studienanalyse und fachlicher Pr&uuml;fung.
+          </p>
+          <a routerLink="/validierung" class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition">
+            Zum Validierungsprozess &rarr;
+          </a>
+        </section>
+
         <!-- AI-Slop -->
         <section class="mt-10">
           <h2 class="text-xl font-bold">AI-Slop</h2>
