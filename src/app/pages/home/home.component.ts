@@ -33,10 +33,6 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
           <p class="mx-auto mt-5 max-w-2xl text-lg leading-7 text-slate-500">
             Dashboards und Flows f&uuml;r Selbstregulation, Fokus, Erholung und konkrete n&auml;chste Schritte.
           </p>
-          <p class="mx-auto mt-2 max-w-2xl text-base leading-7 text-slate-400">
-            Verstehen, was gerade los ist &ndash; und direkt mit kleinen Schritten ins Handeln kommen.
-            Keine Diagnose. Kein Druck.
-          </p>
 
           <!-- Anchor CTAs -->
           <div class="mt-6 flex flex-wrap justify-center gap-3">
