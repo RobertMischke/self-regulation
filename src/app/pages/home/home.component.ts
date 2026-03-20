@@ -25,7 +25,7 @@ import { AuthService } from '../../services/auth.service';
         <!-- Tool-Mode Toggle (iOS switch) -->
         <button
           (click)="toolMode = !toolMode"
-          class="group flex items-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur transition hover:bg-slate-50"
+          class="group flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur transition hover:bg-slate-50"
         >
           <div class="relative h-5 w-9 rounded-full transition-colors duration-200"
                [class]="toolMode ? 'bg-indigo-600' : 'bg-slate-300'">
@@ -59,8 +59,8 @@ import { AuthService } from '../../services/auth.service';
           }
         } @else {
           <button
-            (click)="showLoginDialog = true"
-            class="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-100"
+            (click)="loginReason = ''; showLoginDialog = true"
+            class="flex cursor-pointer items-center gap-1.5 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-100"
           >
             👤 Anmelden
           </button>
@@ -69,10 +69,10 @@ import { AuthService } from '../../services/auth.service';
 
       <!-- Login Dialog -->
       @if (showLoginDialog) {
-        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm" (click)="showLoginDialog = false">
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm" (click)="showLoginDialog = false; loginReason = ''">
           <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" (click)="$event.stopPropagation()">
             <h3 class="text-lg font-bold text-slate-900">Anmelden</h3>
-            <p class="mt-1 text-sm text-slate-500">Damit deine Favoriten gespeichert bleiben.</p>
+            <p class="mt-1 text-sm text-slate-500">{{ loginReason || 'Damit deine Favoriten gespeichert bleiben.' }}</p>
             <div class="mt-4 space-y-3">
               <input
                 #loginName
@@ -89,7 +89,7 @@ import { AuthService } from '../../services/auth.service';
             </div>
             <div class="mt-5 flex gap-2">
               <button
-                (click)="showLoginDialog = false"
+                (click)="showLoginDialog = false; loginReason = ''"
                 class="flex-1 rounded-xl border border-slate-200 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
               >
                 Abbrechen
@@ -177,23 +177,23 @@ import { AuthService } from '../../services/auth.service';
             @for (config of dashboards; track config.key) {
               <a
                 [routerLink]="['/dashboard', config.key]"
-                class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-indigo-200 hover:shadow-lg hover:ring-indigo-100"
+                class="group relative flex cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-indigo-200 hover:shadow-lg hover:ring-indigo-100"
               >
-                <!-- Favorite Heart -->
+                <!-- Favorite Star -->
                 <button
                   (click)="$event.preventDefault(); $event.stopPropagation(); toggleFav('dashboard', config.key)"
-                  class="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-lg transition"
+                  class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl transition hover:scale-110"
                   [class]="favs.isFavorite('dashboard', config.key)
-                    ? 'text-amber-400 hover:text-amber-500'
-                    : 'text-slate-300 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
+                    ? 'text-amber-400 hover:text-amber-500 drop-shadow-sm'
+                    : 'text-slate-300/60 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
                 >
-                  {{ favs.isFavorite('dashboard', config.key) ? '★' : '☆' }}
+                  ★
                 </button>
                 <div class="mb-3 flex items-center gap-3">
                   <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg text-white shadow shadow-indigo-500/25">
                     {{ config.icon }}
                   </div>
-                  <span class="text-base font-bold leading-snug">{{ config.title }}</span>
+                  <span class="text-base font-bold leading-snug">{{ config.title }}<span class="ml-1 inline-block text-indigo-400 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100">&rarr;</span></span>
                 </div>
 
                 <p class="text-[13px] leading-relaxed text-slate-500">{{ config.goal }}</p>
@@ -206,9 +206,6 @@ import { AuthService } from '../../services/auth.service';
                   }
                 </div>
 
-                <span class="absolute bottom-4 right-4 text-xs font-semibold text-indigo-500 opacity-0 transition group-hover:opacity-100">
-                  &Ouml;ffnen &rarr;
-                </span>
               </a>
             }
 
@@ -296,15 +293,15 @@ import { AuthService } from '../../services/auth.service';
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (flow of visibleFlows; track flow.title) {
               <div class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-violet-200 hover:shadow-lg hover:ring-violet-100">
-                <!-- Favorite Heart -->
+                <!-- Favorite Star -->
                 <button
                   (click)="toggleFav('flow', flow.id)"
-                  class="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full transition"
+                  class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl transition hover:scale-110"
                   [class]="favs.isFavorite('flow', flow.id)
-                    ? 'text-amber-400 hover:text-amber-500'
-                    : 'text-slate-300 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
+                    ? 'text-amber-400 hover:text-amber-500 drop-shadow-sm'
+                    : 'text-slate-300/60 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
                 >
-                  {{ favs.isFavorite('flow', flow.id) ? '★' : '☆' }}
+                  ★
                 </button>
                 <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
                 <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
@@ -418,6 +415,7 @@ export class HomeComponent {
   activeFlow: FlowDefinition | null = null;
   showLoginDialog = false;
   showUserMenu = false;
+  loginReason = '';
 
   private readonly PAGE_SIZE = 9;
 
@@ -486,6 +484,7 @@ export class HomeComponent {
 
   toggleFav(type: 'dashboard' | 'flow', id: string): void {
     if (!this.auth.isLoggedIn()) {
+      this.loginReason = 'Um Favoriten zu speichern, bitte erst anmelden.';
       this.showLoginDialog = true;
       return;
     }
