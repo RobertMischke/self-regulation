@@ -2,6 +2,13 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DashboardConfig } from '../../models/dashboard-config';
 import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
+import {
+  FlowConfig,
+  FlowCategory,
+  FlowCategoryMeta,
+  FLOW_CATEGORIES,
+  FLOWS,
+} from '../../configs/flows.config';
 
 @Component({
   selector: 'app-home',
@@ -26,15 +33,28 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
             Interaktive Dashboards f&uuml;r Selbstregulation, Fokus, Erholung und emotionale Stabilisierung.
             Keine Diagnose. Kein Druck. Kein Produktivit&auml;ts-Theater.
           </p>
+
+          <!-- Anchor CTAs -->
+          <div class="mt-6 flex flex-wrap justify-center gap-3">
+            <a href="#dashboards"
+               class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
+              Zu den Dashboards
+            </a>
+            <a href="#flows"
+               class="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
+              Zu den Flows
+            </a>
+
+          </div>
         </div>
       </section>
 
-      <!-- Dashboards (hero flows directly into this) -->
+      <!-- Dashboards -->
       <section id="dashboards">
         <div class="mx-auto max-w-6xl px-6 pb-20 pt-6">
           <div class="mb-8 text-center">
             <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Dashboards</h2>
-            <p class="mt-1.5 text-slate-500">W&auml;hle das Dashboard, das dich jetzt am besten unterstützt..</p>
+            <p class="mt-1.5 text-slate-500">W&auml;hle das Dashboard, das dich jetzt am besten unterst&uuml;tzt.</p>
           </div>
 
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -61,7 +81,7 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
                 </div>
 
                 <span class="absolute right-4 top-4 text-xs font-semibold text-indigo-500 opacity-0 transition group-hover:opacity-100">
-                  &ouml;ffnen &rarr;
+                  &Ouml;ffnen &rarr;
                 </span>
               </a>
             }
@@ -74,6 +94,75 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
               <span class="mt-3 rounded-full bg-slate-200/70 px-2.5 py-0.5 text-[11px] font-bold text-slate-500">In&nbsp;Planung</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- Flows -->
+      <section id="flows" class="border-t border-slate-100 bg-white">
+        <div class="mx-auto max-w-6xl px-6 py-20">
+          <div class="mb-8 text-center">
+            <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Flows</h2>
+            <p class="mt-1.5 text-slate-500">Direkt startbare Hilfe f&uuml;r konkrete Momente.</p>
+          </div>
+
+          <!-- Search -->
+          <div class="mx-auto mb-6 max-w-md">
+            <input
+              type="text"
+              [value]="flowSearch"
+              (input)="onFlowSearch($event)"
+              placeholder="Flow suchen &hellip;"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+          <!-- Category Chips -->
+          <div class="mb-8 flex flex-wrap justify-center gap-2">
+            @for (cat of categories; track cat.key) {
+              <button
+                (click)="selectCategory(cat.key)"
+                [class]="activeCategory === cat.key
+                  ? 'rounded-full px-4 py-1.5 text-sm font-semibold transition bg-indigo-600 text-white shadow-sm'
+                  : 'rounded-full px-4 py-1.5 text-sm font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200'"
+              >
+                {{ cat.label }}
+              </button>
+            }
+          </div>
+
+          <!-- Flow Cards -->
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            @for (flow of filteredFlows; track flow.title) {
+              <div class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-violet-200 hover:shadow-lg hover:ring-violet-100">
+                <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
+                <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
+
+                <!-- Meta: Duration & Style -->
+                <div class="mt-3 flex items-center gap-2 text-[12px] font-medium text-slate-400">
+                  <span class="rounded-md bg-violet-50 px-2 py-0.5 text-violet-600">{{ flow.duration }}</span>
+                  <span class="rounded-md bg-slate-100 px-2 py-0.5 text-slate-500">{{ flow.style }}</span>
+                </div>
+
+                <!-- Tags -->
+                <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
+                  @for (tag of flow.tags; track tag) {
+                    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                      {{ tag }}
+                    </span>
+                  }
+                </div>
+
+                <!-- CTA -->
+                <button class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
+                  Starten
+                </button>
+              </div>
+            }
+          </div>
+
+          @if (filteredFlows.length === 0) {
+            <p class="mt-6 text-center text-sm text-slate-400">Kein Flow gefunden.</p>
+          }
         </div>
       </section>
 
@@ -108,13 +197,38 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
         </div>
       </section>
 
-
-
     </div>
   `,
 })
 export class HomeComponent {
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
+  readonly categories: FlowCategoryMeta[] = FLOW_CATEGORIES;
+  private readonly allFlows: FlowConfig[] = FLOWS;
+
+  activeCategory: FlowCategory = 'schlaf-abend';
+  flowSearch = '';
+
+  get filteredFlows(): FlowConfig[] {
+    const query = this.flowSearch.trim().toLowerCase();
+    let flows = this.allFlows.filter(f => f.category === this.activeCategory);
+    if (query) {
+      flows = this.allFlows.filter(f =>
+        f.title.toLowerCase().includes(query) ||
+        f.description.toLowerCase().includes(query) ||
+        f.tags.some(t => t.toLowerCase().includes(query))
+      );
+    }
+    return flows;
+  }
+
+  selectCategory(key: FlowCategory): void {
+    this.activeCategory = key;
+    this.flowSearch = '';
+  }
+
+  onFlowSearch(event: Event): void {
+    this.flowSearch = (event.target as HTMLInputElement).value;
+  }
 
   configModeCount(config: DashboardConfig): number {
     return Object.keys(config.modes).length;
