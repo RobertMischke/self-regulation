@@ -22,24 +22,27 @@ import { AuthService } from '../../services/auth.service';
 
       <!-- Top Bar -->
       <div class="fixed right-4 top-4 z-50 flex items-center gap-2">
-        <!-- Tool-Mode Toggle -->
+        <!-- Tool-Mode Toggle (iOS switch) -->
         <button
           (click)="toolMode = !toolMode"
-          [class]="toolMode
-            ? 'flex items-center gap-1.5 rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500'
-            : 'flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-100'"
-          [title]="toolMode ? 'Zur&uuml;ck zur Landing-Ansicht' : 'Tool-Ansicht: nur das Wesentliche'"
+          class="group flex items-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur transition hover:bg-slate-50"
         >
-          {{ toolMode ? '🏠 Landing' : '⚡ Tool-Modus' }}
+          <div class="relative h-5 w-9 rounded-full transition-colors duration-200"
+               [class]="toolMode ? 'bg-indigo-600' : 'bg-slate-300'">
+            <div class="absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all duration-200"
+                 [style.left]="toolMode ? '18px' : '2px'"></div>
+          </div>
+          <span class="text-xs font-semibold text-slate-600">{{ toolMode ? '\u26a1 Tool-Modus' : '\ud83d\udc4b Willkommen' }}</span>
         </button>
 
         <!-- Auth Button -->
         @if (auth.isLoggedIn()) {
           <button
             (click)="showUserMenu = !showUserMenu"
-            class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-200"
+            class="flex h-8 items-center gap-1.5 rounded-full bg-indigo-100 px-2.5 text-xs font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-200"
             [title]="auth.user()?.name || ''"
           >
+            <span>\ud83d\udc64</span>
             {{ auth.initials() }}
           </button>
           @if (showUserMenu) {
@@ -59,7 +62,7 @@ import { AuthService } from '../../services/auth.service';
             (click)="showLoginDialog = true"
             class="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-100"
           >
-            Anmelden
+            👤 Anmelden
           </button>
         }
       </div>
@@ -179,7 +182,7 @@ import { AuthService } from '../../services/auth.service';
                 <!-- Favorite Heart -->
                 <button
                   (click)="$event.preventDefault(); $event.stopPropagation(); toggleFav('dashboard', config.key)"
-                  class="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full transition"
+                  class="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full text-lg transition"
                   [class]="favs.isFavorite('dashboard', config.key)
                     ? 'text-amber-400 hover:text-amber-500'
                     : 'text-slate-300 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
@@ -203,7 +206,7 @@ import { AuthService } from '../../services/auth.service';
                   }
                 </div>
 
-                <span class="absolute right-4 top-4 text-xs font-semibold text-indigo-500 opacity-0 transition group-hover:opacity-100">
+                <span class="absolute bottom-4 right-4 text-xs font-semibold text-indigo-500 opacity-0 transition group-hover:opacity-100">
                   &Ouml;ffnen &rarr;
                 </span>
               </a>
