@@ -118,6 +118,14 @@ import {
 
           <!-- Category Chips -->
           <div class="mb-8 flex flex-wrap justify-center gap-2">
+            <button
+              (click)="selectCategory(null)"
+              [class]="activeCategory === null
+                ? 'rounded-full px-4 py-1.5 text-sm font-semibold transition bg-indigo-600 text-white shadow-sm'
+                : 'rounded-full px-4 py-1.5 text-sm font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200'"
+            >
+              Alle
+            </button>
             @for (cat of categories; track cat.key) {
               <button
                 (click)="selectCategory(cat.key)"
@@ -132,7 +140,7 @@ import {
 
           <!-- Flow Cards -->
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            @for (flow of filteredFlows; track flow.title) {
+            @for (flow of visibleFlows; track flow.title) {
               <div class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-violet-200 hover:shadow-lg hover:ring-violet-100">
                 <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
                 <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
@@ -162,6 +170,26 @@ import {
 
           @if (filteredFlows.length === 0) {
             <p class="mt-6 text-center text-sm text-slate-400">Kein Flow gefunden.</p>
+          }
+
+          @if (totalPages > 1) {
+            <div class="mt-8 flex items-center justify-center gap-3">
+              <button
+                (click)="prevPage()"
+                [disabled]="flowPage === 0"
+                class="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none"
+              >
+                &larr; Zur&uuml;ck
+              </button>
+              <span class="text-sm text-slate-400">{{ flowPage + 1 }} / {{ totalPages }}</span>
+              <button
+                (click)="nextPage()"
+                [disabled]="flowPage >= totalPages - 1"
+                class="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none"
+              >
+                Weiter &rarr;
+              </button>
+            </div>
           }
         </div>
       </section>
@@ -205,25 +233,48 @@ export class HomeComponent {
   readonly categories: FlowCategoryMeta[] = FLOW_CATEGORIES;
   private readonly allFlows: FlowConfig[] = FLOWS;
 
-  activeCategory: FlowCategory = 'schlaf-abend';
+  activeCategory: FlowCategory | null = null;
   flowSearch = '';
+  flowPage = 0;
+
+  private readonly PAGE_SIZE = 9;
 
   get filteredFlows(): FlowConfig[] {
     const query = this.flowSearch.trim().toLowerCase();
-    let flows = this.allFlows.filter(f => f.category === this.activeCategory);
     if (query) {
-      flows = this.allFlows.filter(f =>
+      return this.allFlows.filter(f =>
         f.title.toLowerCase().includes(query) ||
         f.description.toLowerCase().includes(query) ||
         f.tags.some(t => t.toLowerCase().includes(query))
       );
     }
-    return flows;
+    if (this.activeCategory === null) {
+      return this.allFlows;
+    }
+    return this.allFlows.filter(f => f.category === this.activeCategory);
   }
 
-  selectCategory(key: FlowCategory): void {
+  get totalPages(): number {
+    return Math.ceil(this.filteredFlows.length / this.PAGE_SIZE);
+  }
+
+  get visibleFlows(): FlowConfig[] {
+    const start = this.flowPage * this.PAGE_SIZE;
+    return this.filteredFlows.slice(start, start + this.PAGE_SIZE);
+  }
+
+  selectCategory(key: FlowCategory | null): void {
     this.activeCategory = key;
     this.flowSearch = '';
+    this.flowPage = 0;
+  }
+
+  prevPage(): void {
+    if (this.flowPage > 0) this.flowPage--;
+  }
+
+  nextPage(): void {
+    if (this.flowPage < this.totalPages - 1) this.flowPage++;
   }
 
   onFlowSearch(event: Event): void {
