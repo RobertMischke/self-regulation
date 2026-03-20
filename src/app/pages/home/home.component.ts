@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DashboardConfig } from '../../models/dashboard-config';
 import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
@@ -10,6 +10,8 @@ import {
   ALL_FLOWS,
 } from '../../flows/flow-registry';
 import { FlowModalComponent } from '../../components/flow-modal.component';
+import { FavoritesService } from '../../services/favorites.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +20,90 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
   template: `
     <div class="min-h-screen bg-white text-slate-900">
 
+      <!-- Top Bar -->
+      <div class="fixed right-4 top-4 z-50 flex items-center gap-2">
+        <!-- Tool-Mode Toggle -->
+        <button
+          (click)="toolMode = !toolMode"
+          [class]="toolMode
+            ? 'flex items-center gap-1.5 rounded-full bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-500'
+            : 'flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-100'"
+          [title]="toolMode ? 'Zur&uuml;ck zur Landing-Ansicht' : 'Tool-Ansicht: nur das Wesentliche'"
+        >
+          {{ toolMode ? '🏠 Landing' : '⚡ Tool-Modus' }}
+        </button>
+
+        <!-- Auth Button -->
+        @if (auth.isLoggedIn()) {
+          <button
+            (click)="showUserMenu = !showUserMenu"
+            class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-bold text-indigo-700 shadow-sm transition hover:bg-indigo-200"
+            [title]="auth.user()?.name || ''"
+          >
+            {{ auth.initials() }}
+          </button>
+          @if (showUserMenu) {
+            <div class="absolute right-0 top-12 w-52 rounded-xl border border-slate-200 bg-white p-3 shadow-lg">
+              <p class="text-sm font-semibold text-slate-800">{{ auth.user()?.name }}</p>
+              <p class="text-xs text-slate-400">{{ auth.user()?.email }}</p>
+              <button
+                (click)="auth.logout(); showUserMenu = false"
+                class="mt-3 w-full rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-200"
+              >
+                Abmelden
+              </button>
+            </div>
+          }
+        } @else {
+          <button
+            (click)="showLoginDialog = true"
+            class="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-100"
+          >
+            Anmelden
+          </button>
+        }
+      </div>
+
+      <!-- Login Dialog -->
+      @if (showLoginDialog) {
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm" (click)="showLoginDialog = false">
+          <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" (click)="$event.stopPropagation()">
+            <h3 class="text-lg font-bold text-slate-900">Anmelden</h3>
+            <p class="mt-1 text-sm text-slate-500">Damit deine Favoriten gespeichert bleiben.</p>
+            <div class="mt-4 space-y-3">
+              <input
+                #loginName
+                type="text"
+                placeholder="Name"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+              />
+              <input
+                #loginEmail
+                type="email"
+                placeholder="E-Mail"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+              />
+            </div>
+            <div class="mt-5 flex gap-2">
+              <button
+                (click)="showLoginDialog = false"
+                class="flex-1 rounded-xl border border-slate-200 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+              >
+                Abbrechen
+              </button>
+              <button
+                (click)="doLogin(loginName.value, loginEmail.value)"
+                class="flex-1 rounded-xl bg-indigo-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+              >
+                Anmelden
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
       <!-- Hero (compact) -->
+      @if (!toolMode) {
       <section class="relative overflow-hidden">
         <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-50 via-white to-white"></div>
 
@@ -48,16 +133,42 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
           </div>
         </div>
       </section>
+      }
 
       <!-- Dashboards -->
       <section id="dashboards">
-        <div class="mx-auto max-w-6xl px-6 pb-24 pt-10">
+        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10 pt-14' : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
+          @if (!toolMode) {
           <div class="mb-10 text-center">
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Dashboards</h2>
             <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-slate-500">
               Deinen Zustand einordnen und Muster sichtbar machen.
             </p>
           </div>
+          } @else {
+          <div class="mb-4 flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Dashboards</span>
+          </div>
+          }
+
+          @if (toolMode && favDashboards.length > 0) {
+          <div class="mb-6">
+            <span class="mb-2 block text-[11px] font-bold uppercase tracking-widest text-amber-500">★ Favoriten</span>
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              @for (config of favDashboards; track config.key) {
+                <a
+                  [routerLink]="['/dashboard', config.key]"
+                  class="group relative flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/50 p-3 transition hover:border-amber-300 hover:shadow-md"
+                >
+                  <div class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-sm text-white shadow shadow-indigo-500/25">
+                    {{ config.icon }}
+                  </div>
+                  <span class="text-sm font-bold leading-snug">{{ config.title }}</span>
+                </a>
+              }
+            </div>
+          </div>
+          }
 
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (config of dashboards; track config.key) {
@@ -65,6 +176,16 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
                 [routerLink]="['/dashboard', config.key]"
                 class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-indigo-200 hover:shadow-lg hover:ring-indigo-100"
               >
+                <!-- Favorite Heart -->
+                <button
+                  (click)="$event.preventDefault(); $event.stopPropagation(); toggleFav('dashboard', config.key)"
+                  class="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full transition"
+                  [class]="favs.isFavorite('dashboard', config.key)
+                    ? 'text-amber-400 hover:text-amber-500'
+                    : 'text-slate-300 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
+                >
+                  {{ favs.isFavorite('dashboard', config.key) ? '★' : '☆' }}
+                </button>
                 <div class="mb-3 flex items-center gap-3">
                   <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg text-white shadow shadow-indigo-500/25">
                     {{ config.icon }}
@@ -89,19 +210,22 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
             }
 
             <!-- Create your own -->
+            @if (!toolMode) {
             <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-5 text-center">
               <div class="grid h-11 w-11 place-items-center rounded-xl bg-slate-100 text-xl font-bold text-slate-400">+</div>
               <span class="mt-3 text-sm font-bold text-slate-400">Eigenes Dashboard</span>
               <p class="mt-1 text-xs leading-relaxed text-slate-400">Eigene Skalen, Regeln und&nbsp;Interventionen konfigurieren.</p>
               <span class="mt-3 rounded-full bg-slate-200/70 px-2.5 py-0.5 text-[11px] font-bold text-slate-500">In&nbsp;Planung</span>
             </div>
+            }
           </div>
         </div>
       </section>
 
       <!-- Flows -->
-      <section id="flows" class="border-t border-slate-100 bg-white">
-        <div class="mx-auto max-w-6xl px-6 pb-24 pt-14">
+      <section id="flows" [class]="toolMode ? 'border-t border-slate-200 bg-white' : 'border-t border-slate-100 bg-white'">
+        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10 pt-8' : 'mx-auto max-w-6xl px-6 pb-24 pt-14'">
+          @if (!toolMode) {
           <div class="mb-10 text-center">
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Flows</h2>
             <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-slate-500">
@@ -109,6 +233,28 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
               Weniger analysieren, direkt ins Tun kommen.
             </p>
           </div>
+          } @else {
+          <div class="mb-4 flex items-center gap-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Flows</span>
+          </div>
+          }
+
+          @if (toolMode && favFlows.length > 0) {
+          <div class="mb-6">
+            <span class="mb-2 block text-[11px] font-bold uppercase tracking-widest text-amber-500">★ Favoriten</span>
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              @for (flow of favFlows; track flow.id) {
+                <button
+                  (click)="openFlow(flow)"
+                  class="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/50 p-3 text-left transition hover:border-amber-300 hover:shadow-md"
+                >
+                  <span class="text-sm font-bold leading-snug">{{ flow.title }}</span>
+                  <span class="ml-auto shrink-0 rounded-md bg-violet-100 px-2 py-0.5 text-[11px] font-semibold text-violet-600">{{ flow.duration }}</span>
+                </button>
+              }
+            </div>
+          </div>
+          }
 
           <!-- Search -->
           <div class="mx-auto mb-6 max-w-md">
@@ -147,6 +293,16 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (flow of visibleFlows; track flow.title) {
               <div class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-violet-200 hover:shadow-lg hover:ring-violet-100">
+                <!-- Favorite Heart -->
+                <button
+                  (click)="toggleFav('flow', flow.id)"
+                  class="absolute right-3 top-3 z-10 flex h-7 w-7 items-center justify-center rounded-full transition"
+                  [class]="favs.isFavorite('flow', flow.id)
+                    ? 'text-amber-400 hover:text-amber-500'
+                    : 'text-slate-300 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
+                >
+                  {{ favs.isFavorite('flow', flow.id) ? '★' : '☆' }}
+                </button>
                 <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
                 <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
 
@@ -201,6 +357,7 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
         </div>
       </section>
 
+      @if (!toolMode) {
       <!-- Explainer (compact, supporting) -->
       <section class="border-t border-slate-100 bg-slate-50/60">
         <div class="mx-auto max-w-4xl px-6 py-16">
@@ -216,7 +373,9 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
           </div>
         </div>
       </section>
+      }
 
+      @if (!toolMode) {
       <!-- Mitstreiter Banner -->
       <section class="border-t border-indigo-100 bg-indigo-50/50">
         <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4 px-6 py-5">
@@ -231,6 +390,7 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
           </a>
         </div>
       </section>
+      }
 
     </div>
 
@@ -241,6 +401,9 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
   `,
 })
 export class HomeComponent {
+  readonly favs = inject(FavoritesService);
+  readonly auth = inject(AuthService);
+
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
   readonly categories: FlowCategoryMeta[] = FLOW_CATEGORIES;
   private readonly allFlows: FlowDefinition[] = ALL_FLOWS;
@@ -248,7 +411,10 @@ export class HomeComponent {
   activeCategory: FlowCategory | null = null;
   flowSearch = '';
   flowPage = 0;
+  toolMode = false;
   activeFlow: FlowDefinition | null = null;
+  showLoginDialog = false;
+  showUserMenu = false;
 
   private readonly PAGE_SIZE = 9;
 
@@ -305,5 +471,27 @@ export class HomeComponent {
 
   configModeCount(config: DashboardConfig): number {
     return Object.keys(config.modes).length;
+  }
+
+  get favDashboards(): DashboardConfig[] {
+    return this.dashboards.filter(d => this.favs.isFavorite('dashboard', d.key));
+  }
+
+  get favFlows(): FlowDefinition[] {
+    return this.allFlows.filter(f => this.favs.isFavorite('flow', f.id));
+  }
+
+  toggleFav(type: 'dashboard' | 'flow', id: string): void {
+    if (!this.auth.isLoggedIn()) {
+      this.showLoginDialog = true;
+      return;
+    }
+    this.favs.toggle(type, id);
+  }
+
+  doLogin(name: string, email: string): void {
+    if (!name.trim() || !email.trim()) return;
+    this.auth.login(name, email);
+    this.showLoginDialog = false;
   }
 }
