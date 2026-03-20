@@ -3,17 +3,18 @@ import { RouterLink } from '@angular/router';
 import { DashboardConfig } from '../../models/dashboard-config';
 import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
 import {
-  FlowConfig,
+  FlowDefinition,
   FlowCategory,
   FlowCategoryMeta,
   FLOW_CATEGORIES,
-  FLOWS,
-} from '../../configs/flows.config';
+  ALL_FLOWS,
+} from '../../flows/flow-registry';
+import { FlowModalComponent } from '../../components/flow-modal.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, FlowModalComponent],
   template: `
     <div class="min-h-screen bg-white text-slate-900">
 
@@ -161,7 +162,9 @@ import {
                 </div>
 
                 <!-- CTA -->
-                <button class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
+                <button
+                  (click)="openFlow(flow)"
+                  class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
                   Starten
                 </button>
               </div>
@@ -226,20 +229,26 @@ import {
       </section>
 
     </div>
+
+    <!-- Flow Modal -->
+    @if (activeFlow) {
+      <app-flow-modal [flow]="activeFlow" (closed)="closeFlow()" />
+    }
   `,
 })
 export class HomeComponent {
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
   readonly categories: FlowCategoryMeta[] = FLOW_CATEGORIES;
-  private readonly allFlows: FlowConfig[] = FLOWS;
+  private readonly allFlows: FlowDefinition[] = ALL_FLOWS;
 
   activeCategory: FlowCategory | null = null;
   flowSearch = '';
   flowPage = 0;
+  activeFlow: FlowDefinition | null = null;
 
   private readonly PAGE_SIZE = 9;
 
-  get filteredFlows(): FlowConfig[] {
+  get filteredFlows(): FlowDefinition[] {
     const query = this.flowSearch.trim().toLowerCase();
     if (query) {
       return this.allFlows.filter(f =>
@@ -258,7 +267,7 @@ export class HomeComponent {
     return Math.ceil(this.filteredFlows.length / this.PAGE_SIZE);
   }
 
-  get visibleFlows(): FlowConfig[] {
+  get visibleFlows(): FlowDefinition[] {
     const start = this.flowPage * this.PAGE_SIZE;
     return this.filteredFlows.slice(start, start + this.PAGE_SIZE);
   }
@@ -279,6 +288,15 @@ export class HomeComponent {
 
   onFlowSearch(event: Event): void {
     this.flowSearch = (event.target as HTMLInputElement).value;
+    this.flowPage = 0;
+  }
+
+  openFlow(flow: FlowDefinition): void {
+    this.activeFlow = flow;
+  }
+
+  closeFlow(): void {
+    this.activeFlow = null;
   }
 
   configModeCount(config: DashboardConfig): number {
