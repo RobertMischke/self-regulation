@@ -2,11 +2,19 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DashboardConfig } from '../../models/dashboard-config';
 import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
+import {
+  FlowDefinition,
+  FlowCategory,
+  FlowCategoryMeta,
+  FLOW_CATEGORIES,
+  ALL_FLOWS,
+} from '../../flows/flow-registry';
+import { FlowModalComponent } from '../../components/flow-modal.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, FlowModalComponent],
   template: `
     <div class="min-h-screen bg-white text-slate-900">
 
@@ -22,19 +30,37 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
             </span>
           </h1>
 
-          <p class="mx-auto mt-4 max-w-2xl text-lg leading-7 text-slate-500">
-            Interaktive Dashboards f&uuml;r Selbstregulation, Fokus, Erholung und emotionale Stabilisierung.
-            Keine Diagnose. Kein Druck. Kein Produktivit&auml;ts-Theater.
+          <p class="mx-auto mt-5 max-w-2xl text-lg leading-7 text-slate-500">
+            Dashboards und Flows f&uuml;r Selbstregulation, Fokus, Erholung und konkrete n&auml;chste Schritte.
           </p>
+          <p class="mx-auto mt-2 max-w-2xl text-base leading-7 text-slate-400">
+            Verstehen, was gerade los ist &ndash; und direkt mit kleinen Schritten ins Handeln kommen.
+            Keine Diagnose. Kein Druck.
+          </p>
+
+          <!-- Anchor CTAs -->
+          <div class="mt-6 flex flex-wrap justify-center gap-3">
+            <a href="#dashboards"
+               class="rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800">
+              Zu den Dashboards
+            </a>
+            <a href="#flows"
+               class="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
+              Zu den Flows
+            </a>
+
+          </div>
         </div>
       </section>
 
-      <!-- Dashboards (hero flows directly into this) -->
+      <!-- Dashboards -->
       <section id="dashboards">
-        <div class="mx-auto max-w-6xl px-6 pb-20 pt-6">
-          <div class="mb-8 text-center">
-            <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Dashboards</h2>
-            <p class="mt-1.5 text-slate-500">W&auml;hle das Dashboard, das dich jetzt am besten unterstützt..</p>
+        <div class="mx-auto max-w-6xl px-6 pb-24 pt-10">
+          <div class="mb-10 text-center">
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Dashboards</h2>
+            <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-slate-500">
+              Deinen Zustand einordnen und Muster sichtbar machen.
+            </p>
           </div>
 
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -61,7 +87,7 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
                 </div>
 
                 <span class="absolute right-4 top-4 text-xs font-semibold text-indigo-500 opacity-0 transition group-hover:opacity-100">
-                  &ouml;ffnen &rarr;
+                  &Ouml;ffnen &rarr;
                 </span>
               </a>
             }
@@ -77,17 +103,119 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
         </div>
       </section>
 
+      <!-- Flows -->
+      <section id="flows" class="border-t border-slate-100 bg-white">
+        <div class="mx-auto max-w-6xl px-6 pb-24 pt-14">
+          <div class="mb-10 text-center">
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Flows</h2>
+            <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-slate-500">
+              Kleine gef&uuml;hrte Schritte f&uuml;r konkrete Situationen.
+              Weniger analysieren, direkt ins Tun kommen.
+            </p>
+          </div>
+
+          <!-- Search -->
+          <div class="mx-auto mb-6 max-w-md">
+            <input
+              type="text"
+              [value]="flowSearch"
+              (input)="onFlowSearch($event)"
+              placeholder="Flow suchen &hellip;"
+              class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
+            />
+          </div>
+
+          <!-- Category Chips -->
+          <div class="mb-8 flex flex-wrap justify-center gap-2">
+            <button
+              (click)="selectCategory(null)"
+              [class]="activeCategory === null
+                ? 'rounded-full px-4 py-1.5 text-sm font-semibold transition bg-indigo-600 text-white shadow-sm'
+                : 'rounded-full px-4 py-1.5 text-sm font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200'"
+            >
+              Alle
+            </button>
+            @for (cat of categories; track cat.key) {
+              <button
+                (click)="selectCategory(cat.key)"
+                [class]="activeCategory === cat.key
+                  ? 'rounded-full px-4 py-1.5 text-sm font-semibold transition bg-indigo-600 text-white shadow-sm'
+                  : 'rounded-full px-4 py-1.5 text-sm font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200'"
+              >
+                {{ cat.label }}
+              </button>
+            }
+          </div>
+
+          <!-- Flow Cards -->
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            @for (flow of visibleFlows; track flow.title) {
+              <div class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-violet-200 hover:shadow-lg hover:ring-violet-100">
+                <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
+                <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
+
+                <!-- Meta: Duration & Style -->
+                <div class="mt-3 flex items-center gap-2 text-[12px] font-medium text-slate-400">
+                  <span class="rounded-md bg-violet-50 px-2 py-0.5 text-violet-600">{{ flow.duration }}</span>
+                  <span class="rounded-md bg-slate-100 px-2 py-0.5 text-slate-500">{{ flow.style }}</span>
+                </div>
+
+                <!-- Tags -->
+                <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
+                  @for (tag of flow.tags; track tag) {
+                    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                      {{ tag }}
+                    </span>
+                  }
+                </div>
+
+                <!-- CTA -->
+                <button
+                  (click)="openFlow(flow)"
+                  class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
+                  Starten
+                </button>
+              </div>
+            }
+          </div>
+
+          @if (filteredFlows.length === 0) {
+            <p class="mt-6 text-center text-sm text-slate-400">Kein Flow gefunden.</p>
+          }
+
+          @if (totalPages > 1) {
+            <div class="mt-8 flex items-center justify-center gap-3">
+              <button
+                (click)="prevPage()"
+                [disabled]="flowPage === 0"
+                class="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none"
+              >
+                &larr; Zur&uuml;ck
+              </button>
+              <span class="text-sm text-slate-400">{{ flowPage + 1 }} / {{ totalPages }}</span>
+              <button
+                (click)="nextPage()"
+                [disabled]="flowPage >= totalPages - 1"
+                class="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none"
+              >
+                Weiter &rarr;
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+
       <!-- Explainer (compact, supporting) -->
       <section class="border-t border-slate-100 bg-slate-50/60">
-        <div class="mx-auto max-w-4xl px-6 py-14">
+        <div class="mx-auto max-w-4xl px-6 py-16">
           <div class="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:items-center">
             <h2 class="text-xl font-bold leading-snug tracking-tight sm:text-2xl">
-              Von innerem Zustand zu konkreter
-              <span class="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Orientierung.</span>
+              Von innerem Zustand zu Orientierung und konkreten
+              <span class="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">n&auml;chsten Schritten.</span>
             </h2>
-            <p class="text-sm leading-7 text-slate-500">
-              Die Dashboards &uuml;bersetzen Signale wie Aktivierung, Klarheit, Druck oder Energie
-              in passende Modi und konkrete n&auml;chste Schritte.
+            <p class="text-[15px] leading-7 text-slate-500">
+              Dashboards helfen dir, Signale wie Aktivierung, Klarheit oder Druck einzuordnen.
+              Flows bringen dich mit kleinen konkreten Handlungen direkt ins Tun.
             </p>
           </div>
         </div>
@@ -108,13 +236,76 @@ import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
         </div>
       </section>
 
-
-
     </div>
+
+    <!-- Flow Modal -->
+    @if (activeFlow) {
+      <app-flow-modal [flow]="activeFlow" (closed)="closeFlow()" />
+    }
   `,
 })
 export class HomeComponent {
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
+  readonly categories: FlowCategoryMeta[] = FLOW_CATEGORIES;
+  private readonly allFlows: FlowDefinition[] = ALL_FLOWS;
+
+  activeCategory: FlowCategory | null = null;
+  flowSearch = '';
+  flowPage = 0;
+  activeFlow: FlowDefinition | null = null;
+
+  private readonly PAGE_SIZE = 9;
+
+  get filteredFlows(): FlowDefinition[] {
+    const query = this.flowSearch.trim().toLowerCase();
+    if (query) {
+      return this.allFlows.filter(f =>
+        f.title.toLowerCase().includes(query) ||
+        f.description.toLowerCase().includes(query) ||
+        f.tags.some(t => t.toLowerCase().includes(query))
+      );
+    }
+    if (this.activeCategory === null) {
+      return this.allFlows;
+    }
+    return this.allFlows.filter(f => f.category === this.activeCategory);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredFlows.length / this.PAGE_SIZE);
+  }
+
+  get visibleFlows(): FlowDefinition[] {
+    const start = this.flowPage * this.PAGE_SIZE;
+    return this.filteredFlows.slice(start, start + this.PAGE_SIZE);
+  }
+
+  selectCategory(key: FlowCategory | null): void {
+    this.activeCategory = key;
+    this.flowSearch = '';
+    this.flowPage = 0;
+  }
+
+  prevPage(): void {
+    if (this.flowPage > 0) this.flowPage--;
+  }
+
+  nextPage(): void {
+    if (this.flowPage < this.totalPages - 1) this.flowPage++;
+  }
+
+  onFlowSearch(event: Event): void {
+    this.flowSearch = (event.target as HTMLInputElement).value;
+    this.flowPage = 0;
+  }
+
+  openFlow(flow: FlowDefinition): void {
+    this.activeFlow = flow;
+  }
+
+  closeFlow(): void {
+    this.activeFlow = null;
+  }
 
   configModeCount(config: DashboardConfig): number {
     return Object.keys(config.modes).length;
