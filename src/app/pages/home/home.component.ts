@@ -30,9 +30,12 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
             </span>
           </h1>
 
-          <p class="mx-auto mt-4 max-w-2xl text-lg leading-7 text-slate-500">
-            Interaktive Dashboards f&uuml;r Selbstregulation, Fokus, Erholung und emotionale Stabilisierung.
-            Keine Diagnose. Kein Druck. Kein Produktivit&auml;ts-Theater.
+          <p class="mx-auto mt-5 max-w-2xl text-lg leading-7 text-slate-500">
+            Dashboards und Flows f&uuml;r Selbstregulation, Fokus, Erholung und konkrete n&auml;chste Schritte.
+          </p>
+          <p class="mx-auto mt-2 max-w-2xl text-base leading-7 text-slate-400">
+            Verstehen, was gerade los ist &ndash; und direkt mit kleinen Schritten ins Handeln kommen.
+            Keine Diagnose. Kein Druck.
           </p>
 
           <!-- Anchor CTAs -->
@@ -52,10 +55,12 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
 
       <!-- Dashboards -->
       <section id="dashboards">
-        <div class="mx-auto max-w-6xl px-6 pb-20 pt-6">
-          <div class="mb-8 text-center">
-            <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Dashboards</h2>
-            <p class="mt-1.5 text-slate-500">W&auml;hle das Dashboard, das dich jetzt am besten unterst&uuml;tzt.</p>
+        <div class="mx-auto max-w-6xl px-6 pb-24 pt-10">
+          <div class="mb-10 text-center">
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Dashboards</h2>
+            <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-slate-500">
+              Deinen Zustand einordnen und Muster sichtbar machen.
+            </p>
           </div>
 
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -100,10 +105,13 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
 
       <!-- Flows -->
       <section id="flows" class="border-t border-slate-100 bg-white">
-        <div class="mx-auto max-w-6xl px-6 py-20">
-          <div class="mb-8 text-center">
-            <h2 class="text-2xl font-bold tracking-tight sm:text-3xl">Flows</h2>
-            <p class="mt-1.5 text-slate-500">Direkt startbare Hilfe f&uuml;r konkrete Momente.</p>
+        <div class="mx-auto max-w-6xl px-6 pb-24 pt-14">
+          <div class="mb-10 text-center">
+            <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Flows</h2>
+            <p class="mx-auto mt-3 max-w-xl text-base leading-relaxed text-slate-500">
+              Kleine gef&uuml;hrte Schritte f&uuml;r konkrete Situationen.
+              Weniger analysieren, direkt ins Tun kommen.
+            </p>
           </div>
 
           <!-- Search -->
@@ -199,15 +207,15 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
 
       <!-- Explainer (compact, supporting) -->
       <section class="border-t border-slate-100 bg-slate-50/60">
-        <div class="mx-auto max-w-4xl px-6 py-14">
+        <div class="mx-auto max-w-4xl px-6 py-16">
           <div class="grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:items-center">
             <h2 class="text-xl font-bold leading-snug tracking-tight sm:text-2xl">
-              Von innerem Zustand zu konkreter
-              <span class="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Orientierung.</span>
+              Von innerem Zustand zu Orientierung und konkreten
+              <span class="bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">n&auml;chsten Schritten.</span>
             </h2>
-            <p class="text-sm leading-7 text-slate-500">
-              Die Dashboards &uuml;bersetzen Signale wie Aktivierung, Klarheit, Druck oder Energie
-              in passende Modi und konkrete n&auml;chste Schritte.
+            <p class="text-[15px] leading-7 text-slate-500">
+              Dashboards helfen dir, Signale wie Aktivierung, Klarheit oder Druck einzuordnen.
+              Flows bringen dich mit kleinen konkreten Handlungen direkt ins Tun.
             </p>
           </div>
         </div>

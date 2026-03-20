@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
 import { FlowDefinition, FlowStep } from '../flows/flow.model';
 
 @Component({
@@ -85,10 +85,47 @@ import { FlowDefinition, FlowStep } from '../flows/flow.model';
                 }
               </ol>
             }
+
+            <!-- Timer -->
             @if (step.duration) {
-              <p class="mt-4 text-xs font-medium text-slate-400">
-                Nimm dir daf&uuml;r ungef&auml;hr {{ step.duration }}.
-              </p>
+              <div class="mt-5 flex items-center gap-3">
+                @if (!timerRunning && timerRemaining === 0) {
+                  <!-- Start timer -->
+                  <button
+                    (click)="startTimer()"
+                    class="flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-4 py-2 text-sm font-semibold text-violet-600 transition hover:bg-violet-100"
+                  >
+                    <span class="text-base">&#9654;</span>
+                    Timer starten &middot; {{ step.duration }}
+                  </button>
+                } @else if (timerRunning) {
+                  <!-- Running -->
+                  <div class="flex items-center gap-3">
+                    <div class="relative grid h-12 w-12 place-items-center">
+                      <svg class="absolute inset-0 -rotate-90" viewBox="0 0 48 48">
+                        <circle cx="24" cy="24" r="20" fill="none" stroke="#e2e8f0" stroke-width="3" />
+                        <circle cx="24" cy="24" r="20" fill="none" stroke="#7c3aed" stroke-width="3"
+                          stroke-linecap="round"
+                          [attr.stroke-dasharray]="timerCircumference"
+                          [attr.stroke-dashoffset]="timerDashOffset" />
+                      </svg>
+                      <span class="relative text-xs font-bold text-violet-600">{{ timerDisplay }}</span>
+                    </div>
+                    <button
+                      (click)="cancelTimer()"
+                      class="rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:bg-slate-50"
+                    >
+                      Abbrechen
+                    </button>
+                  </div>
+                } @else {
+                  <!-- Finished -->
+                  <div class="flex items-center gap-2 text-sm font-medium text-emerald-600">
+                    <span class="text-base">&#10003;</span>
+                    Zeit um
+                  </div>
+                }
+              </div>
             }
           }
 
@@ -135,12 +172,32 @@ import { FlowDefinition, FlowStep } from '../flows/flow.model';
     </div>
   `,
 })
-export class FlowModalComponent {
+export class FlowModalComponent implements OnDestroy {
   @Input() flow!: FlowDefinition;
   @Output() closed = new EventEmitter<void>();
 
   currentStep = 0;
   selectedOption: string | null = null;
+
+  // Timer state
+  timerRunning = false;
+  timerRemaining = 0;
+  private timerTotal = 0;
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
+  private audioCtx: AudioContext | null = null;
+
+  readonly timerCircumference = 2 * Math.PI * 20;
+
+  get timerDashOffset(): number {
+    if (this.timerTotal === 0) return 0;
+    return this.timerCircumference * (1 - this.timerRemaining / this.timerTotal);
+  }
+
+  get timerDisplay(): string {
+    const m = Math.floor(this.timerRemaining / 60);
+    const s = this.timerRemaining % 60;
+    return m > 0 ? `${m}:${s.toString().padStart(2, '0')}` : `${s}s`;
+  }
 
   get step(): FlowStep {
     return this.flow.steps[this.currentStep];
@@ -159,6 +216,7 @@ export class FlowModalComponent {
 
   next(): void {
     if (!this.canAdvance) return;
+    this.cancelTimer();
     if (this.currentStep < this.flow.steps.length - 1) {
       this.currentStep++;
       this.selectedOption = null;
@@ -167,12 +225,101 @@ export class FlowModalComponent {
 
   back(): void {
     if (this.currentStep > 0) {
+      this.cancelTimer();
       this.currentStep--;
       this.selectedOption = null;
     }
   }
 
   close(): void {
+    this.cancelTimer();
     this.closed.emit();
+  }
+
+  ngOnDestroy(): void {
+    this.cancelTimer();
+    this.audioCtx?.close();
+  }
+
+  // --- Timer ---
+
+  startTimer(): void {
+    const seconds = this.parseDuration(this.step.duration);
+    if (seconds <= 0) return;
+
+    this.timerTotal = seconds;
+    this.timerRemaining = seconds;
+    this.timerRunning = true;
+
+    this.timerInterval = setInterval(() => {
+      this.timerRemaining--;
+      if (this.timerRemaining <= 0) {
+        this.timerRemaining = 0;
+        this.timerRunning = false;
+        this.clearInterval();
+        this.playSingingBowl();
+      }
+    }, 1000);
+  }
+
+  cancelTimer(): void {
+    this.timerRunning = false;
+    this.timerRemaining = 0;
+    this.timerTotal = 0;
+    this.clearInterval();
+  }
+
+  private clearInterval(): void {
+    if (this.timerInterval !== null) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  private parseDuration(raw?: string): number {
+    if (!raw) return 0;
+    // Match patterns like "45 Sekunden", "60 Sekunden", "2 Minuten", "3–5 Minuten"
+    const secMatch = raw.match(/(\d+)\s*Sekunde/i);
+    if (secMatch) return parseInt(secMatch[1], 10);
+    const minMatch = raw.match(/(\d+)\s*Minute/i);
+    if (minMatch) return parseInt(minMatch[1], 10) * 60;
+    return 0;
+  }
+
+  private playSingingBowl(): void {
+    const ctx = this.audioCtx ?? new AudioContext();
+    this.audioCtx = ctx;
+
+    const now = ctx.currentTime;
+    const duration = 4;
+
+    // Fundamental tone (~396 Hz, calming singing bowl pitch)
+    this.playTone(ctx, 396, now, duration, 0.18);
+    // Overtone 1
+    this.playTone(ctx, 594, now, duration, 0.08);
+    // Overtone 2 (shimmer)
+    this.playTone(ctx, 792, now, duration, 0.04);
+  }
+
+  private playTone(ctx: AudioContext, freq: number, start: number, dur: number, vol: number): void {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, start);
+    // Slight detuning for warmth
+    osc.detune.setValueAtTime(Math.random() * 6 - 3, start);
+
+    gain.gain.setValueAtTime(0, start);
+    // Quick attack
+    gain.gain.linearRampToValueAtTime(vol, start + 0.05);
+    // Long, gentle fade-out
+    gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(start);
+    osc.stop(start + dur);
   }
 }
