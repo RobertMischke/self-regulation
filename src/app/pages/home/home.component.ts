@@ -142,76 +142,30 @@ import { StorageService } from '../../services/storage.service';
       </section>
       }
 
-      <!-- Greeting (Tool-Modus) -->
-      @if (toolMode && auth.isLoggedIn()) {
-      <div class="mx-auto max-w-6xl px-6 pt-14 pb-2">
+      <!-- Greeting + Nav (Tool-Modus) -->
+      @if (toolMode) {
+      <div class="mx-auto max-w-6xl px-6" [class]="auth.isLoggedIn() ? 'pt-14 pb-2' : 'pt-14 pb-2'">
+        @if (auth.isLoggedIn()) {
         <h2 class="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">{{ greeting }}</h2>
         <p class="mt-1 text-sm text-slate-400">Was brauchst du gerade?</p>
+        }
+        <!-- Tool-Mode Navigation -->
+        <nav class="flex flex-wrap items-center gap-2" [class]="auth.isLoggedIn() ? 'mt-4' : ''">
+          @if (favDashboards.length > 0) {
+          <a href="#fav-dashboards" class="rounded-full bg-amber-50 px-3.5 py-1.5 text-sm font-semibold text-amber-600 transition hover:bg-amber-100">★ Dashboards</a>
+          }
+          @if (favFlows.length > 0) {
+          <a href="#fav-flows" class="rounded-full bg-amber-50 px-3.5 py-1.5 text-sm font-semibold text-amber-600 transition hover:bg-amber-100">★ Flows</a>
+          }
+          <a href="#dashboards" class="rounded-full bg-slate-100 px-3.5 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-200">Dashboards</a>
+          <a href="#flows" class="rounded-full bg-slate-100 px-3.5 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-200">Flows</a>
+        </nav>
       </div>
-      }
-
-      <!-- Favorites Section (Tool-Modus) -->
-      @if (toolMode && (favDashboards.length > 0 || favFlows.length > 0)) {
-      <section class="mx-auto max-w-6xl px-6" [class]="auth.isLoggedIn() ? 'pt-2 pb-6' : 'pt-14 pb-6'">
-        <div class="mb-4 flex items-center gap-2">
-          <span class="text-xs font-bold uppercase tracking-widest text-amber-500">★ Favoriten</span>
-        </div>
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          @for (config of favDashboards; track config.key) {
-            <a
-              [routerLink]="['/dashboard', config.key]"
-              class="group relative flex cursor-pointer flex-col rounded-2xl border border-amber-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-amber-300 hover:shadow-lg hover:ring-amber-100"
-            >
-              <button
-                (click)="$event.preventDefault(); $event.stopPropagation(); toggleFav('dashboard', config.key)"
-                class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl text-amber-400 hover:text-amber-500 drop-shadow-sm transition hover:scale-110"
-              >
-                ★
-              </button>
-              <div class="mb-3 flex items-center gap-3">
-                <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg text-white shadow shadow-indigo-500/25">
-                  {{ config.icon }}
-                </div>
-                <span class="text-base font-bold leading-snug">{{ config.title }}</span>
-              </div>
-              <p class="text-[13px] leading-relaxed text-slate-500">{{ config.goal }}</p>
-              <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
-                @for (metric of config.metricLabels; track metric) {
-                  <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
-                    {{ metric }}
-                  </span>
-                }
-              </div>
-            </a>
-          }
-          @for (flow of favFlows; track flow.id) {
-            <div class="group relative flex flex-col rounded-2xl border border-amber-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-amber-300 hover:shadow-lg hover:ring-amber-100">
-              <button
-                (click)="toggleFav('flow', flow.id)"
-                class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl text-amber-400 hover:text-amber-500 drop-shadow-sm transition hover:scale-110"
-              >
-                ★
-              </button>
-              <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
-              <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
-              <div class="mt-3 flex items-center gap-2 text-[12px] font-medium text-slate-400">
-                <span class="rounded-md bg-violet-50 px-2 py-0.5 text-violet-600">{{ flow.duration }}</span>
-                <span class="rounded-md bg-slate-100 px-2 py-0.5 text-slate-500">{{ flow.style }}</span>
-              </div>
-              <button
-                (click)="openFlow(flow)"
-                class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
-                Starten
-              </button>
-            </div>
-          }
-        </div>
-      </section>
       }
 
       <!-- Dashboards -->
       <section id="dashboards">
-        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10' + (auth.isLoggedIn() && favDashboards.length === 0 && favFlows.length === 0 ? ' pt-6' : ' pt-2') : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
+        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10 pt-6' : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
           @if (!toolMode) {
           <div class="mb-10 text-center">
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Dashboards</h2>
@@ -222,8 +176,8 @@ import { StorageService } from '../../services/storage.service';
           } @else {
           <button (click)="dashboardsOpen = !dashboardsOpen" class="mb-4 flex w-full cursor-pointer items-center gap-2 text-left">
             <svg class="h-4 w-4 text-slate-400 transition-transform" [class.rotate-90]="dashboardsOpen" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
-            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Dashboards</span>
-            <span class="text-xs text-slate-300">({{ toolMode ? nonFavDashboards.length : dashboards.length }})</span>
+            <span class="text-sm font-bold uppercase tracking-widest text-slate-400">Dashboards</span>
+            <span class="text-xs text-slate-300">({{ nonFavDashboards.length }})</span>
           </button>
           }
 
@@ -278,9 +232,43 @@ import { StorageService } from '../../services/storage.service';
         </div>
       </section>
 
+      <!-- Fav Flows -->
+      @if (toolMode && favFlows.length > 0) {
+      <section id="fav-flows">
+        <div class="mx-auto max-w-6xl px-6 pb-6 pt-6">
+          <div class="mb-4 flex items-center gap-2">
+            <span class="text-sm font-bold uppercase tracking-widest text-amber-500">★ Favoriten · Flows</span>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            @for (flow of favFlows; track flow.id) {
+              <div class="group relative flex flex-col rounded-2xl border border-amber-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-amber-300 hover:shadow-lg hover:ring-amber-100">
+                <button
+                  (click)="toggleFav('flow', flow.id)"
+                  class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl text-amber-400 hover:text-amber-500 drop-shadow-sm transition hover:scale-110"
+                >
+                  ★
+                </button>
+                <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
+                <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
+                <div class="mt-3 flex items-center gap-2 text-[12px] font-medium text-slate-400">
+                  <span class="rounded-md bg-violet-50 px-2 py-0.5 text-violet-600">{{ flow.duration }}</span>
+                  <span class="rounded-md bg-slate-100 px-2 py-0.5 text-slate-500">{{ flow.style }}</span>
+                </div>
+                <button
+                  (click)="openFlow(flow)"
+                  class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
+                  Starten
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+      }
+
       <!-- Flows -->
-      <section id="flows" [class]="toolMode ? 'border-t border-slate-200 bg-white' : 'border-t border-slate-100 bg-white'">
-        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10 pt-8' : 'mx-auto max-w-6xl px-6 pb-24 pt-14'">
+      <section id="flows" [class]="toolMode ? 'bg-white' : 'border-t border-slate-100 bg-white'">
+        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10 pt-6' : 'mx-auto max-w-6xl px-6 pb-24 pt-14'">
           @if (!toolMode) {
           <div class="mb-10 text-center">
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Flows</h2>
@@ -292,8 +280,8 @@ import { StorageService } from '../../services/storage.service';
           } @else {
           <button (click)="flowsOpen = !flowsOpen" class="mb-4 flex w-full cursor-pointer items-center gap-2 text-left">
             <svg class="h-4 w-4 text-slate-400 transition-transform" [class.rotate-90]="flowsOpen" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
-            <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Flows</span>
-            <span class="text-xs text-slate-300">({{ toolMode ? nonFavFlows.length : filteredFlows.length }})</span>
+            <span class="text-sm font-bold uppercase tracking-widest text-slate-400">Flows</span>
+            <span class="text-xs text-slate-300">({{ nonFavFlows.length }})</span>
           </button>
           }
 
