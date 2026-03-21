@@ -71,7 +71,7 @@ export class DashboardComponent implements OnDestroy {
 
     this.values = signal({ ...this.config.defaultValues });
     this.intention = signal(this.config.defaultIntention ?? '');
-    this.titleService.setTitle(`${this.config.title} \u2013 Regulate`);
+    this.titleService.setTitle(`${this.config.title} \u2013 Zenya`);
 
     this.computedMetrics = computed(() => computeAllMetrics(this.config, this.values()));
 

@@ -1,8 +1,8 @@
-# Regulate
+# Zenya
 
 **A signal-driven self-regulation engine for ADHD, emotional balance, recovery, and daily orientation.**
 
-Regulate is a client-side Angular application that turns subjective inner states into structured, actionable feedback. Users adjust sliders representing dimensions like arousal, mood, clarity, or emotional pressure — and the system responds in real time with computed metrics, contextual interventions, and mode-specific guidance.
+Zenya is a client-side Angular application that turns subjective inner states into structured, actionable feedback. Users adjust sliders representing dimensions like arousal, mood, clarity, or emotional pressure — and the system responds in real time with computed metrics, contextual interventions, and mode-specific guidance.
 
 No accounts. No backend. No telemetry. Just a sharp, focused tool that runs entirely in the browser.
 

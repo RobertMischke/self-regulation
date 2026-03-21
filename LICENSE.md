@@ -1,6 +1,6 @@
-# Regulate License
+# Zenya License
 
-Copyright (c) 2026 Regulate Contributors. All rights reserved.
+Copyright (c) 2026 Zenya Contributors. All rights reserved.
 
 ## Terms
 

@@ -384,7 +384,7 @@ import { PwaService } from '../../services/pwa.service';
           <div class="flex items-center gap-3">
             <span class="text-xl">📲</span>
             <p class="text-sm font-medium text-slate-700">
-              <strong>App installieren</strong> &mdash; Regulate als App auf deinem Ger&auml;t nutzen. Offline verf&uuml;gbar, schneller Zugriff.
+              <strong>App installieren</strong> &mdash; Zenya als App auf deinem Ger&auml;t nutzen. Offline verf&uuml;gbar, schneller Zugriff.
             </p>
           </div>
           <button

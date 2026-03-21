@@ -7,11 +7,11 @@ import { DatenschutzComponent } from './pages/datenschutz/datenschutz.component'
 import { ValidierungComponent } from './pages/validierung/validierung.component';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, title: 'Regulate' },
+  { path: '', component: HomeComponent, title: 'Zenya' },
   { path: 'dashboard/:key', component: DashboardComponent },
-  { path: 'impressum', component: ImpressumComponent, title: 'Impressum – Regulate' },
-  { path: 'cofounder', component: CofounderComponent, title: 'Mitstreiter gesucht – Regulate' },
-  { path: 'datenschutz', component: DatenschutzComponent, title: 'Datenschutz – Regulate' },
-  { path: 'validierung', component: ValidierungComponent, title: 'Wissenschaftliche Einordnung – Regulate' },
+  { path: 'impressum', component: ImpressumComponent, title: 'Impressum – Zenya' },
+  { path: 'cofounder', component: CofounderComponent, title: 'Mitstreiter gesucht – Zenya' },
+  { path: 'datenschutz', component: DatenschutzComponent, title: 'Datenschutz – Zenya' },
+  { path: 'validierung', component: ValidierungComponent, title: 'Wissenschaftliche Einordnung – Zenya' },
   { path: '**', redirectTo: '' },
 ];
