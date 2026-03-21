@@ -17,6 +17,7 @@ import { FavoritesService } from '../../services/favorites.service';
 import { AuthService } from '../../services/auth.service';
 import { PwaService } from '../../services/pwa.service';
 import { StorageService } from '../../services/storage.service';
+import { Snapshot, SnapshotService } from '../../models/snapshot';
 
 @Component({
   selector: 'app-home',
@@ -148,7 +149,7 @@ import { StorageService } from '../../services/storage.service';
           </div>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (config of favDashboards; track config.key) {
-              <app-dashboard-card [config]="config" [isFavorite]="true" [highlighted]="true" (toggleFavorite)="toggleFav('dashboard', config.key)" />
+              <app-dashboard-card [config]="config" [isFavorite]="true" [highlighted]="true" [snapshots]="snapshotsByKey[config.key]" (toggleFavorite)="toggleFav('dashboard', config.key)" />
             }
           </div>
         </div>
@@ -176,7 +177,7 @@ import { StorageService } from '../../services/storage.service';
           @if (!toolMode || dashboardsOpen) {
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (config of (toolMode ? nonFavDashboards : dashboards); track config.key) {
-              <app-dashboard-card [config]="config" [isFavorite]="favs.isFavorite('dashboard', config.key)" (toggleFavorite)="toggleFav('dashboard', config.key)" />
+              <app-dashboard-card [config]="config" [isFavorite]="favs.isFavorite('dashboard', config.key)" [snapshots]="snapshotsByKey[config.key]" (toggleFavorite)="toggleFav('dashboard', config.key)" />
             }
 
             @if (!toolMode) {
@@ -364,8 +365,13 @@ export class HomeComponent {
   readonly auth = inject(AuthService);
   readonly pwa = inject(PwaService);
   private readonly storage = inject(StorageService);
+  private readonly snapshotService = inject(SnapshotService);
 
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
+
+  readonly snapshotsByKey: Record<string, Snapshot[]> = Object.fromEntries(
+    getAllDashboardConfigs().map(d => [d.key, this.snapshotService.getSnapshots(d.key)])
+  );
   readonly categories: FlowCategoryMeta[] = FLOW_CATEGORIES;
   private readonly allFlows: FlowDefinition[] = ALL_FLOWS;
 

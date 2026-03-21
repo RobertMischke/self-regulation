@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DashboardConfig } from '../models/dashboard-config';
+import { Snapshot, snapshotScore } from '../models/snapshot';
 
 @Component({
   selector: 'app-dashboard-card',
@@ -40,6 +41,32 @@ import { DashboardConfig } from '../models/dashboard-config';
           </span>
         }
       </div>
+
+      @if (recentSnapshots.length > 0) {
+        <div class="mt-3 border-t border-slate-100 pt-3">
+          <div class="mb-1.5 flex items-center justify-between">
+            <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Verlauf</span>
+            <span class="text-[10px] text-slate-400">{{ recentSnapshots.length }} Eintr{{ recentSnapshots.length === 1 ? 'ag' : 'äge' }}</span>
+          </div>
+          <div class="flex items-end gap-1">
+            @for (s of recentSnapshots; track s.id) {
+              <div
+                class="flex-1 rounded-sm transition"
+                [style.height.px]="Math.max(6, Math.round(scoreOf(s) * 0.28))"
+                [class]="scoreOf(s) >= 65 ? 'bg-emerald-400' : scoreOf(s) >= 40 ? 'bg-amber-400' : 'bg-rose-400'"
+                [title]="scoreOf(s) + ' · ' + formatDate(s.timestamp)"
+              ></div>
+            }
+          </div>
+          <div class="mt-1.5 flex items-center gap-1.5">
+            <span
+              class="inline-block rounded-full px-2 py-0.5 text-[10px] font-bold"
+              [class]="latestScore >= 65 ? 'bg-emerald-50 text-emerald-700' : latestScore >= 40 ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700'"
+            >{{ latestScore }}</span>
+            <span class="text-[10px] text-slate-400">Letzter Score · {{ lastLabel }}</span>
+          </div>
+        </div>
+      }
     </a>
   `,
 })
@@ -47,5 +74,39 @@ export class DashboardCardComponent {
   @Input({ required: true }) config!: DashboardConfig;
   @Input() isFavorite = false;
   @Input() highlighted = false;
+  @Input() snapshots: Snapshot[] = [];
   @Output() toggleFavorite = new EventEmitter<void>();
+
+  readonly Math = Math;
+
+  get recentSnapshots(): Snapshot[] {
+    return [...this.snapshots]
+      .sort((a, b) => a.timestamp - b.timestamp)
+      .slice(-12);
+  }
+
+  scoreOf(s: Snapshot): number {
+    return snapshotScore(s);
+  }
+
+  get latestScore(): number {
+    const last = this.recentSnapshots.at(-1);
+    return last ? snapshotScore(last) : 0;
+  }
+
+  get lastLabel(): string {
+    const last = this.recentSnapshots.at(-1);
+    return last ? this.formatDate(last.timestamp) : '';
+  }
+
+  formatDate(ts: number): string {
+    const d = new Date(ts);
+    const now = new Date();
+    const diffMs = now.getTime() - d.getTime();
+    const diffH = diffMs / 3_600_000;
+    if (diffH < 1) return 'Gerade eben';
+    if (diffH < 24) return `vor ${Math.round(diffH)} Std.`;
+    if (diffH < 48) return 'Gestern';
+    return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' });
+  }
 }
