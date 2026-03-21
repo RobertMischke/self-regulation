@@ -10,6 +10,9 @@ import {
   ALL_FLOWS,
 } from '../../flows/flow-registry';
 import { FlowModalComponent } from '../../components/flow-modal.component';
+import { DashboardCardComponent } from '../../components/dashboard-card.component';
+import { FlowCardComponent } from '../../components/flow-card.component';
+import { LoginDialogComponent } from '../../components/login-dialog.component';
 import { FavoritesService } from '../../services/favorites.service';
 import { AuthService } from '../../services/auth.service';
 import { PwaService } from '../../services/pwa.service';
@@ -18,7 +21,7 @@ import { StorageService } from '../../services/storage.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, FlowModalComponent],
+  imports: [RouterLink, FlowModalComponent, DashboardCardComponent, FlowCardComponent, LoginDialogComponent],
   template: `
     <div class="min-h-screen bg-white text-slate-900">
 
@@ -52,7 +55,7 @@ import { StorageService } from '../../services/storage.service';
               <p class="text-sm font-semibold text-slate-800">{{ auth.user()?.name }}</p>
               <p class="text-xs text-slate-400">{{ auth.user()?.email }}</p>
               <button
-                (click)="auth.logout(); showUserMenu = false"
+                (click)="doLogout()"
                 class="mt-3 w-full rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-200"
               >
                 Abmelden
@@ -70,44 +73,12 @@ import { StorageService } from '../../services/storage.service';
       </div>
 
       <!-- Login Dialog -->
-      @if (showLoginDialog) {
-        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm" (click)="showLoginDialog = false; loginReason = ''">
-          <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl" (click)="$event.stopPropagation()">
-            <h3 class="text-lg font-bold text-slate-900">Anmelden</h3>
-            <p class="mt-1 text-sm text-slate-500">{{ loginReason || 'Damit deine Favoriten gespeichert bleiben.' }}</p>
-            <div class="mt-4 space-y-3">
-              <input
-                #loginName
-                type="text"
-                placeholder="Name"
-                value="Lumi"
-                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
-              />
-              <input
-                #loginEmail
-                type="email"
-                placeholder="E-Mail"
-                value="lumi@zenya.app"
-                class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
-              />
-            </div>
-            <div class="mt-5 flex gap-2">
-              <button
-                (click)="showLoginDialog = false; loginReason = ''"
-                class="flex-1 rounded-xl border border-slate-200 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
-              >
-                Abbrechen
-              </button>
-              <button
-                (click)="doLogin(loginName.value, loginEmail.value)"
-                class="flex-1 rounded-xl bg-indigo-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
-              >
-                Anmelden
-              </button>
-            </div>
-          </div>
-        </div>
-      }
+      <app-login-dialog
+        [open]="showLoginDialog"
+        [reason]="loginReason"
+        (closed)="showLoginDialog = false; loginReason = ''"
+        (loggedIn)="doLogin($event.name, $event.email)"
+      />
 
       <!-- Hero (compact) -->
       @if (!toolMode) {
@@ -163,6 +134,22 @@ import { StorageService } from '../../services/storage.service';
       </div>
       }
 
+      <!-- Fav Dashboards (Tool-Modus) -->
+      @if (toolMode && favDashboards.length > 0) {
+      <section id="fav-dashboards">
+        <div class="mx-auto max-w-6xl px-6 pb-6 pt-6">
+          <div class="mb-4">
+            <span class="text-sm font-bold uppercase tracking-widest text-amber-500">★ Favoriten · Dashboards</span>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            @for (config of favDashboards; track config.key) {
+              <app-dashboard-card [config]="config" [isFavorite]="true" [highlighted]="true" (toggleFavorite)="toggleFav('dashboard', config.key)" />
+            }
+          </div>
+        </div>
+      </section>
+      }
+
       <!-- Dashboards -->
       <section id="dashboards">
         <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10 pt-6' : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
@@ -184,41 +171,9 @@ import { StorageService } from '../../services/storage.service';
           @if (!toolMode || dashboardsOpen) {
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (config of (toolMode ? nonFavDashboards : dashboards); track config.key) {
-              <a
-                [routerLink]="['/dashboard', config.key]"
-                class="group relative flex cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-indigo-200 hover:shadow-lg hover:ring-indigo-100"
-              >
-                <!-- Favorite Star -->
-                <button
-                  (click)="$event.preventDefault(); $event.stopPropagation(); toggleFav('dashboard', config.key)"
-                  class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl transition hover:scale-110"
-                  [class]="favs.isFavorite('dashboard', config.key)
-                    ? 'text-amber-400 hover:text-amber-500 drop-shadow-sm'
-                    : 'text-slate-300/60 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
-                >
-                  ★
-                </button>
-                <div class="mb-3 flex items-center gap-3">
-                  <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg text-white shadow shadow-indigo-500/25">
-                    {{ config.icon }}
-                  </div>
-                  <span class="text-base font-bold leading-snug">{{ config.title }}<span class="ml-1 inline-block text-indigo-400 opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100">&rarr;</span></span>
-                </div>
-
-                <p class="text-[13px] leading-relaxed text-slate-500">{{ config.goal }}</p>
-
-                <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
-                  @for (metric of config.metricLabels; track metric) {
-                    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
-                      {{ metric }}
-                    </span>
-                  }
-                </div>
-
-              </a>
+              <app-dashboard-card [config]="config" [isFavorite]="favs.isFavorite('dashboard', config.key)" (toggleFavorite)="toggleFav('dashboard', config.key)" />
             }
 
-            <!-- Create your own -->
             @if (!toolMode) {
             <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-5 text-center">
               <div class="grid h-11 w-11 place-items-center rounded-xl bg-slate-100 text-xl font-bold text-slate-400">+</div>
@@ -236,30 +191,12 @@ import { StorageService } from '../../services/storage.service';
       @if (toolMode && favFlows.length > 0) {
       <section id="fav-flows">
         <div class="mx-auto max-w-6xl px-6 pb-6 pt-6">
-          <div class="mb-4 flex items-center gap-2">
+          <div class="mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-amber-500">★ Favoriten · Flows</span>
           </div>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (flow of favFlows; track flow.id) {
-              <div class="group relative flex flex-col rounded-2xl border border-amber-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-amber-300 hover:shadow-lg hover:ring-amber-100">
-                <button
-                  (click)="toggleFav('flow', flow.id)"
-                  class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl text-amber-400 hover:text-amber-500 drop-shadow-sm transition hover:scale-110"
-                >
-                  ★
-                </button>
-                <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
-                <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
-                <div class="mt-3 flex items-center gap-2 text-[12px] font-medium text-slate-400">
-                  <span class="rounded-md bg-violet-50 px-2 py-0.5 text-violet-600">{{ flow.duration }}</span>
-                  <span class="rounded-md bg-slate-100 px-2 py-0.5 text-slate-500">{{ flow.style }}</span>
-                </div>
-                <button
-                  (click)="openFlow(flow)"
-                  class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
-                  Starten
-                </button>
-              </div>
+              <app-flow-card [flow]="flow" [isFavorite]="true" [highlighted]="true" (toggleFavorite)="toggleFav('flow', flow.id)" (start)="openFlow(flow)" />
             }
           </div>
         </div>
@@ -323,42 +260,7 @@ import { StorageService } from '../../services/storage.service';
           <!-- Flow Cards -->
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (flow of (toolMode ? visibleNonFavFlows : visibleFlows); track flow.title) {
-              <div class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-violet-200 hover:shadow-lg hover:ring-violet-100">
-                <!-- Favorite Star -->
-                <button
-                  (click)="toggleFav('flow', flow.id)"
-                  class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl transition hover:scale-110"
-                  [class]="favs.isFavorite('flow', flow.id)
-                    ? 'text-amber-400 hover:text-amber-500 drop-shadow-sm'
-                    : 'text-slate-300/60 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
-                >
-                  ★
-                </button>
-                <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
-                <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
-
-                <!-- Meta: Duration & Style -->
-                <div class="mt-3 flex items-center gap-2 text-[12px] font-medium text-slate-400">
-                  <span class="rounded-md bg-violet-50 px-2 py-0.5 text-violet-600">{{ flow.duration }}</span>
-                  <span class="rounded-md bg-slate-100 px-2 py-0.5 text-slate-500">{{ flow.style }}</span>
-                </div>
-
-                <!-- Tags -->
-                <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
-                  @for (tag of flow.tags; track tag) {
-                    <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
-                      {{ tag }}
-                    </span>
-                  }
-                </div>
-
-                <!-- CTA -->
-                <button
-                  (click)="openFlow(flow)"
-                  class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
-                  Starten
-                </button>
-              </div>
+              <app-flow-card [flow]="flow" [isFavorite]="favs.isFavorite('flow', flow.id)" (toggleFavorite)="toggleFav('flow', flow.id)" (start)="openFlow(flow)" />
             }
           </div>
 
@@ -465,7 +367,7 @@ export class HomeComponent {
   activeCategory: FlowCategory | null = null;
   flowSearch = '';
   flowPage = 0;
-  toolMode = inject(StorageService).get<boolean>('zenya_tool_mode', false);
+  toolMode = this.storage.get<boolean>('zenya_tool_mode', false);
   dashboardsOpen = true;
   flowsOpen = true;
   activeFlow: FlowDefinition | null = null;
@@ -551,7 +453,14 @@ export class HomeComponent {
     if (!name.trim() || !email.trim()) return;
     this.auth.login(name, email);
     this.showLoginDialog = false;
+    this.loginReason = '';
     this.setToolMode(true);
+  }
+
+  doLogout(): void {
+    this.auth.logout();
+    this.setToolMode(false);
+    this.showUserMenu = false;
   }
 
   setToolMode(value: boolean): void {
