@@ -79,12 +79,14 @@ import { PwaService } from '../../services/pwa.service';
                 #loginName
                 type="text"
                 placeholder="Name"
+                value="Lumi"
                 class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
               />
               <input
                 #loginEmail
                 type="email"
                 placeholder="E-Mail"
+                value="lumi@zenya.app"
                 class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100"
               />
             </div>
@@ -139,9 +141,17 @@ import { PwaService } from '../../services/pwa.service';
       </section>
       }
 
+      <!-- Greeting (Tool-Modus) -->
+      @if (toolMode && auth.isLoggedIn()) {
+      <div class="mx-auto max-w-6xl px-6 pt-14 pb-2">
+        <h2 class="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">{{ greeting }}</h2>
+        <p class="mt-1 text-sm text-slate-400">Was brauchst du gerade?</p>
+      </div>
+      }
+
       <!-- Dashboards -->
       <section id="dashboards">
-        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10 pt-14' : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
+        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10' + (auth.isLoggedIn() ? ' pt-6' : ' pt-14') : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
           @if (!toolMode) {
           <div class="mb-10 text-center">
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Dashboards</h2>
@@ -517,5 +527,25 @@ export class HomeComponent {
     if (!name.trim() || !email.trim()) return;
     this.auth.login(name, email);
     this.showLoginDialog = false;
+    this.toolMode = true;
+  }
+
+  get greeting(): string {
+    const h = new Date().getHours();
+    const name = this.auth.user()?.name.split(' ')[0] ?? '';
+    const greetings = [
+      `Guten Morgen, ${name} ☀️`,
+      `Hallo ${name} 👋`,
+      `Schön, dass du da bist, ${name} 💛`,
+      `Guten Abend, ${name} 🌙`,
+      `Hey ${name}, alles klar? ✨`,
+      `Willkommen zurück, ${name} 🫶`,
+    ];
+    if (h < 6) return greetings[3];
+    if (h < 11) return greetings[0];
+    if (h < 14) return greetings[1];
+    if (h < 17) return greetings[2];
+    if (h < 21) return greetings[3];
+    return greetings[3];
   }
 }
