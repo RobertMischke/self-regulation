@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { StorageService } from './storage.service';
 
 export interface UserProfile {
   name: string;
@@ -9,7 +10,8 @@ const STORAGE_KEY = 'adhs_user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly _user = signal<UserProfile | null>(this.load());
+  private readonly storage = inject(StorageService);
+  private readonly _user = signal<UserProfile | null>(this.storage.get<UserProfile | null>(STORAGE_KEY, null));
 
   readonly user = this._user.asReadonly();
   readonly isLoggedIn = computed(() => this._user() !== null);
@@ -27,20 +29,11 @@ export class AuthService {
   login(name: string, email: string): void {
     const profile: UserProfile = { name: name.trim(), email: email.trim().toLowerCase() };
     this._user.set(profile);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    this.storage.set(STORAGE_KEY, profile);
   }
 
   logout(): void {
     this._user.set(null);
-    localStorage.removeItem(STORAGE_KEY);
-  }
-
-  private load(): UserProfile | null {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
+    this.storage.remove(STORAGE_KEY);
   }
 }

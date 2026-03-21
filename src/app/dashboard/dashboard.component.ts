@@ -10,7 +10,8 @@ import { InfoTooltipComponent } from '../components/info-tooltip.component';
 import { DashboardConfig, ModeDefinition, SystemFeedback, ComputedMetric, SliderItem } from '../models/dashboard-config';
 import { getDashboardConfig, getAllDashboardConfigs } from '../configs/dashboard-registry';
 import { computeAllMetrics, resolveMode, calculateIdealDistance, collectSliderFeedbacks, ActiveSliderFeedback } from '../models/engine';
-import { Snapshot, getSnapshots, addSnapshot, deleteSnapshot, clearSnapshots, snapshotScore } from '../models/snapshot';
+import { Snapshot, SnapshotService, snapshotScore } from '../models/snapshot';
+import { StorageService } from '../services/storage.service';
 
 function severityRank(s: 'mild' | 'moderate' | 'severe'): number {
   return s === 'severe' ? 0 : s === 'moderate' ? 1 : 2;
@@ -27,6 +28,8 @@ export class DashboardComponent implements OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private titleService = inject(Title);
+  private storage = inject(StorageService);
+  private snapshotService = inject(SnapshotService);
   private autosaveTimer: ReturnType<typeof setTimeout> | null = null;
 
   readonly config: DashboardConfig;
@@ -57,7 +60,7 @@ export class DashboardComponent implements OnDestroy {
 
   constructor() {
     const key = this.route.snapshot.paramMap.get('key') ?? '';
-    this.disclaimerDismissed = signal(localStorage.getItem('disclaimer_dismissed') === '1');
+    this.disclaimerDismissed = signal(this.storage.get<boolean>('disclaimer_dismissed', false));
     const config = getDashboardConfig(key);
     if (!config) {
       this.config = getAllDashboardConfigs()[0];
@@ -105,13 +108,11 @@ export class DashboardComponent implements OnDestroy {
       return hints;
     });
 
-    this.snapshots = signal(getSnapshots(this.config.key));
+    this.snapshots = signal(this.snapshotService.getSnapshots(this.config.key));
 
-    // Autosave config from localStorage
-    const savedEnabled = localStorage.getItem(`autosave_enabled_${this.config.key}`);
-    this.autosaveEnabled = signal(savedEnabled !== '0');
-    const savedSeconds = parseInt(localStorage.getItem(`autosave_seconds_${this.config.key}`) ?? '', 10);
-    this.autosaveSeconds = signal(isNaN(savedSeconds) || savedSeconds < 5 ? 30 : savedSeconds);
+    // Autosave config
+    this.autosaveEnabled = signal(this.storage.get<boolean>(`autosave_enabled_${this.config.key}`, true));
+    this.autosaveSeconds = signal(this.storage.get<number>(`autosave_seconds_${this.config.key}`, 30) < 5 ? 30 : this.storage.get<number>(`autosave_seconds_${this.config.key}`, 30));
 
     // Reset index when feedbacks change
     effect(() => {
@@ -149,7 +150,7 @@ export class DashboardComponent implements OnDestroy {
   toggleAutosave(): void {
     const next = !this.autosaveEnabled();
     this.autosaveEnabled.set(next);
-    localStorage.setItem(`autosave_enabled_${this.config.key}`, next ? '1' : '0');
+    this.storage.set(`autosave_enabled_${this.config.key}`, next);
     if (!next && this.autosaveTimer) {
       clearTimeout(this.autosaveTimer);
       this.autosaveTimer = null;
@@ -159,7 +160,7 @@ export class DashboardComponent implements OnDestroy {
   setAutosaveSeconds(value: number): void {
     const clamped = Math.max(5, Math.min(300, Math.round(value)));
     this.autosaveSeconds.set(clamped);
-    localStorage.setItem(`autosave_seconds_${this.config.key}`, String(clamped));
+    this.storage.set(`autosave_seconds_${this.config.key}`, clamped);
     if (this.autosaveEnabled()) this.resetAutosaveTimer();
   }
 
@@ -183,7 +184,7 @@ export class DashboardComponent implements OnDestroy {
   }
 
   takeSnapshot(): void {
-    const snap = addSnapshot({
+    const snap = this.snapshotService.addSnapshot({
       timestamp: Date.now(),
       dashboardKey: this.config.key,
       values: { ...this.values() },
@@ -197,14 +198,14 @@ export class DashboardComponent implements OnDestroy {
   }
 
   removeSnapshot(id: string): void {
-    deleteSnapshot(id);
+    this.snapshotService.deleteSnapshot(id);
     this.snapshots.update(list => list.filter(s => s.id !== id));
     if (this.expandedSnapshotId() === id) this.expandedSnapshotId.set(null);
     if (this.selectedSnapshot()?.id === id) this.selectedSnapshot.set(null);
   }
 
   clearAllSnapshots(): void {
-    clearSnapshots(this.config.key);
+    this.snapshotService.clearSnapshots(this.config.key);
     this.snapshots.set([]);
     this.expandedSnapshotId.set(null);
     this.selectedSnapshot.set(null);
@@ -254,7 +255,7 @@ export class DashboardComponent implements OnDestroy {
   }
 
   dismissDisclaimer(): void {
-    localStorage.setItem('disclaimer_dismissed', '1');
+    this.storage.set('disclaimer_dismissed', true);
     this.disclaimerDismissed.set(true);
   }
 

@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { StorageService } from './storage.service';
 
 export type FavoriteItem = { type: 'dashboard' | 'flow'; id: string };
 
@@ -6,7 +7,8 @@ const STORAGE_KEY = 'adhs_favorites';
 
 @Injectable({ providedIn: 'root' })
 export class FavoritesService {
-  private readonly _items = signal<FavoriteItem[]>(this.load());
+  private readonly storage = inject(StorageService);
+  private readonly _items = signal<FavoriteItem[]>(this.storage.get<FavoriteItem[]>(STORAGE_KEY, []));
 
   readonly items = this._items.asReadonly();
   readonly count = computed(() => this._items().length);
@@ -24,19 +26,6 @@ export class FavoritesService {
     } else {
       this._items.set([...current, { type, id }]);
     }
-    this.save();
-  }
-
-  private load(): FavoriteItem[] {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  private save(): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this._items()));
+    this.storage.set(STORAGE_KEY, this._items());
   }
 }

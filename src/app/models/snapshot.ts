@@ -1,3 +1,6 @@
+import { inject, Injectable } from '@angular/core';
+import { StorageService } from '../services/storage.service';
+
 export interface Snapshot {
   id: string;
   timestamp: number;
@@ -12,37 +15,37 @@ export interface Snapshot {
 
 const STORAGE_KEY = 'snapshots';
 
-function readAll(): Snapshot[] {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
+@Injectable({ providedIn: 'root' })
+export class SnapshotService {
+  private storage = inject(StorageService);
+
+  private readAll(): Snapshot[] {
+    return this.storage.get<Snapshot[]>(STORAGE_KEY, []);
   }
-}
 
-function writeAll(snapshots: Snapshot[]): void {
-  sessionStorage.setItem(STORAGE_KEY, JSON.stringify(snapshots));
-}
+  private writeAll(snapshots: Snapshot[]): void {
+    this.storage.set(STORAGE_KEY, snapshots);
+  }
 
-export function getSnapshots(dashboardKey: string): Snapshot[] {
-  return readAll().filter(s => s.dashboardKey === dashboardKey);
-}
+  getSnapshots(dashboardKey: string): Snapshot[] {
+    return this.readAll().filter(s => s.dashboardKey === dashboardKey);
+  }
 
-export function addSnapshot(snapshot: Omit<Snapshot, 'id'>): Snapshot {
-  const all = readAll();
-  const entry: Snapshot = { ...snapshot, id: crypto.randomUUID() };
-  all.push(entry);
-  writeAll(all);
-  return entry;
-}
+  addSnapshot(snapshot: Omit<Snapshot, 'id'>): Snapshot {
+    const all = this.readAll();
+    const entry: Snapshot = { ...snapshot, id: crypto.randomUUID() };
+    all.push(entry);
+    this.writeAll(all);
+    return entry;
+  }
 
-export function deleteSnapshot(id: string): void {
-  writeAll(readAll().filter(s => s.id !== id));
-}
+  deleteSnapshot(id: string): void {
+    this.writeAll(this.readAll().filter(s => s.id !== id));
+  }
 
-export function clearSnapshots(dashboardKey: string): void {
-  writeAll(readAll().filter(s => s.dashboardKey !== dashboardKey));
+  clearSnapshots(dashboardKey: string): void {
+    this.writeAll(this.readAll().filter(s => s.dashboardKey !== dashboardKey));
+  }
 }
 
 /** 0–100 score: high regulation + low friction = good */

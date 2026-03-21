@@ -12,6 +12,7 @@ import {
 import { FlowModalComponent } from '../../components/flow-modal.component';
 import { FavoritesService } from '../../services/favorites.service';
 import { AuthService } from '../../services/auth.service';
+import { PwaService } from '../../services/pwa.service';
 
 @Component({
   selector: 'app-home',
@@ -376,6 +377,26 @@ import { AuthService } from '../../services/auth.service';
       }
 
       @if (!toolMode) {
+      <!-- PWA Install Banner -->
+      @if (pwa.canInstall()) {
+      <section class="border-t border-emerald-100 bg-emerald-50/50">
+        <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4 px-6 py-4">
+          <div class="flex items-center gap-3">
+            <span class="text-xl">📲</span>
+            <p class="text-sm font-medium text-slate-700">
+              <strong>App installieren</strong> &mdash; Regulate als App auf deinem Ger&auml;t nutzen. Offline verf&uuml;gbar, schneller Zugriff.
+            </p>
+          </div>
+          <button
+            (click)="pwa.install()"
+            class="shrink-0 cursor-pointer rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+          >
+            Installieren
+          </button>
+        </div>
+      </section>
+      }
+
       <!-- Mitstreiter Banner -->
       <section class="border-t border-indigo-100 bg-indigo-50/50">
         <div class="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-4 px-6 py-5">
@@ -403,6 +424,7 @@ import { AuthService } from '../../services/auth.service';
 export class HomeComponent {
   readonly favs = inject(FavoritesService);
   readonly auth = inject(AuthService);
+  readonly pwa = inject(PwaService);
 
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
   readonly categories: FlowCategoryMeta[] = FLOW_CATEGORIES;
