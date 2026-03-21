@@ -13,6 +13,7 @@ import { FlowModalComponent } from '../../components/flow-modal.component';
 import { FavoritesService } from '../../services/favorites.service';
 import { AuthService } from '../../services/auth.service';
 import { PwaService } from '../../services/pwa.service';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-home',
@@ -25,7 +26,7 @@ import { PwaService } from '../../services/pwa.service';
       <div class="fixed right-4 top-4 z-50 flex items-center gap-2">
         <!-- Tool-Mode Toggle (iOS switch) -->
         <button
-          (click)="toolMode = !toolMode"
+          (click)="setToolMode(!toolMode)"
           class="group flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 shadow-sm backdrop-blur transition hover:bg-slate-50"
         >
           <div class="relative h-5 w-9 rounded-full transition-colors duration-200"
@@ -149,9 +150,68 @@ import { PwaService } from '../../services/pwa.service';
       </div>
       }
 
+      <!-- Favorites Section (Tool-Modus) -->
+      @if (toolMode && (favDashboards.length > 0 || favFlows.length > 0)) {
+      <section class="mx-auto max-w-6xl px-6" [class]="auth.isLoggedIn() ? 'pt-2 pb-6' : 'pt-14 pb-6'">
+        <div class="mb-4 flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-widest text-amber-500">★ Favoriten</span>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          @for (config of favDashboards; track config.key) {
+            <a
+              [routerLink]="['/dashboard', config.key]"
+              class="group relative flex cursor-pointer flex-col rounded-2xl border border-amber-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-amber-300 hover:shadow-lg hover:ring-amber-100"
+            >
+              <button
+                (click)="$event.preventDefault(); $event.stopPropagation(); toggleFav('dashboard', config.key)"
+                class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl text-amber-400 hover:text-amber-500 drop-shadow-sm transition hover:scale-110"
+              >
+                ★
+              </button>
+              <div class="mb-3 flex items-center gap-3">
+                <div class="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg text-white shadow shadow-indigo-500/25">
+                  {{ config.icon }}
+                </div>
+                <span class="text-base font-bold leading-snug">{{ config.title }}</span>
+              </div>
+              <p class="text-[13px] leading-relaxed text-slate-500">{{ config.goal }}</p>
+              <div class="mt-auto flex flex-wrap gap-1.5 pt-4">
+                @for (metric of config.metricLabels; track metric) {
+                  <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                    {{ metric }}
+                  </span>
+                }
+              </div>
+            </a>
+          }
+          @for (flow of favFlows; track flow.id) {
+            <div class="group relative flex flex-col rounded-2xl border border-amber-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-amber-300 hover:shadow-lg hover:ring-amber-100">
+              <button
+                (click)="toggleFav('flow', flow.id)"
+                class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl text-amber-400 hover:text-amber-500 drop-shadow-sm transition hover:scale-110"
+              >
+                ★
+              </button>
+              <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
+              <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
+              <div class="mt-3 flex items-center gap-2 text-[12px] font-medium text-slate-400">
+                <span class="rounded-md bg-violet-50 px-2 py-0.5 text-violet-600">{{ flow.duration }}</span>
+                <span class="rounded-md bg-slate-100 px-2 py-0.5 text-slate-500">{{ flow.style }}</span>
+              </div>
+              <button
+                (click)="openFlow(flow)"
+                class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500">
+                Starten
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+      }
+
       <!-- Dashboards -->
       <section id="dashboards">
-        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10' + (auth.isLoggedIn() ? ' pt-6' : ' pt-14') : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
+        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10' + (auth.isLoggedIn() && favDashboards.length === 0 && favFlows.length === 0 ? ' pt-6' : ' pt-2') : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
           @if (!toolMode) {
           <div class="mb-10 text-center">
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Dashboards</h2>
@@ -160,32 +220,16 @@ import { PwaService } from '../../services/pwa.service';
             </p>
           </div>
           } @else {
-          <div class="mb-4 flex items-center gap-2">
+          <button (click)="dashboardsOpen = !dashboardsOpen" class="mb-4 flex w-full cursor-pointer items-center gap-2 text-left">
+            <svg class="h-4 w-4 text-slate-400 transition-transform" [class.rotate-90]="dashboardsOpen" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
             <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Dashboards</span>
-          </div>
+            <span class="text-xs text-slate-300">({{ toolMode ? nonFavDashboards.length : dashboards.length }})</span>
+          </button>
           }
 
-          @if (toolMode && favDashboards.length > 0) {
-          <div class="mb-6">
-            <span class="mb-2 block text-[11px] font-bold uppercase tracking-widest text-amber-500">★ Favoriten</span>
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              @for (config of favDashboards; track config.key) {
-                <a
-                  [routerLink]="['/dashboard', config.key]"
-                  class="group relative flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/50 p-3 transition hover:border-amber-300 hover:shadow-md"
-                >
-                  <div class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 text-sm text-white shadow shadow-indigo-500/25">
-                    {{ config.icon }}
-                  </div>
-                  <span class="text-sm font-bold leading-snug">{{ config.title }}</span>
-                </a>
-              }
-            </div>
-          </div>
-          }
-
+          @if (!toolMode || dashboardsOpen) {
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            @for (config of dashboards; track config.key) {
+            @for (config of (toolMode ? nonFavDashboards : dashboards); track config.key) {
               <a
                 [routerLink]="['/dashboard', config.key]"
                 class="group relative flex cursor-pointer flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-indigo-200 hover:shadow-lg hover:ring-indigo-100"
@@ -230,6 +274,7 @@ import { PwaService } from '../../services/pwa.service';
             </div>
             }
           </div>
+          }
         </div>
       </section>
 
@@ -245,27 +290,14 @@ import { PwaService } from '../../services/pwa.service';
             </p>
           </div>
           } @else {
-          <div class="mb-4 flex items-center gap-2">
+          <button (click)="flowsOpen = !flowsOpen" class="mb-4 flex w-full cursor-pointer items-center gap-2 text-left">
+            <svg class="h-4 w-4 text-slate-400 transition-transform" [class.rotate-90]="flowsOpen" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
             <span class="text-xs font-bold uppercase tracking-widest text-slate-400">Flows</span>
-          </div>
+            <span class="text-xs text-slate-300">({{ toolMode ? nonFavFlows.length : filteredFlows.length }})</span>
+          </button>
           }
 
-          @if (toolMode && favFlows.length > 0) {
-          <div class="mb-6">
-            <span class="mb-2 block text-[11px] font-bold uppercase tracking-widest text-amber-500">★ Favoriten</span>
-            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              @for (flow of favFlows; track flow.id) {
-                <button
-                  (click)="openFlow(flow)"
-                  class="flex items-center gap-3 rounded-xl border border-amber-200 bg-amber-50/50 p-3 text-left transition hover:border-amber-300 hover:shadow-md"
-                >
-                  <span class="text-sm font-bold leading-snug">{{ flow.title }}</span>
-                  <span class="ml-auto shrink-0 rounded-md bg-violet-100 px-2 py-0.5 text-[11px] font-semibold text-violet-600">{{ flow.duration }}</span>
-                </button>
-              }
-            </div>
-          </div>
-          }
+          @if (!toolMode || flowsOpen) {
 
           <!-- Search -->
           <div class="mx-auto mb-6 max-w-md">
@@ -302,7 +334,7 @@ import { PwaService } from '../../services/pwa.service';
 
           <!-- Flow Cards -->
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            @for (flow of visibleFlows; track flow.title) {
+            @for (flow of (toolMode ? visibleNonFavFlows : visibleFlows); track flow.title) {
               <div class="group relative flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-1 ring-transparent transition hover:border-violet-200 hover:shadow-lg hover:ring-violet-100">
                 <!-- Favorite Star -->
                 <button
@@ -342,11 +374,11 @@ import { PwaService } from '../../services/pwa.service';
             }
           </div>
 
-          @if (filteredFlows.length === 0) {
+          @if ((toolMode ? nonFavFlows : filteredFlows).length === 0) {
             <p class="mt-6 text-center text-sm text-slate-400">Kein Flow gefunden.</p>
           }
 
-          @if (totalPages > 1) {
+          @if ((toolMode ? totalNonFavPages : totalPages) > 1) {
             <div class="mt-8 flex items-center justify-center gap-3">
               <button
                 (click)="prevPage()"
@@ -355,15 +387,16 @@ import { PwaService } from '../../services/pwa.service';
               >
                 &larr; Zur&uuml;ck
               </button>
-              <span class="text-sm text-slate-400">{{ flowPage + 1 }} / {{ totalPages }}</span>
+              <span class="text-sm text-slate-400">{{ flowPage + 1 }} / {{ toolMode ? totalNonFavPages : totalPages }}</span>
               <button
                 (click)="nextPage()"
-                [disabled]="flowPage >= totalPages - 1"
+                [disabled]="flowPage >= (toolMode ? totalNonFavPages : totalPages) - 1"
                 class="rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-30 disabled:pointer-events-none"
               >
                 Weiter &rarr;
               </button>
             </div>
+          }
           }
         </div>
       </section>
@@ -435,6 +468,7 @@ export class HomeComponent {
   readonly favs = inject(FavoritesService);
   readonly auth = inject(AuthService);
   readonly pwa = inject(PwaService);
+  private readonly storage = inject(StorageService);
 
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
   readonly categories: FlowCategoryMeta[] = FLOW_CATEGORIES;
@@ -443,7 +477,9 @@ export class HomeComponent {
   activeCategory: FlowCategory | null = null;
   flowSearch = '';
   flowPage = 0;
-  toolMode = false;
+  toolMode = inject(StorageService).get<boolean>('zenya_tool_mode', false);
+  dashboardsOpen = true;
+  flowsOpen = true;
   activeFlow: FlowDefinition | null = null;
   showLoginDialog = false;
   showUserMenu = false;
@@ -527,7 +563,42 @@ export class HomeComponent {
     if (!name.trim() || !email.trim()) return;
     this.auth.login(name, email);
     this.showLoginDialog = false;
-    this.toolMode = true;
+    this.setToolMode(true);
+  }
+
+  setToolMode(value: boolean): void {
+    this.toolMode = value;
+    this.storage.set('zenya_tool_mode', value);
+  }
+
+  get nonFavDashboards(): DashboardConfig[] {
+    return this.dashboards.filter(d => !this.favs.isFavorite('dashboard', d.key));
+  }
+
+  get nonFavFlows(): FlowDefinition[] {
+    const query = this.flowSearch.trim().toLowerCase();
+    let flows: FlowDefinition[];
+    if (query) {
+      flows = this.allFlows.filter(f =>
+        f.title.toLowerCase().includes(query) ||
+        f.description.toLowerCase().includes(query) ||
+        f.tags.some(t => t.toLowerCase().includes(query))
+      );
+    } else if (this.activeCategory === null) {
+      flows = this.allFlows;
+    } else {
+      flows = this.allFlows.filter(f => f.category === this.activeCategory);
+    }
+    return flows.filter(f => !this.favs.isFavorite('flow', f.id));
+  }
+
+  get visibleNonFavFlows(): FlowDefinition[] {
+    const start = this.flowPage * this.PAGE_SIZE;
+    return this.nonFavFlows.slice(start, start + this.PAGE_SIZE);
+  }
+
+  get totalNonFavPages(): number {
+    return Math.ceil(this.nonFavFlows.length / this.PAGE_SIZE);
   }
 
   get greeting(): string {
