@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DashboardConfig } from '../../models/dashboard-config';
 import { getAllDashboardConfigs } from '../../configs/dashboard-registry';
@@ -26,17 +26,22 @@ import { StorageService } from '../../services/storage.service';
     <div class="min-h-screen bg-white text-slate-900">
 
       <!-- Top Bar -->
-      <div class="fixed right-4 top-4 z-50 flex items-center gap-2">
+      <div
+        [class]="toolMode
+          ? 'fixed inset-x-0 top-0 z-50 bg-white/90 backdrop-blur-md' + (hasScrolled ? ' border-b border-slate-200/80' : '')
+          : 'fixed right-4 top-4 z-50'"
+      >
+        <div [class]="toolMode ? 'mx-auto flex max-w-7xl items-center justify-end gap-2 px-4 py-3' : 'flex items-center gap-2'">
         <!-- Tool-Mode Navigation Chips -->
         @if (toolMode) {
           @if (favDashboards.length > 0) {
-          <a href="#fav-dashboards" class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-600 shadow-sm backdrop-blur transition hover:bg-amber-100">★ Dashboards</a>
+          <a href="#fav-dashboards" class="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-600 shadow-sm backdrop-blur transition hover:bg-amber-100">★ Dashboards</a>
           }
           @if (favFlows.length > 0) {
-          <a href="#fav-flows" class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-600 shadow-sm backdrop-blur transition hover:bg-amber-100">★ Flows</a>
+          <a href="#fav-flows" class="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-600 shadow-sm backdrop-blur transition hover:bg-amber-100">★ Flows</a>
           }
-          <a href="#dashboards" class="rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-50">Dashboards</a>
-          <a href="#flows" class="rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-50">Flows</a>
+          <a href="#dashboards" class="rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-50">Dashboards</a>
+          <a href="#flows" class="rounded-full border border-slate-200 bg-white/90 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-50">Flows</a>
         }
 
         <!-- Tool-Mode Toggle (iOS switch) -->
@@ -82,6 +87,7 @@ import { StorageService } from '../../services/storage.service';
             👤 Anmelden
           </button>
         }
+        </div>
       </div>
 
       <!-- Login Dialog -->
@@ -367,6 +373,7 @@ export class HomeComponent {
   flowSearch = '';
   flowPage = 0;
   toolMode = this.storage.get<boolean>('zenya_tool_mode', false);
+  hasScrolled = false;
   dashboardsOpen = true;
   flowsOpen = true;
   activeFlow: FlowDefinition | null = null;
@@ -465,6 +472,11 @@ export class HomeComponent {
   setToolMode(value: boolean): void {
     this.toolMode = value;
     this.storage.set('zenya_tool_mode', value);
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    this.hasScrolled = window.scrollY > 12;
   }
 
   get nonFavDashboards(): DashboardConfig[] {
