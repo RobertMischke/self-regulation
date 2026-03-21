@@ -27,6 +27,18 @@ import { StorageService } from '../../services/storage.service';
 
       <!-- Top Bar -->
       <div class="fixed right-4 top-4 z-50 flex items-center gap-2">
+        <!-- Tool-Mode Navigation Chips -->
+        @if (toolMode) {
+          @if (favDashboards.length > 0) {
+          <a href="#fav-dashboards" class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-600 shadow-sm backdrop-blur transition hover:bg-amber-100">★ Dashboards</a>
+          }
+          @if (favFlows.length > 0) {
+          <a href="#fav-flows" class="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-600 shadow-sm backdrop-blur transition hover:bg-amber-100">★ Flows</a>
+          }
+          <a href="#dashboards" class="rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-50">Dashboards</a>
+          <a href="#flows" class="rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-600 shadow-sm backdrop-blur transition hover:bg-slate-50">Flows</a>
+        }
+
         <!-- Tool-Mode Toggle (iOS switch) -->
         <button
           (click)="setToolMode(!toolMode)"
@@ -113,31 +125,18 @@ import { StorageService } from '../../services/storage.service';
       </section>
       }
 
-      <!-- Greeting + Nav (Tool-Modus) -->
-      @if (toolMode) {
-      <div class="mx-auto max-w-6xl px-6" [class]="auth.isLoggedIn() ? 'pt-14 pb-2' : 'pt-14 pb-2'">
-        @if (auth.isLoggedIn()) {
+      <!-- Greeting (Tool-Modus) -->
+      @if (toolMode && auth.isLoggedIn()) {
+      <div class="mx-auto max-w-6xl px-6 pt-14 pb-2">
         <h2 class="text-2xl font-bold tracking-tight text-slate-800 sm:text-3xl">{{ greeting }}</h2>
         <p class="mt-1 text-sm text-slate-400">Was brauchst du gerade?</p>
-        }
-        <!-- Tool-Mode Navigation -->
-        <nav class="flex flex-wrap items-center gap-2" [class]="auth.isLoggedIn() ? 'mt-4' : ''">
-          @if (favDashboards.length > 0) {
-          <a href="#fav-dashboards" class="rounded-full bg-amber-50 px-3.5 py-1.5 text-sm font-semibold text-amber-600 transition hover:bg-amber-100">★ Dashboards</a>
-          }
-          @if (favFlows.length > 0) {
-          <a href="#fav-flows" class="rounded-full bg-amber-50 px-3.5 py-1.5 text-sm font-semibold text-amber-600 transition hover:bg-amber-100">★ Flows</a>
-          }
-          <a href="#dashboards" class="rounded-full bg-slate-100 px-3.5 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-200">Dashboards</a>
-          <a href="#flows" class="rounded-full bg-slate-100 px-3.5 py-1.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-200">Flows</a>
-        </nav>
       </div>
       }
 
       <!-- Fav Dashboards (Tool-Modus) -->
       @if (toolMode && favDashboards.length > 0) {
       <section id="fav-dashboards">
-        <div class="mx-auto max-w-6xl px-6 pb-6 pt-6">
+        <div [class]="'mx-auto max-w-6xl px-6 pb-6' + (auth.isLoggedIn() ? ' pt-6' : ' pt-14')">
           <div class="mb-4">
             <span class="text-sm font-bold uppercase tracking-widest text-amber-500">★ Favoriten · Dashboards</span>
           </div>
@@ -152,7 +151,7 @@ import { StorageService } from '../../services/storage.service';
 
       <!-- Dashboards -->
       <section id="dashboards">
-        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10 pt-6' : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
+        <div [class]="toolMode ? 'mx-auto max-w-6xl px-6 pb-10' + (auth.isLoggedIn() || favDashboards.length > 0 ? ' pt-6' : ' pt-14') : 'mx-auto max-w-6xl px-6 pb-24 pt-10'">
           @if (!toolMode) {
           <div class="mb-10 text-center">
             <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Dashboards</h2>
