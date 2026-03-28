@@ -145,7 +145,7 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
       <section id="fav-dashboards">
         <div [class]="'mx-auto max-w-6xl px-6 pb-6' + (auth.isLoggedIn() ? ' pt-6' : ' pt-14')">
           <div class="mb-4">
-            <span class="text-sm font-bold uppercase tracking-widest text-amber-500">★ Favoriten · Dashboards</span>
+            <span class="text-lg font-bold uppercase tracking-wide text-amber-500">★ Favoriten · Dashboards</span>
           </div>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (config of favDashboards; track config.key) {
@@ -167,10 +167,10 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
             </p>
           </div>
           } @else {
-          <button (click)="dashboardsOpen = !dashboardsOpen" class="mb-4 flex w-full cursor-pointer items-center gap-2 text-left">
-            <svg class="h-4 w-4 text-slate-400 transition-transform" [class.rotate-90]="dashboardsOpen" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
-            <span class="text-sm font-bold uppercase tracking-widest text-slate-400">Dashboards</span>
-            <span class="text-xs text-slate-300">({{ nonFavDashboards.length }})</span>
+          <button (click)="dashboardsOpen = !dashboardsOpen" class="mb-4 flex w-full cursor-pointer items-center gap-2.5 text-left">
+            <svg class="h-5 w-5 text-slate-400 transition-transform" [class.rotate-90]="dashboardsOpen" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
+            <span class="text-lg font-bold uppercase tracking-wide text-slate-600">Dashboards</span>
+            <span class="text-sm text-slate-400">({{ nonFavDashboards.length }})</span>
           </button>
           }
 
@@ -198,7 +198,7 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
       <section id="fav-flows">
         <div class="mx-auto max-w-6xl px-6 pb-6 pt-6">
           <div class="mb-4">
-            <span class="text-sm font-bold uppercase tracking-widest text-amber-500">★ Favoriten · Flows</span>
+            <span class="text-lg font-bold uppercase tracking-wide text-amber-500">★ Favoriten · Flows</span>
           </div>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (flow of favFlows; track flow.id) {
@@ -221,10 +221,10 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
             </p>
           </div>
           } @else {
-          <button (click)="flowsOpen = !flowsOpen" class="mb-4 flex w-full cursor-pointer items-center gap-2 text-left">
-            <svg class="h-4 w-4 text-slate-400 transition-transform" [class.rotate-90]="flowsOpen" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
-            <span class="text-sm font-bold uppercase tracking-widest text-slate-400">Flows</span>
-            <span class="text-xs text-slate-300">({{ nonFavFlows.length }})</span>
+          <button (click)="flowsOpen = !flowsOpen" class="mb-4 flex w-full cursor-pointer items-center gap-2.5 text-left">
+            <svg class="h-5 w-5 text-slate-400 transition-transform" [class.rotate-90]="flowsOpen" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd"/></svg>
+            <span class="text-lg font-bold uppercase tracking-wide text-slate-600">Flows</span>
+            <span class="text-sm text-slate-400">({{ nonFavFlows.length }})</span>
           </button>
           }
 

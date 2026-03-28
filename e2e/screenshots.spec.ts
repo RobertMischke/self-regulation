@@ -22,6 +22,18 @@ for (const page of pages) {
   });
 }
 
+test('screenshot: home-tool-mode', async ({ page: p }) => {
+  await p.goto('/', { waitUntil: 'networkidle' });
+  await p.waitForTimeout(300);
+  const toggle = p.locator('button', { hasText: 'Willkommen' });
+  await toggle.click();
+  await p.waitForTimeout(500);
+  await p.screenshot({
+    path: join(SCREENSHOT_DIR, 'home-tool-mode.png'),
+    fullPage: true,
+  });
+});
+
 test('screenshot: modal-verlauf', async ({ page: p }) => {
   await p.goto('/dashboard/adhs-regulation', { waitUntil: 'networkidle' });
   await p.waitForTimeout(300);
