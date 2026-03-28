@@ -48,15 +48,26 @@ import { Snapshot, snapshotScore } from '../models/snapshot';
             <span class="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Verlauf</span>
             <span class="text-[10px] text-slate-400">{{ recentSnapshots.length }} Eintr{{ recentSnapshots.length === 1 ? 'ag' : 'äge' }}</span>
           </div>
-          <div class="flex items-end gap-1">
-            @for (s of recentSnapshots; track s.id) {
-              <div
-                class="flex-1 rounded-sm transition"
-                [style.height.px]="Math.max(6, Math.round(scoreOf(s) * 0.28))"
-                [class]="scoreOf(s) >= 65 ? 'bg-emerald-400' : scoreOf(s) >= 40 ? 'bg-amber-400' : 'bg-rose-400'"
-                [title]="scoreOf(s) + ' · ' + formatDate(s.timestamp)"
-              ></div>
-            }
+          <div class="rounded-xl bg-slate-50/50 p-1.5">
+            <svg viewBox="0 0 300 48" class="h-12 w-full" preserveAspectRatio="none">
+              <defs>
+                <linearGradient [attr.id]="'waveFill-' + config.key" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.25"/>
+                  <stop offset="100%" stop-color="#a78bfa" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+              <path [attr.d]="waveAreaPath(recentSnapshots, 300, 48)" [attr.fill]="'url(#waveFill-' + config.key + ')'"/>
+              <path [attr.d]="wavePath(recentSnapshots, 300, 48)" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round"/>
+              @for (s of recentSnapshots; track s.id; let i = $index) {
+                <circle
+                  [attr.cx]="recentSnapshots.length === 1 ? 150 : i * 300 / (recentSnapshots.length - 1)"
+                  [attr.cy]="scoreToY(scoreOf(s), recentSnapshots, 48)"
+                  r="3"
+                  [attr.fill]="dotColor(scoreOf(s))"
+                  class="opacity-70"
+                />
+              }
+            </svg>
           </div>
           <div class="mt-1.5 flex items-center gap-1.5">
             <span
@@ -82,11 +93,52 @@ export class DashboardCardComponent {
   get recentSnapshots(): Snapshot[] {
     return [...this.snapshots]
       .sort((a, b) => a.timestamp - b.timestamp)
-      .slice(-12);
+      .slice(-30);
   }
 
   scoreOf(s: Snapshot): number {
     return snapshotScore(s);
+  }
+
+  scoreToY(score: number, snaps: Snapshot[], height: number): number {
+    const scores = snaps.map(s => snapshotScore(s));
+    const min = Math.min(...scores);
+    const max = Math.max(...scores);
+    const spread = max - min;
+    if (spread < 5) return height * 0.5;
+    const pad = spread * 0.15;
+    const lo = min - pad;
+    const hi = max + pad;
+    const norm = (score - lo) / (hi - lo);
+    return height - Math.max(0, Math.min(1, norm)) * height;
+  }
+
+  wavePath(snaps: Snapshot[], width: number, height: number): string {
+    if (snaps.length === 0) return '';
+    if (snaps.length === 1) return `M0,${height * 0.5} L${width},${height * 0.5}`;
+    const step = width / (snaps.length - 1);
+    const points = snaps.map((s, i) => ({
+      x: i * step,
+      y: this.scoreToY(snapshotScore(s), snaps, height),
+    }));
+    let d = `M${points[0].x},${points[0].y}`;
+    for (let i = 1; i < points.length; i++) {
+      const cp = step * 0.4;
+      d += ` C${points[i - 1].x + cp},${points[i - 1].y} ${points[i].x - cp},${points[i].y} ${points[i].x},${points[i].y}`;
+    }
+    return d;
+  }
+
+  waveAreaPath(snaps: Snapshot[], width: number, height: number): string {
+    const line = this.wavePath(snaps, width, height);
+    if (!line) return '';
+    return line + ` L${width},${height} L0,${height} Z`;
+  }
+
+  dotColor(score: number): string {
+    if (score >= 65) return '#34d399';
+    if (score >= 40) return '#f59e0b';
+    return '#ef4444';
   }
 
   get latestScore(): number {
