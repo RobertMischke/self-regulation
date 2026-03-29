@@ -10,6 +10,7 @@ export const NACH_UEBERFORDERUNG: FlowDefinition = {
   category: 'stress-ueberforderung',
   steps: [
     {
+      id: 'check',
       type: 'choice',
       prompt: 'Was trifft gerade am ehesten zu?',
       options: [
@@ -20,6 +21,7 @@ export const NACH_UEBERFORDERUNG: FlowDefinition = {
       ],
     },
     {
+      id: 'ground',
       type: 'action',
       prompt: 'Erst mal ankommen.',
       items: [
@@ -31,6 +33,7 @@ export const NACH_UEBERFORDERUNG: FlowDefinition = {
       nextLabel: 'Gemacht',
     },
     {
+      id: 'breathe',
       type: 'action',
       prompt: 'Atme bewusst langsamer.',
       body: 'Atme 4× ein (4 Sekunden) und aus (6 Sekunden). Langsamer, als du denkst. Das Ausatmen ist länger als das Einatmen.',
@@ -39,15 +42,17 @@ export const NACH_UEBERFORDERUNG: FlowDefinition = {
       backLabel: 'Noch nicht',
     },
     {
+      id: 'recheck',
       type: 'recheck',
       prompt: 'Wie ist es jetzt?',
       options: [
-        'Etwas besser',
-        'Gleich',
-        'Noch zu viel',
+        { label: 'Etwas besser', next: 'end' },
+        { label: 'Gleich', next: 'breathe' },
+        { label: 'Noch zu viel', flowId: 'wenn-alles-zu-viel' },
       ],
     },
     {
+      id: 'end',
       type: 'end',
       prompt: 'Du hast runtergeregelt.',
       body: 'Das war genug. Wenn es noch nachwirkt: Wasser trinken, kurz bewegen, oder einfach noch einen Moment sitzen bleiben.',

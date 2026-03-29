@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
-import { FlowDefinition, FlowStep } from '../flows/flow.model';
+import { FlowDefinition, FlowStep, FlowOption } from '../flows/flow.model';
+import { getFlowById } from '../flows/flow-registry';
+import { FlowGraphComponent } from './flow-graph.component';
 
 @Component({
   selector: 'app-flow-modal',
   standalone: true,
+  imports: [FlowGraphComponent],
   template: `
     <!-- Backdrop -->
     <div
@@ -44,7 +47,28 @@ import { FlowDefinition, FlowStep } from '../flows/flow.model';
               ></div>
             }
           </div>
+
+          <!-- Graph toggle -->
+          @if (hasBranching) {
+            <button
+              (click)="showGraph = !showGraph"
+              class="mt-2.5 flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
+            >
+              <span class="text-sm">{{ showGraph ? '▾' : '▸' }}</span>
+              Flow-Karte
+            </button>
+          }
         </div>
+
+        <!-- Flow Graph (collapsible) -->
+        @if (showGraph && hasBranching) {
+          <div class="border-b border-slate-100 bg-slate-50/60 px-4 py-3">
+            <app-flow-graph
+              [flow]="flow"
+              [currentStepId]="currentStepId"
+            />
+          </div>
+        }
 
         <!-- Body -->
         <div class="min-h-[260px] px-6 py-6">
@@ -54,15 +78,18 @@ import { FlowDefinition, FlowStep } from '../flows/flow.model';
           <!-- Choice / Recheck options -->
           @if (step.type === 'choice' || step.type === 'recheck') {
             <div class="mt-5 flex flex-col gap-2">
-              @for (opt of step.options; track opt) {
+              @for (opt of step.options; track optLabel(opt)) {
                 <button
-                  (click)="selectOption(opt)"
+                  (click)="selectOption(optLabel(opt))"
                   class="rounded-xl border px-4 py-3 text-left text-sm font-medium transition"
-                  [class]="selectedOption === opt
+                  [class]="selectedOption === optLabel(opt)
                     ? 'border-violet-300 bg-violet-50 text-violet-700 ring-1 ring-violet-200'
                     : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'"
                 >
-                  {{ opt }}
+                  @if (isCrossFlowOption(opt)) {
+                    <span class="mr-1.5 text-slate-400">⇗</span>
+                  }
+                  {{ optLabel(opt) }}
                 </button>
               }
             </div>
@@ -148,7 +175,7 @@ import { FlowDefinition, FlowStep } from '../flows/flow.model';
               Flow beenden
             </button>
           } @else {
-            @if (currentStep > 0) {
+            @if (history.length > 1) {
               <button
                 (click)="back()"
                 class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
@@ -178,6 +205,8 @@ export class FlowModalComponent implements OnDestroy {
 
   currentStep = 0;
   selectedOption: string | null = null;
+  showGraph = false;
+  history: number[] = [0];
 
   // Timer state
   timerRunning = false;
@@ -187,6 +216,19 @@ export class FlowModalComponent implements OnDestroy {
   private audioCtx: AudioContext | null = null;
 
   readonly timerCircumference = 2 * Math.PI * 20;
+
+  /** True if any step uses FlowOption with routing */
+  get hasBranching(): boolean {
+    return this.flow.steps.some(s =>
+      s.options?.some(o => typeof o !== 'string' && (o.next || o.flowId))
+      || !!s.next
+    );
+  }
+
+  /** Resolved id of current step (for graph highlight) */
+  get currentStepId(): string {
+    return this.flow.steps[this.currentStep]?.id || `s${this.currentStep}`;
+  }
 
   get timerDashOffset(): number {
     if (this.timerTotal === 0) return 0;
@@ -210,23 +252,58 @@ export class FlowModalComponent implements OnDestroy {
     return true;
   }
 
-  selectOption(opt: string): void {
-    this.selectedOption = opt;
+  optLabel(opt: string | FlowOption): string {
+    return typeof opt === 'string' ? opt : opt.label;
+  }
+
+  isCrossFlowOption(opt: string | FlowOption): boolean {
+    return typeof opt !== 'string' && !!opt.flowId;
+  }
+
+  selectOption(label: string): void {
+    this.selectedOption = label;
   }
 
   next(): void {
     if (!this.canAdvance) return;
     this.cancelTimer();
+
+    // Check if selected option has routing
+    if (this.selectedOption && this.step.options) {
+      const opt = this.step.options.find(o =>
+        typeof o === 'string' ? o === this.selectedOption : o.label === this.selectedOption
+      );
+      if (opt && typeof opt !== 'string') {
+        if (opt.flowId) {
+          this.switchToFlow(opt.flowId);
+          return;
+        }
+        if (opt.next) {
+          this.goToStepById(opt.next);
+          return;
+        }
+      }
+    }
+
+    // Check step-level next override
+    if (this.step.next) {
+      this.goToStepById(this.step.next);
+      return;
+    }
+
+    // Default: sequential
     if (this.currentStep < this.flow.steps.length - 1) {
       this.currentStep++;
+      this.history.push(this.currentStep);
       this.selectedOption = null;
     }
   }
 
   back(): void {
-    if (this.currentStep > 0) {
-      this.cancelTimer();
-      this.currentStep--;
+    this.cancelTimer();
+    if (this.history.length > 1) {
+      this.history.pop();
+      this.currentStep = this.history[this.history.length - 1];
       this.selectedOption = null;
     }
   }
@@ -239,6 +316,26 @@ export class FlowModalComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.cancelTimer();
     this.audioCtx?.close();
+  }
+
+  private goToStepById(stepId: string): void {
+    const idx = this.flow.steps.findIndex(s => s.id === stepId);
+    if (idx >= 0) {
+      this.currentStep = idx;
+      this.history.push(idx);
+      this.selectedOption = null;
+    }
+  }
+
+  private switchToFlow(flowId: string): void {
+    const newFlow = getFlowById(flowId);
+    if (newFlow) {
+      this.flow = newFlow;
+      this.currentStep = 0;
+      this.history = [0];
+      this.selectedOption = null;
+      this.cancelTimer();
+    }
   }
 
   // --- Timer ---

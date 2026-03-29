@@ -22,15 +22,23 @@ export const FLOW_CATEGORIES: FlowCategoryMeta[] = [
 
 export type FlowStepType = 'choice' | 'action' | 'recheck' | 'end';
 
+export interface FlowOption {
+  label: string;
+  next?: string;       // step id to jump to
+  flowId?: string;     // link to another flow
+}
+
 export interface FlowStep {
+  id?: string;                        // unique within flow, auto = 's{index}'
   type: FlowStepType;
   prompt: string;
-  options?: string[];
+  options?: (string | FlowOption)[];  // string = simple label, FlowOption = with routing
   body?: string;
   items?: string[];
   duration?: string;
   nextLabel?: string;
   backLabel?: string;
+  next?: string;                      // override default sequential next (step id)
 }
 
 export interface FlowDefinition {
