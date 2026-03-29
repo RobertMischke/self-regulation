@@ -437,7 +437,8 @@ export class HomeComponent {
   readonly showcaseTabs = [
     { key: 'dashboard', label: 'Dashboard', src: 'showcase/dashboard.png', url: 'zenya.app/dashboard/adhs-regulation', caption: 'ADHS-Regulations-Dashboard – Regler, Interventionen und Kennzahlen auf einen Blick.' },
     { key: 'verlauf',   label: 'Verlauf',   src: 'showcase/verlauf.png',   url: 'zenya.app/dashboard/adhs-regulation', caption: 'Verlauf – Gespeicherte Momente mit Wellendiagramm und Detail-Radar.' },
-    { key: 'flows',     label: 'Flows',     src: 'showcase/flow-active.png', url: 'zenya.app/', caption: 'Geführter Flow – Schritt für Schritt durch eine konkrete Situation.' },
+    { key: 'flow',      label: 'Flow', src: 'showcase/flow-active.png', url: 'zenya.app/', caption: 'Schritt f\u00fcr Schritt durch eine Situation \u2013 mit Timer, Zur\u00fcck-Option und klarer Handlungsanweisung.' },
+    { key: 'flowmap',   label: 'Flow-Verzweigung', src: 'showcase/flow-graph.png', url: 'zenya.app/', caption: 'Verzweigungsdiagramm \u2013 jeder Flow als visueller Entscheidungsbaum mit R\u00fcckschleifen und Querverweisen.' },
   ];
   showcaseActive = 'dashboard';
 
