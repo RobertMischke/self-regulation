@@ -10,6 +10,7 @@ import {
   ALL_FLOWS,
 } from '../../flows/flow-registry';
 import { FlowModalComponent } from '../../components/flow-modal.component';
+import { FlowGraphComponent } from '../../components/flow-graph.component';
 import { DashboardCardComponent } from '../../components/dashboard-card.component';
 import { FlowCardComponent } from '../../components/flow-card.component';
 import { LoginDialogComponent } from '../../components/login-dialog.component';
@@ -22,7 +23,7 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, FlowModalComponent, DashboardCardComponent, FlowCardComponent, LoginDialogComponent],
+  imports: [RouterLink, FlowModalComponent, FlowGraphComponent, DashboardCardComponent, FlowCardComponent, LoginDialogComponent],
   template: `
     <div class="min-h-screen bg-white text-slate-900">
 
@@ -202,7 +203,7 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
           </div>
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (flow of favFlows; track flow.id) {
-              <app-flow-card [flow]="flow" [isFavorite]="true" [highlighted]="true" (toggleFavorite)="toggleFav('flow', flow.id)" (start)="openFlow(flow)" />
+              <app-flow-card [flow]="flow" [isFavorite]="true" [highlighted]="true" (toggleFavorite)="toggleFav('flow', flow.id)" (showGraph)="openGraph(flow)" (start)="openFlow(flow)" />
             }
           </div>
         </div>
@@ -266,7 +267,7 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
           <!-- Flow Cards -->
           <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @for (flow of (toolMode ? visibleNonFavFlows : visibleFlows); track flow.title) {
-              <app-flow-card [flow]="flow" [isFavorite]="favs.isFavorite('flow', flow.id)" (toggleFavorite)="toggleFav('flow', flow.id)" (start)="openFlow(flow)" />
+              <app-flow-card [flow]="flow" [isFavorite]="favs.isFavorite('flow', flow.id)" (toggleFavorite)="toggleFav('flow', flow.id)" (showGraph)="openGraph(flow)" (start)="openFlow(flow)" />
             }
           </div>
 
@@ -358,6 +359,36 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
     @if (activeFlow) {
       <app-flow-modal [flow]="activeFlow" (closed)="closeFlow()" />
     }
+
+    <!-- Flow Graph Modal (standalone from card) -->
+    @if (graphFlow) {
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm"
+        (click)="closeGraph()"
+      >
+        <div
+          class="relative mx-4 w-full max-w-xl sm:max-w-2xl overflow-hidden rounded-2xl bg-white p-5 shadow-2xl"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="mb-3 flex items-center justify-between">
+            <h3 class="text-sm font-bold text-slate-700">{{ graphFlow.title }}</h3>
+            <button
+              (click)="closeGraph()"
+              class="grid h-7 w-7 place-items-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            >
+              <span class="text-lg leading-none">&times;</span>
+            </button>
+          </div>
+          <app-flow-graph [flow]="graphFlow" />
+          <button
+            (click)="startFlowFromGraph()"
+            class="mt-4 w-full rounded-xl bg-violet-600 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-violet-500"
+          >
+            Flow starten
+          </button>
+        </div>
+      </div>
+    }
   `,
 })
 export class HomeComponent {
@@ -383,6 +414,7 @@ export class HomeComponent {
   dashboardsOpen = true;
   flowsOpen = true;
   activeFlow: FlowDefinition | null = null;
+  graphFlow: FlowDefinition | null = null;
   showLoginDialog = false;
   showUserMenu = false;
   loginReason = '';
@@ -438,6 +470,20 @@ export class HomeComponent {
 
   closeFlow(): void {
     this.activeFlow = null;
+  }
+
+  openGraph(flow: FlowDefinition): void {
+    this.graphFlow = flow;
+  }
+
+  closeGraph(): void {
+    this.graphFlow = null;
+  }
+
+  startFlowFromGraph(): void {
+    const flow = this.graphFlow;
+    this.graphFlow = null;
+    if (flow) this.activeFlow = flow;
   }
 
   configModeCount(config: DashboardConfig): number {

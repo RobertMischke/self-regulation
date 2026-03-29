@@ -15,7 +15,7 @@ import { FlowGraphComponent } from './flow-graph.component';
     >
       <!-- Modal Card -->
       <div
-        class="relative mx-4 flex w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
+        class="relative mx-4 flex w-full max-w-xl sm:max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl"
         (click)="$event.stopPropagation()"
       >
         <!-- Header -->
@@ -30,12 +30,25 @@ import { FlowGraphComponent } from './flow-graph.component';
                 }
               </p>
             </div>
-            <button
-              (click)="close()"
-              class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-            >
-              <span class="text-lg leading-none">&times;</span>
-            </button>
+            <div class="flex items-center gap-1">
+              <button
+                (click)="showGraph = !showGraph"
+                class="grid h-8 w-8 shrink-0 place-items-center rounded-lg transition"
+                [class]="showGraph ? 'text-violet-500 bg-violet-50' : 'text-slate-400 hover:bg-slate-100 hover:text-slate-600'"
+                title="Flow-Karte"
+              >
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/>
+                  <path d="M6 8v2a4 4 0 004 4h0a4 4 0 004-4V8"/><line x1="12" y1="14" x2="12" y2="16"/>
+                </svg>
+              </button>
+              <button
+                (click)="close()"
+                class="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+              >
+                <span class="text-lg leading-none">&times;</span>
+              </button>
+            </div>
           </div>
 
           <!-- Progress bar -->
@@ -48,20 +61,10 @@ import { FlowGraphComponent } from './flow-graph.component';
             }
           </div>
 
-          <!-- Graph toggle -->
-          @if (hasBranching) {
-            <button
-              (click)="showGraph = !showGraph"
-              class="mt-2.5 flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-700"
-            >
-              <span class="text-sm">{{ showGraph ? '▾' : '▸' }}</span>
-              Flow-Karte
-            </button>
-          }
         </div>
 
         <!-- Flow Graph (collapsible) -->
-        @if (showGraph && hasBranching) {
+        @if (showGraph) {
           <div class="border-b border-slate-100 bg-slate-50/60 px-4 py-3">
             <app-flow-graph
               [flow]="flow"

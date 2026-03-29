@@ -8,7 +8,7 @@ import {
 import { FlowDefinition, FlowStep, FlowOption } from '../flows/flow.model';
 
 /* ── Layout constants ────────────────────────────────── */
-const NODE_W = 154;
+const NODE_W = 200;
 const NODE_H = 44;
 const GAP_X = 54;
 const GAP_Y = 34;
@@ -19,6 +19,7 @@ const BACK_EDGE_MARGIN = 38;
 interface GNode {
   id: string;
   label: string;
+  fullLabel: string;
   type: string; // FlowStepType | 'cross-flow'
   row: number;
   col: number;
@@ -44,7 +45,7 @@ function optLabel(o: string | FlowOption): string {
   return typeof o === 'string' ? o : o.label;
 }
 
-function truncate(s: string, max = 22): string {
+function truncate(s: string, max = 28): string {
   return s.length > max ? s.substring(0, max - 1) + '…' : s;
 }
 
@@ -55,7 +56,7 @@ function truncate(s: string, max = 22): string {
     <svg
       [attr.viewBox]="viewBox"
       class="w-full select-none"
-      style="max-height: 340px"
+      style="max-height: 480px"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
@@ -120,7 +121,11 @@ function truncate(s: string, max = 22): string {
             [attr.fill]="bgColor(n.type)"
             [attr.stroke]="n.isCurrent ? '#7c3aed' : borderColor(n.type)"
             stroke-width="1.5"
-          />
+          >
+            @if (n.fullLabel !== n.label) {
+              <title>{{ n.fullLabel }}</title>
+            }
+          </rect>
           <!-- Type icon -->
           <text
             [attr.x]="n.x + 12" [attr.y]="n.y + nodeH / 2 + 1"
@@ -133,7 +138,12 @@ function truncate(s: string, max = 22): string {
             class="text-[11px]"
             [attr.fill]="n.isCurrent ? '#5b21b6' : '#334155'"
             [attr.font-weight]="n.isCurrent ? '600' : '500'"
-          >{{ n.label }}</text>
+          >
+            @if (n.fullLabel !== n.label) {
+              <title>{{ n.fullLabel }}</title>
+            }
+            {{ n.label }}
+          </text>
         </g>
       }
     </svg>
@@ -279,6 +289,7 @@ export class FlowGraphComponent implements OnChanges {
         gNodes.push({
           id,
           label: truncate(step.prompt),
+          fullLabel: step.prompt,
           type: step.type,
           row: pos.row,
           col: pos.col,
@@ -290,6 +301,7 @@ export class FlowGraphComponent implements OnChanges {
         gNodes.push({
           id,
           label: '→ ' + truncate(flowId, 18),
+          fullLabel: '→ Flow: ' + flowId,
           type: 'cross-flow',
           row: pos.row,
           col: pos.col,
@@ -328,14 +340,45 @@ export class FlowGraphComponent implements OnChanges {
       });
     }
 
-    this.nodes = gNodes;
-    this.edges = gEdges;
-
     // ── 6. ViewBox ──
+    const hasOnlyMainCol = gNodes.every(n => n.col === 0);
     const maxX = Math.max(...gNodes.map(n => n.x + NODE_W), 0) + PAD;
     const maxY = Math.max(...gNodes.map(n => n.y + NODE_H), 0) + PAD;
-    const minX = -BACK_EDGE_MARGIN - 8;
-    this.viewBox = `${minX} 0 ${maxX - minX} ${maxY}`;
+
+    if (hasOnlyMainCol) {
+      // Center the single column: shift all nodes so column is centered in viewBox
+      const contentW = NODE_W + PAD * 2;
+      const totalW = Math.max(contentW + 40, 300);  // minimum width
+      const offsetX = (totalW - NODE_W) / 2;
+      for (const n of gNodes) {
+        n.x = offsetX;
+      }
+      this.nodes = gNodes;
+      this.edges = [];
+      // Rebuild edges with new positions
+      const nodeById2 = new Map(gNodes.map(n => [n.id, n]));
+      for (const re of rawEdges) {
+        const fromN = nodeById2.get(re.from);
+        const toN = nodeById2.get(re.to);
+        if (!fromN || !toN) continue;
+        const isBack2 = toN.row <= fromN.row && !re.isCrossFlow;
+        const path2 = this.edgePath(fromN, toN, isBack2);
+        const mid2 = this.edgeMid(fromN, toN, isBack2);
+        const isActive2 = fromN.isCurrent || toN.isCurrent;
+        this.edges.push({
+          from: re.from, to: re.to,
+          label: re.label ? truncate(re.label, 18) : undefined,
+          path: path2, labelX: mid2.x, labelY: mid2.y,
+          isBack: isBack2, isCrossFlow: re.isCrossFlow, isActive: isActive2,
+        });
+      }
+      this.viewBox = `0 0 ${totalW} ${maxY}`;
+    } else {
+      this.nodes = gNodes;
+      this.edges = gEdges;
+      const minX = -BACK_EDGE_MARGIN - 8;
+      this.viewBox = `${minX} 0 ${maxX - minX} ${maxY}`;
+    }
   }
 
   /* ── Edge path generation ───────────────────────────── */

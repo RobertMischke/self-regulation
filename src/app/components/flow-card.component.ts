@@ -11,15 +11,27 @@ import { FlowDefinition } from '../flows/flow.model';
         ? 'border border-amber-200 hover:border-amber-300 hover:ring-amber-100'
         : 'border border-slate-200 hover:border-violet-200 hover:ring-violet-100'"
     >
-      <button
-        (click)="toggleFavorite.emit()"
-        class="absolute right-2.5 top-2.5 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl transition hover:scale-110"
-        [class]="isFavorite
-          ? 'text-amber-400 hover:text-amber-500 drop-shadow-sm'
-          : 'text-slate-300/60 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
-      >
-        ★
-      </button>
+      <div class="absolute right-2.5 top-2.5 z-10 flex items-center gap-0.5">
+        <button
+          (click)="$event.stopPropagation(); showGraph.emit()"
+          class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-slate-300/60 opacity-0 transition hover:scale-110 hover:text-violet-500 group-hover:opacity-100"
+          title="Flow-Karte"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/>
+            <path d="M6 8v2a4 4 0 004 4h0a4 4 0 004-4V8"/><line x1="12" y1="14" x2="12" y2="16"/>
+          </svg>
+        </button>
+        <button
+          (click)="toggleFavorite.emit()"
+          class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl transition hover:scale-110"
+          [class]="isFavorite
+            ? 'text-amber-400 hover:text-amber-500 drop-shadow-sm'
+            : 'text-slate-300/60 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
+        >
+          ★
+        </button>
+      </div>
       <span class="text-base font-bold leading-snug">{{ flow.title }}</span>
       <p class="mt-1.5 text-[13px] leading-relaxed text-slate-500">{{ flow.description }}</p>
       <div class="mt-3 flex items-center gap-2 text-[12px] font-medium text-slate-400">
@@ -46,5 +58,6 @@ export class FlowCardComponent {
   @Input() isFavorite = false;
   @Input() highlighted = false;
   @Output() toggleFavorite = new EventEmitter<void>();
+  @Output() showGraph = new EventEmitter<void>();
   @Output() start = new EventEmitter<void>();
 }
