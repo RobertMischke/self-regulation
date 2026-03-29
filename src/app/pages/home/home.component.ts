@@ -127,8 +127,43 @@ import { Snapshot, SnapshotService } from '../../models/snapshot';
                class="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
               Zu den Flows
             </a>
-
           </div>
+        </div>
+
+        <!-- App Showcase -->
+        <div class="relative mx-auto max-w-5xl px-6 pb-16 pt-4">
+          <p class="mb-4 text-center text-xs font-bold uppercase tracking-widest text-slate-400">So sieht's aus</p>
+          <nav class="mb-6 flex justify-center gap-2">
+            @for (tab of showcaseTabs; track tab.key) {
+              <button
+                (click)="showcaseActive = tab.key"
+                [class]="showcaseActive === tab.key
+                  ? 'rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-semibold text-white shadow-sm transition'
+                  : 'rounded-full bg-white/80 px-4 py-1.5 text-sm font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200 transition hover:bg-white'"
+              >
+                {{ tab.label }}
+              </button>
+            }
+          </nav>
+          <div class="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xl ring-1 ring-slate-900/5">
+            <div class="flex items-center gap-1.5 border-b border-slate-100 bg-slate-50/80 px-4 py-2.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-red-300"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-amber-300"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-300"></span>
+              <span class="ml-3 text-xs text-slate-400">{{ showcaseUrl }}</span>
+            </div>
+            @for (tab of showcaseTabs; track tab.key) {
+              @if (tab.key === showcaseActive) {
+                <img
+                  [src]="tab.src"
+                  [alt]="tab.label"
+                  class="block w-full"
+                  loading="eager"
+                />
+              }
+            }
+          </div>
+          <p class="mt-3 text-center text-xs text-slate-400">{{ showcaseCaption }}</p>
         </div>
       </section>
       }
@@ -397,6 +432,21 @@ export class HomeComponent {
   readonly pwa = inject(PwaService);
   private readonly storage = inject(StorageService);
   private readonly snapshotService = inject(SnapshotService);
+
+  /* Showcase */
+  readonly showcaseTabs = [
+    { key: 'dashboard', label: 'Dashboard', src: 'showcase/dashboard.png', url: 'zenya.app/dashboard/adhs-regulation', caption: 'ADHS-Regulations-Dashboard – Regler, Interventionen und Kennzahlen auf einen Blick.' },
+    { key: 'verlauf',   label: 'Verlauf',   src: 'showcase/verlauf.png',   url: 'zenya.app/dashboard/adhs-regulation', caption: 'Verlauf – Gespeicherte Momente mit Wellendiagramm und Detail-Radar.' },
+    { key: 'flows',     label: 'Flows',     src: 'showcase/flow-active.png', url: 'zenya.app/', caption: 'Geführter Flow – Schritt für Schritt durch eine konkrete Situation.' },
+  ];
+  showcaseActive = 'dashboard';
+
+  get showcaseUrl(): string {
+    return this.showcaseTabs.find(t => t.key === this.showcaseActive)?.url ?? '';
+  }
+  get showcaseCaption(): string {
+    return this.showcaseTabs.find(t => t.key === this.showcaseActive)?.caption ?? '';
+  }
 
   readonly dashboards: DashboardConfig[] = getAllDashboardConfigs();
 

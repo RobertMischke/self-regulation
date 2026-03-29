@@ -11,10 +11,10 @@ import { FlowDefinition } from '../flows/flow.model';
         ? 'border border-amber-200 hover:border-amber-300 hover:ring-amber-100'
         : 'border border-slate-200 hover:border-violet-200 hover:ring-violet-100'"
     >
-      <div class="absolute right-2.5 top-2.5 z-10 flex items-center gap-0.5">
+      <div class="absolute right-2.5 top-2.5 z-10 flex flex-row items-center gap-1">
         <button
           (click)="$event.stopPropagation(); showGraph.emit()"
-          class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-slate-300/60 opacity-0 transition hover:scale-110 hover:text-violet-500 group-hover:opacity-100"
+          class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-slate-400 transition hover:scale-110 hover:text-violet-500 sm:text-slate-300/60 sm:opacity-0 sm:group-hover:opacity-100"
           title="Flow-Karte"
         >
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -24,10 +24,10 @@ import { FlowDefinition } from '../flows/flow.model';
         </button>
         <button
           (click)="toggleFavorite.emit()"
-          class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-xl transition hover:scale-110"
+          class="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-lg transition hover:scale-110"
           [class]="isFavorite
             ? 'text-amber-400 hover:text-amber-500 drop-shadow-sm'
-            : 'text-slate-300/60 opacity-0 group-hover:opacity-100 hover:text-amber-400'"
+            : 'text-slate-400 sm:text-slate-300/60 sm:opacity-0 sm:group-hover:opacity-100 hover:text-amber-400'"
         >
           ★
         </button>
