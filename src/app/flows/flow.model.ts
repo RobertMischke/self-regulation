@@ -41,6 +41,13 @@ export interface FlowStep {
   next?: string;                      // override default sequential next (step id)
 }
 
+export interface FlowMeta {
+  strengths: string[];
+  weaknesses: string[];
+  analysis: string;
+  reviewedAt: string;
+}
+
 export interface FlowDefinition {
   id: string;
   title: string;
@@ -50,4 +57,5 @@ export interface FlowDefinition {
   tags: string[];
   category: FlowCategory;
   steps: FlowStep[];
+  meta?: FlowMeta;
 }

@@ -8,6 +8,19 @@ export const WENN_ALLES_ZU_VIEL: FlowDefinition = {
   style: 'kompakt',
   tags: ['akut', 'Überforderung'],
   category: 'stress-ueberforderung',
+  meta: {
+    strengths: [
+      'Gutes Notfall-Format: kurz, direkt, keine Überforderung',
+      'Recheck mit 3-Wege-Verzweigung: Loop, Deeper, Ende',
+      'Deeper-Schritt (kaltes Wasser) ist evidenzbasiert (Dive Reflex)',
+    ],
+    weaknesses: [
+      '"Kann ich nicht" als Back-Label auf der Pause geht nur zurück – könnte zu sanfterer Alternative führen',
+      'Initiale Auswahl differenziert nicht',
+    ],
+    analysis: 'Einer der besten Akut-Flows. Branching-Muster vorbildlich. Der "Deeper"-Pfad mit sensorischem Reiz ist genau richtig für Shutdown-Zustände. Könnte als Ziel-Flow für Eskalationen aus anderen Flows dienen.',
+    reviewedAt: '2026-03-29',
+  },
   steps: [
     {
       id: 'check',

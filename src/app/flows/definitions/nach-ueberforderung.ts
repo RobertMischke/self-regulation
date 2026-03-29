@@ -8,6 +8,19 @@ export const NACH_UEBERFORDERUNG: FlowDefinition = {
   style: 'ruhig',
   tags: ['nach Stress', 'Regulation'],
   category: 'stress-ueberforderung',
+  meta: {
+    strengths: [
+      'Excellentes Branching: Atem-Loop bei "Gleich", Cross-Flow bei "Noch zu viel"',
+      'Grounding-Sequenz (Ankommen → Atmen) ist physiologisch sinnvoll',
+      'Cross-Flow zu "Wenn alles zu viel" als Eskalationspfad',
+    ],
+    weaknesses: [
+      'Initiale Auswahl differenziert nicht – alle 4 Optionen führen zum selben Pfad',
+      'Könnte für "körperlich angespannt" eine spezifischere Übung bieten',
+    ],
+    analysis: 'Einer der stärksten Flows. Branching-Muster ist vorbildlich: Loop bei "Gleich", Eskalation bei "Noch zu viel". Könnte als Template für andere Flows dienen.',
+    reviewedAt: '2026-03-29',
+  },
   steps: [
     {
       id: 'check',

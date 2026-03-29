@@ -8,10 +8,10 @@ import {
 import { FlowDefinition, FlowStep, FlowOption } from '../flows/flow.model';
 
 /* ── Layout constants ────────────────────────────────── */
-const NODE_W = 200;
-const NODE_H = 44;
+const NODE_W = 280;
+const NODE_H = 40;
 const GAP_X = 54;
-const GAP_Y = 34;
+const GAP_Y = 30;
 const PAD = 24;
 const BACK_EDGE_MARGIN = 38;
 
@@ -45,7 +45,7 @@ function optLabel(o: string | FlowOption): string {
   return typeof o === 'string' ? o : o.label;
 }
 
-function truncate(s: string, max = 28): string {
+function truncate(s: string, max = 38): string {
   return s.length > max ? s.substring(0, max - 1) + '…' : s;
 }
 
@@ -56,7 +56,7 @@ function truncate(s: string, max = 28): string {
     <svg
       [attr.viewBox]="viewBox"
       class="w-full select-none"
-      style="max-height: 480px"
+      style="max-height: 380px"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
