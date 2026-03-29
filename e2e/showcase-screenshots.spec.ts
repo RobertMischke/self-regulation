@@ -15,6 +15,10 @@ test('showcase: dashboard-adhs', async ({ page }) => {
     await sliders.nth(i).fill(String(values[i]));
     await page.waitForTimeout(100);
   }
+
+  // Remove focus from sliders so no focus ring is visible in screenshot
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+  await page.mouse.click(10, 10);
   await page.waitForTimeout(400);
 
   await page.screenshot({
@@ -34,6 +38,10 @@ test('showcase: dashboard-emotion', async ({ page }) => {
     await sliders.nth(i).fill(String(values[i]));
     await page.waitForTimeout(100);
   }
+
+  // Remove focus from sliders so no focus ring is visible in screenshot
+  await page.evaluate(() => (document.activeElement as HTMLElement)?.blur());
+  await page.mouse.click(10, 10);
   await page.waitForTimeout(400);
 
   await page.screenshot({
